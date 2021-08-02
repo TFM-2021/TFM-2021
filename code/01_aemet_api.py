@@ -7,7 +7,7 @@ import time
 
 #la API KEY se pide en https://opendata.aemet.es/centrodedescargas/obtencionAPIKey y te llegará al corre :)
 
-key = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZXJnaW8uY2Fub25AY3VuZWYuZWR1IiwianRpIjoiNDY0OTEzMGQtZGFmNS00ODBlLTk5YjktNGE2Mjg2MDAxZGMzIiwiaXNzIjoiQUVNRVQiLCJpYXQiOjE2Mjc4MTM1MTgsInVzZXJJZCI6IjQ2NDkxMzBkLWRhZjUtNDgwZS05OWI5LTRhNjI4NjAwMWRjMyIsInJvbGUiOiIifQ.s0htPJBpo_EcBUmflF-dYidpMBsx1cqS7Mp54ed4IBY"
+key = "*********"
 aemet = Aemet(api_key= key)
 estaciones = Estacion.get_estaciones(api_key=key)
 

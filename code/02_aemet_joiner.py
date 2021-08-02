@@ -17,7 +17,6 @@ columnas = ['latitud', 'provincia', 'altitud', 'indicativo', 'nombre', 'indsinop
 
 TMP_data_merged = pd.DataFrame(columns=columnas)
 
-
     
 for file in onlyfiles:
 
@@ -36,27 +35,23 @@ for file in onlyfiles:
 
                 TMP_data_merged = TMP_data_merged.append(TMP_data)
 
-            except:
-                 pass
-
+            except: 
+                pass
 TMP_data_merged = TMP_data_merged.reset_index(drop=True)
 
 
 columnas_con_parentesis = list([8, 13, 18, 24, 29, 42])
 
+
+
+mes_13 = []
 for j, row in TMP_data_merged.iterrows():
 
-    print(j/len(TMP_data_merged)*100)
+    if (row.fecha[-2:]==str(13)) == True:
 
-    for columna in columnas_con_parentesis:
-        try:
-            if str(TMP_data_merged.iloc[j][columna][-1:]) == ')':
+        mes_13.extend([TMP_data_merged.index[j]])
 
-                TMP_data_merged.iloc[j][columna] = str(TMP_data_merged.iloc[j][columna][:-4])
+TMP_data_merged.drop(mes_13, inplace=True)
 
-            else:
-                pass
-        except: 
-            pass
 
-TMP_data_merged.to_csv(r"data/data_clean/AEMET/data_clean_aemet.csv", index= False)
+TMP_data_merged.to_csv(r"data/data_clean/AEMET/data_join_aemet.csv", index= False)
