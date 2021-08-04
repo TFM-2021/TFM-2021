@@ -20,43 +20,25 @@ aemet_clean %>%
   geom_line(aes(fecha, sum))
 
 
-  
+attach(aemet_clean)  
 Buscar_nulos <- function(data_set, variable){
   
   #for (variable in colnames(data_set)) {
     
     data_set %>%
-      select(fecha, variable) %>%
-      filter(is.na(data_set$variable)) %>%
+      select(fecha, {{variable}}) %>%
+      filter(is.na(variable)) %>%
       group_by(fecha) %>%
       summarise(missings = n()) %>%
       ggplot() +
       geom_col(aes(fecha, missings/nrow(data_set)*100),
                color="darkgreen")+
       labs(title = paste0("Distribución de NAs por ", variable),
-           subtitle = paste0("Porcentaje nulos: ", sum(is.na(data_set$variable))/nrow(data_set)*100," %"),
+           subtitle = paste0("Porcentaje nulos: ", sum(is.na(variable))/nrow(data_set)*100," %"),
            x = NULL,
            y = "Porcentaje sobre la columna")+
       theme_light()
   #}
 
 }
-Buscar_nulos(aemet_clean,"p_max" )
-
-
-data_set %>%
-  select(fecha, "p_max") %>%
-  filter(is.na(data_set$"p_max")) %>%
-  group_by(fecha) %>%
-  summarise(missings = n())%>%
-  ggplot() +
-  geom_col(aes(fecha, missings/nrow(data_set)*100),
-           color="darkgreen")+
-  labs(title = paste0("Distribución de NAs por ", "p_max"),
-       subtitle = paste0("Porcentaje nulos: ", sum(is.na(data_set$"p_max"))/nrow(data_set)*100," %"),
-       x = "Fecha",
-       y = "Porcentaje sobre la columna")+
-  theme_light() 
-
-str_replace(variable,'"',"")
-
+Buscar_nulos(aemet_clean, indsinop )

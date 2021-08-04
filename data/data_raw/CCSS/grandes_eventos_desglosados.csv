@@ -1,0 +1,264 @@
+﻿ID;CLASE DE RIESGO;Nº de Expedientes;Indemnizaciones;%;Costes Medios
+35 ;Viviendas y Comunidades de Viviendas; 1,419   ; 9,956,054   ; 42.8   ; 7,016   
+35 ;Oficinas; 19   ; 291,763   ; 1.3   ; 15,356   
+35 ;Comercios ; 357   ; 5,696,790   ; 24.5   ; 15,957   
+35 ;Industriales; 24   ; 476,218   ; 2.0   ; 19,842   
+35 ;Vehículos Automóviles; 1,083   ; 6,169,607   ; 26.6   ; 5,697   
+35 ;Obras Civiles; 1   ; 643,423   ; 2.8   ; 643,423   
+36 ;Viviendas y Comunidades de Viviendas; 5,446   ; 14,594,350   ; 36.4   ; 2,680   
+36 ;Oficinas; 40   ; 324,478   ; 0.8   ; 8,112   
+36 ;Comercios ; 906   ; 9,382,265   ; 23.4   ; 10,356   
+36 ;Industriales; 379   ; 9,622,981   ; 24.0   ; 25,390   
+36 ;Vehículos Automóviles; 2,023   ; 6,137,489   ; 15.3   ; 3,034   
+36 ;Obras Civiles; 1   ; 51,178   ; 0.1   ; 51,178   
+37 ;Daños personales; 1   ; 6,647   ; 0.0   ; 6,647   
+37 ;Viviendas y Comunidades de Viviendas; 3,309   ; 28,403,050   ; 52.6   ; 8,584   
+37 ;Oficinas; 52   ; 709,564   ; 1.3   ; 13,645   
+37 ;Comercios ; 705   ; 15,075,593   ; 28.0   ; 21,384   
+37 ;Industriales; 123   ; 3,169,631   ; 5.9   ; 25,769   
+37 ;Vehículos Automóviles; 1,190   ; 6,030,978   ; 11.2   ; 5,068   
+37 ;Obras Civiles; 3   ; 514,544   ; 1.0   ; 171,515   
+38 ;Viviendas y Comunidades de Viviendas; 10,504   ; 23,735,015   ; 23.6   ; 2,260   
+38 ;Oficinas; 26   ; 400,183   ; 0.4   ; 15,392   
+38 ;Comercios ; 1,892   ; 36,404,314   ; 36.1   ; 19,241   
+38 ;Industriales; 139   ; 33,485,583   ; 33.2   ; 240,903   
+38 ;Vehículos Automóviles; 2,916   ; 3,902,345   ; 3.9   ; 1,338   
+38 ;Obras Civiles; 5   ; 2,806,041   ; 2.8   ; 561,208   
+39 ;Viviendas y Comunidades de Viviendas; 1,774   ; 7,367,209   ; 10.8   ; 4,153   
+39 ;Oficinas; 29   ; 229,734   ; 0.3   ; 7,922   
+39 ;Comercios ; 664   ; 14,549,048   ; 21.3   ; 21,911   
+39 ;Industriales; 284   ; 37,635,770   ; 55.1   ; 132,520   
+39 ;Vehículos Automóviles; 1,123   ; 4,842,599   ; 7.1   ; 4,312   
+39 ;Obras Civiles; 1   ; 3,626,887   ; 5.4   ; 3,626,887   
+40 ;Viviendas y Comunidades de Viviendas; 1,447   ; 9,120,917   ; 26.4   ; 6,303   
+40 ;Oficinas; 3   ; 31,730   ; 0.1   ; 10,577   
+40 ;Comercios ; 864   ; 16,523,924   ; 48.0   ; 19,125   
+40 ;Industriales; 3   ; 146,167   ; 0.4   ; 48,722   
+40 ;Vehículos Automóviles; 1,746   ; 8,189,450   ; 23.8   ; 4,690   
+40 ;Obras Civiles; 3   ; 442,068   ; 1.3   ; 147,356   
+41 ;Daños personales; 16   ; 630,853   ; 1.2   ; 39,428   
+41 ;Viviendas y Comunidades de Viviendas; 2   ; 11,937   ; 0.0   ; 5,969   
+41 ;Oficinas; 1   ; 3,456   ; 0.0   ; 3,456   
+41 ;Comercios ; 11   ; 36,018,153   ; 71.2   ; 3,274,378   
+41 ;Industriales; -   ; -   ; -    ; -   
+41 ;Vehículos Automóviles; 869   ; 13,973,317   ; 27.6   ; 16,080   
+41 ;Obras Civiles; -     ; -   ; -    ; -   
+42 ;Viviendas y Comunidades de Viviendas; 2,550   ; 12,935,545   ; 36.6   ; 5,073   
+42 ;Oficinas; 23   ; 547,353   ; 1.5   ; 23,798   
+42 ;Comercios ; 631   ; 6,612,725   ; 18.7   ; 10,480   
+42 ;Industriales; 144   ; 8,886,136   ; 25.2   ; 61,709   
+42 ;Vehículos Automóviles; 1,138   ; 6,346,491   ; 18.0   ; 5,577   
+42 ;Obras Civiles; -   ; -   ; -    ; -   
+43 ;Viviendas y Comunidades de Viviendas; 7,188   ; 19,344,057   ; 39.4   ; 2,691   
+43 ;Oficinas; 39   ; 944,840   ; 1.9   ; 24,227   
+43 ;Comercios ; 1,274   ; 17,818,543   ; 36.4   ; 13,986   
+43 ;Industriales; 128   ; 8,701,367   ; 17.8   ; 67,979   
+43 ;Vehículos Automóviles; 887   ; 2,193,443   ; 4.5   ; 2,473   
+43 ;Obras Civiles; -   ; -   ; -    ; -   
+44 ;Viviendas y Comunidades de Viviendas; 7,147   ; 48,425,613   ; 49.4   ; 6,776   
+44 ;Oficinas; 23   ; 886,651   ; 0.9   ; 38,550   
+44 ;Comercios ; 1,228   ; 20,021,104   ; 20.4   ; 16,304   
+44 ;Industriales; 177   ; 16,037,866   ; 16.4   ; 90,609   
+44 ;Vehículos Automóviles; 2,205   ; 12,640,787   ; 12.9   ; 5,733   
+44 ;Obras Civiles; -   ; -   ; -    ; -   
+45 ;Viviendas y Comunidades de Viviendas; 3,442   ; 17,100,326   ; 25.4   ; 4,968   
+45 ;Oficinas; 43   ; 579,238   ; 0.9   ; 13,471   
+45 ;Comercios ; 549   ; 16,144,722   ; 24.0   ; 29,408   
+45 ;Industriales; 228   ; 23,580,270   ; 34.9   ; 103,422   
+45 ;Vehículos Automóviles; 1,565   ; 9,664,003   ; 14.4   ; 6,175   
+45 ;Obras Civiles; 2   ; 248,332   ; 0.4   ; 124,166   
+46 ;Daños personales; 7   ; 169,585   ; 0.0   ; 24,226   
+46 ;Viviendas y Comunidades de Viviendas; 230,375   ; 305,770,169   ; 54.2   ; 1,327   
+46 ;Oficinas; 698   ; 1,617,222   ; 0.3   ; 2,317   
+46 ;Comercios ; 12,929   ; 58,189,199   ; 10.3   ; 4,501   
+46 ;Industriales; 14,814   ; 189,199,617   ; 33.6   ; 12,772   
+46 ;Vehículos Automóviles; 6,358   ; 7,234,850   ; 1.3   ; 1,138   
+46 ;Obras Civiles; 62   ; 1,918,947   ; 0.3   ; 30,951   
+47 ;Daños personales;4 ; 128,149   ; 0.2   ; 32,037   
+47 ;Viviendas y Comunidades de Viviendas; 7,241   ; 33,559,400   ; 58.7   ; 4,635   
+47 ;Oficinas; 28   ; 137,354   ; 0.2   ; 4,906   
+47 ;Comercios ; 1,014   ; 7,269,774   ; 12.7   ; 7,169   
+47 ;Industriales; 261   ; 8,842,189   ; 15.5   ; 33,878   
+47 ;Vehículos Automóviles; 1,871   ; 7,103,234   ; 12.4   ; 3,796   
+47 ;Obras Civiles; 3   ; 189,563   ; 0.3   ; 63,188   
+48 ;Viviendas y Comunidades de Viviendas; 1,442   ; 8,934,210   ; 21.9   ; 6,196   
+48 ;Oficinas; 13   ; 76,957   ; 0.2   ; 5,920   
+48 ;Comercios ; 418   ; 4,644,748   ; 11.4   ; 11,112   
+48 ;Industriales; 208   ; 12,987,556   ; 31.7   ; 62,440   
+48 ;Vehículos Automóviles; 669   ; 2,253,155   ; 5.5   ; 3,368   
+48 ;Obras Civiles; 3   ; 11,990,729   ; 29.3   ; 3,996,910   
+49 ;Daños personales; 1   ; 11,135   ; 0.0   ; 11,135   
+49 ;Viviendas y Comunidades de Viviendas; 33,791   ; 27,386,832   ; 56.0   ; 810   
+49 ;Oficinas; 127   ; 175,300   ; 0.4   ; 1,380   
+49 ;Comercios ; 1,827   ; 5,794,274   ; 11.9   ; 3,171   
+49 ;Industriales; 2,496   ; 14,207,814   ; 29.0   ; 5,692   
+49 ;Vehículos Automóviles; 1,104   ; 1,135,513   ; 2.3   ; 1,029   
+49 ;Obras Civiles; 2   ; 177,553   ; 0.4   ; 88,776   
+50 ;Viviendas y Comunidades de Viviendas; 32,559   ; 29,943,396   ; 45.5   ; 920   
+50 ;Oficinas; 61   ; 117,951   ; 0.2   ; 1,934   
+50 ;Comercios ; 2,310   ; 7,947,974   ; 12.1   ; 3,441   
+50 ;Industriales; 2,802   ; 25,471,338   ; 38.8   ; 9,090   
+50 ;Vehículos Automóviles; 1,513   ; 1,822,464   ; 2.8   ; 1,205   
+50 ;Obras Civiles; 14   ; 362,016   ; 0.6   ; 25,858   
+51 ;Viviendas y Comunidades de Viviendas; 1,142   ; 11,323,809   ; 29.9   ; 9,916   
+51 ;Oficinas; 2   ; 24,059   ; 0.1   ; 12,030   
+51 ;Comercios ; 195   ; 5,662,750   ; 15.0   ; 29,040   
+51 ;Industriales; 168   ; 19,115,622   ; 50.6   ; 113,783   
+51 ;Vehículos Automóviles; 335   ; 1,317,144   ; 3.5   ; 3,932   
+51 ;Obras Civiles; 2   ; 301,055   ; 0.9   ; 150,527   
+52 ;Viviendas y Comunidades de Viviendas; 1,731   ; 9,774,713   ; 20.9   ; 5,647   
+52 ;Oficinas; 8   ; 105,867   ; 0.2   ; 13,233   
+52 ;Comercios ; 348   ; 5,825,300   ; 12.4   ; 16,739   
+52 ;Industriales; 129   ; 28,997,731   ; 61.9   ; 224,789   
+52 ;Vehículos Automóviles; 524   ; 2,169,911   ; 4.6   ; 4,141   
+52 ;Obras Civiles; -   ; -   ; -    ; -   
+53 ;Viviendas y Comunidades de Viviendas; 2,139   ; 19,443,724   ; 34.5   ; 9,090   
+53 ;Oficinas; 21   ; 180,383   ; 0.3   ; 8,590   
+53 ;Comercios ; 641   ; 9,766,310   ; 17.3   ; 15,236   
+53 ;Industriales; 255   ; 20,190,043   ; 35.8   ; 79,177   
+53 ;Vehículos Automóviles; 372   ; 1,391,763   ; 2.5   ; 3,741   
+53 ;Obras Civiles; 10   ; 5,414,160   ; 9.6   ; 541,416   
+54 ;Daños personales;9 ; 218,999   ; 0.0   ; 24,333   
+54 ;Viviendas y Comunidades de Viviendas; 25,025   ; 432,609,243   ; 83.4   ; 17,287   
+54 ;Oficinas; 363   ; 7,946,738   ; 1.5   ; 21,892   
+54 ;Comercios ; 2,069   ; 69,328,092   ; 13.5   ; 33,508   
+54 ;Industriales; 201   ; 7,578,480   ; 1.5   ; 37,704   
+54 ;Vehículos Automóviles; 375   ; 726,808   ; 0.1   ; 1,938   
+54 ;Obras Civiles; 1   ; 26,052   ; 0.0   ; 26,052   
+55 ;Daños personales; 1   ; 2,131   ; 0.0   ; 2,131   
+55 ;Viviendas y Comunidades de Viviendas; 2,429   ; 10,169,014   ; 18.9   ; 4,187   
+55 ;Oficinas; 39   ; 762,331   ; 1.4   ; 19,547   
+55 ;Comercios ; 627   ; 18,674,280   ; 34.7   ; 29,784   
+55 ;Industriales; 333   ; 21,536,959   ; 40.1   ; 64,676   
+55 ;Vehículos Automóviles; 698   ; 2,257,847   ; 4.2   ; 3,235   
+55 ;Obras Civiles; 3   ; 377,133   ; 0.7   ; 125,711   
+56 ;Daños personales;13 ; 294,959   ; 0.1   ; 22,689   
+56 ;Viviendas y Comunidades de Viviendas; 14,841   ; 104,749,033   ; 46.6   ; 7,058   
+56 ;Oficinas; 254   ; 5,254,863   ; 2.3   ; 20,688   
+56 ;Comercios ; 3,174   ; 52,300,922   ; 23.3   ; 16,478   
+56 ;Industriales; 561   ; 31,180,198   ; 13.9   ; 55,580   
+56 ;Vehículos Automóviles; 6,779   ; 23,650,065   ; 10.5   ; 3,489   
+56 ;Obras Civiles; 14   ; 7,397,584   ; 3.3   ; 528,399   
+57 ;Daños personales; 1   ; 485   ; 0.0   ; 485   
+57 ;Viviendas y Comunidades de Viviendas; 14,839   ; 10,650,365   ; 48.5   ; 718   
+57 ;Oficinas; 59   ; 54,775   ; 0.2   ; 928   
+57 ;Comercios ; 1,097   ; 3,662,615   ; 16.7   ; 3,339   
+57 ;Industriales; 1,281   ; 6,087,348   ; 27.7   ; 4,752   
+57 ;Vehículos Automóviles; 514   ; 849,344   ; 3.9   ; 1,652   
+57 ;Obras Civiles; 11   ; 661,770   ; 3.0   ; 60,161   
+58 ;Viviendas y Comunidades de Viviendas; 20,123   ; 16,981,889   ; 53.7   ; 844   
+58 ;Oficinas; 56   ; 82,447   ; 0.3   ; 1,472   
+58 ;Comercios ; 1,197   ; 4,075,319   ; 12.9   ; 3,405   
+58 ;Industriales; 1,632   ; 9,233,240   ; 29.2   ; 5,658   
+58 ;Vehículos Automóviles; 677   ; 1,028,719   ; 3.3   ; 1,520   
+58 ;Obras Civiles; 5   ; 177,099   ; 0.6   ; 35,420   
+59 ;Viviendas y Comunidades de Viviendas; 601   ; 2,990,819   ; 13.3   ; 4,976   
+59 ;Oficinas; 12   ; 172,344   ; 0.8   ; 14,362   
+59 ;Comercios ; 483   ; 11,378,771   ; 51.1   ; 23,559   
+59 ;Industriales; 25   ; 1,911,201   ; 8.6   ; 76,448   
+59 ;Vehículos Automóviles; 198   ; 609,275   ; 2.7   ; 3,077   
+59 ;Obras Civiles; 8   ; 5,205,681   ; 23.5   ; 650,710   
+60 ;Viviendas y Comunidades de Viviendas; 14,715   ; 18,677,411   ; 70.9   ; 1,269   
+60 ;Oficinas; 55   ; 138,410   ; 0.5   ; 2,517   
+60 ;Comercios ; 597   ; 1,882,745   ; 7.2   ; 3,154   
+60 ;Industriales; 679   ; 4,987,673   ; 19.0   ; 7,346   
+60 ;Vehículos Automóviles; 438   ; 570,927   ; 2.2   ; 1,303   
+60 ;Obras Civiles; 6   ; 59,854   ; 0.2   ; 9,976   
+61 ;Viviendas y Comunidades de Viviendas; 2,300   ; 18,176,685   ; 68.9   ; 7,903   
+61 ;Oficinas; 8   ; 52,115   ; 0.2   ; 6,514   
+61 ;Comercios ; 159   ; 6,694,658   ; 25.4   ; 42,105   
+61 ;Industriales; 37   ; 845,531   ; 3.2   ; 22,852   
+61 ;Vehículos Automóviles; 60   ; 163,730   ; 0.6   ; 2,729   
+61 ;Obras Civiles; 3   ; 457,252   ; 1.7   ; 152,417   
+62 ;Viviendas y Comunidades de Viviendas; 7,342   ; 41,182,773   ; 52.1   ; 5,609   
+62 ;Oficinas; 84   ; 498,730   ; 0.6   ; 5,937   
+62 ;Comercios ; 1,429   ; 23,133,066   ; 29.4   ; 16,188   
+62 ;Industriales; 103   ; 2,135,980   ; 2.7   ; 20,738   
+62 ;Vehículos Automóviles; 3,286   ; 10,917,915   ; 13.8   ; 3,323   
+62 ;Obras Civiles; 6   ; 1,124,523   ; 1.4   ; 187,420   
+63 ;Viviendas y Comunidades de Viviendas; 8,064   ; 33,168,269   ; 49.7   ; 4,113   
+63 ;Oficinas; 53   ; 689,171   ; 1.0   ; 13,003   
+63 ;Comercios ; 1,024   ; 21,731,445   ; 32.6   ; 21,222   
+63 ;Industriales; 163   ; 2,553,047   ; 3.9   ; 15,663   
+63 ;Vehículos Automóviles; 2,813   ; 7,533,451   ; 11.3   ; 2,678   
+63 ;Obras Civiles; 6   ; 996,730   ; 1.5   ; 166,122   
+64 ;Viviendas y Comunidades de Viviendas; 49,036   ; 35,126,982   ; 48.7   ; 716   
+64 ;Oficinas; 147   ; 256,101   ; 0.4   ; 1,742   
+64 ;Comercios ; 2,673   ; 3,533,620   ; 4.9   ; 1,322   
+64 ;Industriales; 4,455   ; 31,851,706   ; 44.3   ; 7,150   
+64 ;Vehículos Automóviles; 1,042   ; 1,073,375   ; 1.5   ; 1,030   
+64 ;Obras Civiles; 8   ; 131,773   ; 0.2   ; 16,472   
+65 ;Daños personales; 1   ; 13,635   ; 0.1   ; 13,635   
+65 ;Viviendas y Comunidades de Viviendas; 13,522   ; 9,968,890   ; 43.9   ; 737   
+65 ;Oficinas; 35   ; 49,661   ; 0.2   ; 1,419   
+65 ;Comercios ; 721   ; 5,149,138   ; 22.7   ; 7,142   
+65 ;Industriales; 1,361   ; 7,125,081   ; 31.4   ; 5,235   
+65 ;Vehículos Automóviles; 329   ; 377,107   ; 1.7   ; 1,146   
+65 ;Obras Civiles; 2   ; 6,704   ; 0.0   ; 3,352   
+66 ;Daños personales;5 ; 384,070   ; 1.0   ; 76,814   
+66 ;Viviendas y Comunidades de Viviendas; 2,408   ; 14,414,027   ; 36.0   ; 5,986   
+66 ;Oficinas; 38   ; 340,347   ; 0.8   ; 8,957   
+66 ;Comercios ; 753   ; 12,368,328   ; 30.8   ; 16,425   
+66 ;Industriales; 98   ; 5,034,571   ; 12.6   ; 51,373   
+66 ;Vehículos Automóviles; 1,839   ; 7,059,000   ; 17.6   ; 3,838   
+66 ;Obras Civiles; 3   ; 491,950   ; 1.2   ; 163,983   
+67 ;Daños personales; 1   ; 275,978   ; 0.6   ; 275,978   
+67 ;Viviendas y Comunidades de Viviendas; 4,186   ; 16,625,360   ; 35.7   ; 3,972   
+67 ;Oficinas; 30   ; 94,962   ; 0.2   ; 3,165   
+67 ;Comercios ; 840   ; 9,271,383   ; 19.9   ; 11,037   
+67 ;Industriales; 130   ; 2,819,583   ; 6.2   ; 21,689   
+67 ;Vehículos Automóviles; 2,111   ; 6,008,423   ; 12.9   ; 2,846   
+67 ;Obras Civiles; 6   ; 11,417,390   ; 24.5   ; 1,902,898   
+68 ;Daños personales; 6   ; 115,133   ; 0.3   ; 19,189   
+68 ;Viviendas y Comunidades de Viviendas; 3,989   ; 14,222,565   ; 42.9   ; 3,565   
+68 ;Oficinas; 37   ; 283,703   ; 0.9   ; 7,668   
+68 ;Comercios ; 753   ; 7,565,297   ; 22.8   ; 10,047   
+68 ;Industriales; 113   ; 4,978,436   ; 15.0   ; 44,057   
+68 ;Vehículos Automóviles; 1,604   ; 4,152,862   ; 12.5   ; 2,589   
+68 ;Obras Civiles; 3   ; 1,842,637   ; 5.6   ; 614,212   
+69 ;Daños personales; 3   ; 143,345   ; 0.6   ; 47,782   
+69 ;Viviendas y Comunidades de Viviendas; 2,396   ; 11,014,768   ; 47.3   ; 4,597   
+69 ;Oficinas; 16   ; 78,681   ; 0.3   ; 4,918   
+69 ;Comercios ; 341   ; 4,059,802   ; 17.5   ; 11,906   
+69 ;Industriales; 78   ; 2,899,854   ; 12.5   ; 37,178   
+69 ;Vehículos Automóviles; 360   ; 992,786   ; 4.3   ; 2,758   
+69 ;Obras Civiles; 5   ; 4,065,243   ; 17.5   ; 813,049   
+70 ;Viviendas y Comunidades de Viviendas; 964   ; 10,762,384   ; 42.6   ; 11,164   
+70 ;Oficinas; 15   ; 312,346   ; 1.2   ; 20,823   
+70 ;Comercios ; 224   ; 7,952,371   ; 31.5   ; 35,502   
+70 ;Industriales; 34   ; 964,211   ; 3.8   ; 28,359   
+70 ;Vehículos Automóviles; 656   ; 2,709,276   ; 10.7   ; 4,130   
+70 ;Obras Civiles; 7   ; 2,578,915   ; 10.2   ; 368,416   
+71 ;Daños personales; 5   ; 130,345   ; 0.0   ; 26,069   
+71 ;Viviendas y Comunidades de Viviendas; 33,152   ; 212,406,899   ; 47.2   ; 6,407   
+71 ;Oficinas; 327   ; 3,570,021   ; 0.8   ; 10,917   
+71 ;Comercios ; 4,721   ; 96,217,551   ; 21.4   ; 20,381   
+71 ;Industriales; 1,050   ; 49,996,251   ; 11.1   ; 47,615   
+71 ;Vehículos Automóviles; 17,030   ; 76,914,970   ; 17.1   ; 4,516   
+71 ;Obras Civiles; 30   ; 10,646,196   ; 2.4   ; 354,873   
+72 ;Viviendas y Comunidades de Viviendas; 2,841   ; 13,755,925   ; 32.9   ; 4,842   
+72 ;Oficinas; 69   ; 430,505   ; 1.0   ; 6,239   
+72 ;Comercios ; 821   ; 8,900,541   ; 21.3   ; 10,841   
+72 ;Industriales; 119   ; 9,006,960   ; 21.6   ; 75,689   
+72 ;Vehículos Automóviles; 1,212   ; 4,288,592   ; 10.3   ; 3,538   
+72 ;Obras Civiles; 29   ; 5,375,291   ; 12.9   ; 185,355   
+73 ;Viviendas y Comunidades de Viviendas; 32,144   ; 35,158,048   ; 51.2   ; 1,094   
+73 ;Oficinas; 81   ; 527,328   ; 0.8   ; 6,510   
+73 ;Comercios ; 1,601   ; 7,495,276   ; 10.9   ; 4,682   
+73 ;Industriales; 2,785   ; 21,279,806   ; 31.0   ; 7,641   
+73 ;Vehículos Automóviles; 1,347   ; 3,408,676   ; 5.0   ; 2,531   
+73 ;Obras Civiles; 7   ; 727,720   ; 1.1   ; 103,960   
+74 ;Daños personales; 7   ; 141,998   ; 0.1   ; 20,285   
+74 ;Viviendas y Comunidades de Viviendas; 44,823   ; 75,930,494   ; 36.8   ; 1,694   
+74 ;Oficinas; 192   ; 1,394,160   ; 0.7   ; 7,261   
+74 ;Comercios ; 3,320   ; 62,843,353   ; 30.5   ; 18,929   
+74 ;Industriales; 2,249   ; 35,388,997   ; 17.1   ; 15,735   
+74 ;Vehículos Automóviles; 2,919   ; 10,373,661   ; 5.0   ; 3,554   
+74 ;Obras Civiles; 83   ; 20,305,447   ; 9.8   ; 244,644   
+75 ;Daños personales; 1   ; 13,976   ; 0.0   ; 13,976   
+75 ;Viviendas y Comunidades de Viviendas; 6,596   ; 20,068,515   ; 27.8   ; 3,043   
+75 ;Oficinas; 87   ; 367,331   ; 0.5   ; 4,222   
+75 ;Comercios ; 1,619   ; 18,220,565   ; 25.3   ; 11,254   
+75 ;Industriales; 337   ; 21,438,469   ; 29.7   ; 63,616   
+75 ;Vehículos Automóviles; 4,057   ; 11,931,510   ; 16.6   ; 2,941   
+75 ;Obras Civiles; 1   ; 42,030   ; 0.1   ; 42,030   
