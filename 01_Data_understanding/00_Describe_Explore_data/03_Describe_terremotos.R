@@ -108,5 +108,6 @@ skimr::skim(terremotos_ign_nums) # prof, mag y tipo mag siguen distribuciones ex
 library(psych)
 describe(terremotos_ign_nums)
 
-
+# Determine if the attribute meaning is used consistently
+# la magnitud no puesto que hay varias formas de medirla (ver InT)
 
