@@ -12,7 +12,9 @@ library(dplyr)
 
 dim(aemet_diarios_join %>% distinct())
 dim(aemet_diarios_join)
-2038831*20
+
+
+
 # Identify data and method of capture
 # Access data sources-----------------------------------------------------------
 
@@ -118,10 +120,19 @@ mode(aemet_diarios_join)
 
 # NO relevantes: sol, dir
 
+
+
+
 # Determine if the attribute meaning is used consistently----------------------
 
 
+
+
+
 # Interview domain experts to obtain their opinion of attribute relevance----------------------
+
+
+
 
 
 # Decide if it is necessary to balance the data (based on the modeling techniques to be used)----------------------
