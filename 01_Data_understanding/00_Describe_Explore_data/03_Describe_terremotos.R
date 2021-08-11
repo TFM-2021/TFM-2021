@@ -59,7 +59,7 @@ check_text_entries(terremotos_ign,`Mag.`) # no hay texto
 check_text_entries(terremotos_ign,`Tipo Mag.`) # no hay texto
 
 
-check_text_entries(terremotos_ign,`Localización`) # todo texto
+check_text_entries(terremotos_ign,`Localización`) # todo texto sin localizaciones claras
 
 
 
