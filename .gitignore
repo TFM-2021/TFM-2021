@@ -3,7 +3,8 @@
 .Rapp.history
 
 
-
+/data/data_raw/AEMET/datos_diario/aemet_diarios_join.csv
+G
 # Session Data files
 .RData
 .Rproj
