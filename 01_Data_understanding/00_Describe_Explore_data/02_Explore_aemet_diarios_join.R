@@ -242,5 +242,93 @@ aemet_diarios_join %>%
   View()
 
   
+# DATOS DE LA NUEVA EXTRACCIÓN CON DATOS DE AÑOS COMPLETOS-----------------------
+
+
+
+
+
+aemet_diarios_join_completo <- read.csv2("data/data_raw/AEMET/datos_diario/aemet_diarios_join_completo.csv",
+                                         dec = ",", sep = ",", fileEncoding = "UTF-8")
+
+
+aemet_diarios_join_completo$fecha <- as.Date(aemet_diarios_join_completo$fecha, format = "%Y-%m-%d")
+
+# distribuvion de las estaciones por años 
+
+aemet_diarios_join_completo_fechas <- aemet_diarios_join_completo %>% 
+  dplyr::mutate(date = ymd(fecha)) %>% 
+  mutate_at(vars(fecha), funs(year, month, day))
+
+
+
+library(gapminder)
+data("gapminder")
+View(gapminder)
+
+
+
+library(plotly)
+
+# cargo aemet diario para obtener las coordenadas de las estaciones
+
+aemet_mensual <- read.csv2("data/data_raw/AEMET/data_join_aemet.csv",
+                                         dec = ",", sep = ",", fileEncoding = "UTF-8")
+
+colnames(aemet_mensual)
+
+TMP_coordendas_estaciones <- tibble("nombre" =aemet_mensual$nombre,
+                                    "latitud" = aemet_mensual$latitud,
+                                    "longitud" = aemet_mensual$longitud) %>%
+                                      distinct()
+
+
+conversor_coordenadas_decimales <- function(coordenada){
+  
+ 
+  horas <- as.numeric(str_sub( coordenada,1,nchar( coordenada)-5))
+  
+  minutos <- as.numeric(str_sub( coordenada,3,nchar( coordenada)-3))/60
+  
+  segundos <- as.numeric(str_sub( coordenada,5,nchar( coordenada)-1))/3600
+  
+  if (str_ends(coordenada, "S")) {
+    
+    sum(horas,minutos,segundos)*-1
+    
+  }else if(str_ends(coordenada, "W")){
+    
+    sum(horas,minutos,segundos)*-1
+    
+  }else{
+    sum(horas,minutos,segundos)
+  }
+  
+  
+}
+
+
+aemet_plot <- aemet_diarios_join_completo_fechas %>%
+  select(year, provincia, nombre) %>%
+  distinct()
+
+aemet_plot <- inner_join(TMP_coordendas_estaciones, aemet_plot, by="nombre")
+
+
+aemet_plot[,2] <- apply(aemet_plot[,2],1, conversor_coordenadas_decimales)
+aemet_plot[,3] <- apply(aemet_plot[,3],1, conversor_coordenadas_decimales)
+
+
+
+
+
+
+aemet_plot %>%
+  filter(nombre=="PUERTO DE LEITARIEGOS")
+as.numeric(aemet_plot[aemet_plot$nombre == "PUERTO DE LEITARIEGOS",][1,2])
+as.numeric(TMP_coordendas_estaciones[TMP_coordendas_estaciones$nombre == "PUERTO DE LEITARIEGOS",][1,2])
+
+
+
 
 
