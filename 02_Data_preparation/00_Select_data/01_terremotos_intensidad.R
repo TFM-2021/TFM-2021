@@ -17,8 +17,6 @@ terremotos_intensidad <-terremotos_ign %>%
 # Selección de elementos (filas)
 
 terremotos_intensidad <- terremotos_intensidad %>%
-  filter(`Tipo Mag.` == 4) %>%
   select(!`Tipo Mag.`)
 
-getwd()
 saveRDS(terremotos_intensidad, file = "02_Data_preparation/00_Select_data/terremotos_selected_modelo_intensidad.rds")
