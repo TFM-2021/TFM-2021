@@ -1,6 +1,6 @@
 
 # VER: https://www.ign.es/web/ign/portal/sis-catalogo-terremotos
-
+# comparativa escalas https://web.ua.es/urs/sismosurs/Informes/EMS-98.pdf
 
 library(readr)
 library(tidyverse)
@@ -90,7 +90,7 @@ str(terremotos_ign)
 terremotos_ign_nums <- terremotos_ign[, unlist(lapply(terremotos_ign, is.numeric))]
 terremotos_ign_na <- drop_na(terremotos_ign_nums)
 
-
+cor(terremotos_ign_na$`Prof. (Km)`,terremotos_ign_na$Mag.)
 ggcorrplot(cor(terremotos_ign_na), hc.order = TRUE, type = "lower",
            outline.col = "white", lab = TRUE, title = "corrplot")
 
