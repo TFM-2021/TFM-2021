@@ -63,3 +63,69 @@ indemnizaciones %>%
 View(grandes_eventos)
 
 grandes_eventos$media <- grandes_eventos$Indemnizaciones/grandes_eventos$`Nº de Reclamaciones`
+
+
+
+
+
+
+
+
+
+indemnizaciones[indemnizaciones=="-"] <- NA
+
+indemnizaciones <- indemnizaciones %>%
+  mutate_all(funs(str_replace(.,",","")))%>%
+  mutate_all(funs(str_replace(.,",","")))
+
+
+indemnizaciones[,-c(1,2)] <- apply(indemnizaciones[,-c(1,2)],2, as.numeric)
+
+indemnizaciones %>%
+  pivot_longer(!c(ID, PROVINCIA), names_to = "año", values_to = "coste") %>%
+  group_by(PROVINCIA, ID) %>%
+  summarise(suma = sum(coste,na.rm = T)) %>% 
+  ggplot()+
+  geom_col(aes(suma,PROVINCIA)) +
+  facet_wrap(~ ID )
+
+
+
+
+indemnizaciones_por_año <- indemnizaciones %>%
+  pivot_longer(!c(ID, PROVINCIA), names_to = "año", values_to = "coste") %>%
+  group_by(PROVINCIA, ID) %>%
+  summarise(suma = sum(coste,na.rm = T))
+#------------------------------------------------------------------------------
+
+expedientes[expedientes=="-"] <- NA
+
+expedientes <- expedientes %>%
+  mutate_all(funs(str_replace(.,",","")))%>%
+  mutate_all(funs(str_replace(.,",","")))
+
+
+expedientes[,-c(1,2)] <- apply(expedientes[,-c(1,2)],2, as.numeric)
+
+expedientes %>%
+  pivot_longer(!c(ID, PROVINCIA), names_to = "año", values_to = "coste") %>%
+  group_by(PROVINCIA, ID) %>%
+  summarise(suma = sum(coste,na.rm = T)) %>% 
+  ggplot()+
+  geom_col(aes(suma,PROVINCIA)) +
+  facet_wrap(~ ID )
+
+expedientes_por_año <- expedientes %>%
+  pivot_longer(!c(ID, PROVINCIA), names_to = "año", values_to = "numero") %>%
+  group_by(PROVINCIA, ID) %>%
+  summarise(numero = sum(numero,na.rm = T)) 
+
+
+
+View(expedientes_por_año)
+join_expedientes_indemniuzaciones <- inner_join(expedientes_por_año, indemnizaciones_por_año,by=c("PROVINCIA","ID"))
+
+cor(join_expedientes_indemniuzaciones$numero, join_expedientes_indemniuzaciones$suma)
+
+
+
