@@ -11,7 +11,7 @@ colnames(terremotos_ign)
 
 # Selección de atributos o características (columnas)
 
-terremotos_intensidad <-terremotos_ign %>%
+terremotos_intensidad <- terremotos_ign %>%
     select(`Prof. (Km)`, Inten., Mag., `Tipo Mag.`)
 
 # Selección de elementos (filas)

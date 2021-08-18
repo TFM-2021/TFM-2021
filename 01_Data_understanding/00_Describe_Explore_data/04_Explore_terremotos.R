@@ -23,6 +23,9 @@ terremotos_ign %>%
   geom_col(aes(Inten. , media))+
   facet_wrap(~ `Tipo Mag.`)
 
+
+  
+  
 terremotos_ign %>%
   filter(Mag. > 5) %>%
   ggplot()+
@@ -57,7 +60,7 @@ ggplot() +
   
   geom_point(data=terremotos_con_intensidad,aes(x= Longitud,
                  y=  Latitud,
-                 fill=Inten.))
+                 color=Inten.))
 
 
 
@@ -163,5 +166,34 @@ terremotos_ign %>%
 terremotos_ign %>%
   dplyr::filter(Inten. == "IX-X") %>%
   View()
+
+# DISTRIBUCION MODELO ----------------------------------------------------------
+
+terremotos_con_intensidad_filter <- terremotos_con_intensidad %>%
+  dplyr::mutate(Inten. = replace(Inten., Inten. == "I", "<IV"),
+                Inten. = replace(Inten., Inten. == "I-II", "<IV"),
+                Inten. = replace(Inten., Inten. == "II", "<IV"),
+                Inten. = replace(Inten., Inten. == "II-III", "<IV"),
+                Inten. = replace(Inten., Inten. == "III", "<IV"),
+                Inten. = replace(Inten., Inten. == "III-IV", "IV"),
+                Inten. = replace(Inten., Inten. == "IV-V", "V")) %>%
+  filter(Inten. == "<IV")
+ggplot() +
+  
+  geom_polygon(data = my_data,
+               aes(x = long, y = lat, 
+                   group = group,col ="white"), 
+               color = "black") +
+  
+  coord_map("mercator") +
+  
+  labs(title = "Municipios de España (peninsula y Baleares)",
+       subtitle = "Color por comunidad aut?noma") +
+  
+  theme_bw() +
+  
+  geom_point(data=terremotos_con_intensidad_filter,aes(x= Longitud,
+                                                y=  Latitud,
+                                                color=Inten.))
 
 
