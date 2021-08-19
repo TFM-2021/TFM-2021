@@ -2,6 +2,7 @@
 library(tidyverse)
 
 
+
 inundaciones_TCA_selected <- readRDS(file = "02_Data_preparation/01_Clean_data/inundaciones_TCA_clean.rds")
 
 inundaciones_TCA_selected$meses <- str_split_fixed(inundaciones_TCA_selected$mes_y_ano_de_ocurrencia, " ",4)[,-c(2,4)][,1]
@@ -21,7 +22,6 @@ inundaciones_TCA_selected$p_cos <- cos((2*pi*inundaciones_TCA_selected$mes)/12)
 inundaciones_TCA_selected$mes <- NULL
 
 
-plot($p_cos, inundaciones_TCA_selected$p_sin)
 
 inundaciones_TCA_selected$TCA <- NA
 inundaciones_TCA_selected$inundacion <- NA
@@ -62,7 +62,7 @@ inundaciones_TCA_selected$inundacion <- NULL
 
 inundaciones_TCA_selected <- inundaciones_TCA_selected %>%
   filter(!str_detect(causa_del_siniestro, "Terremoto|Terrorismo"))
-View(inundaciones_TCA_selected)
+
 
 
 
@@ -70,14 +70,110 @@ View(inundaciones_TCA_selected)
 inundaciones_TCA_selected$causa_del_siniestro <- NULL
 
 
-library(fastDummies)
-dummy_inundaciones <- dummy_cols(inundaciones_TCA_selected,select_columns = "clase_de_riesgo")
+#library(fastDummies)
+#dummy_inundaciones <- dummy_cols(inundaciones_TCA_selected,select_columns = "clase_de_riesgo")
+
+
+
+
+dummy_inundaciones <- inundaciones_TCA_selected
+
+
+
+for (causa in 1:nrow(dummy_inundaciones)) {
+  
+  if(str_detect(dummy_inundaciones$clase_de_riesgo[causa],"Viviendas y Comunidades de Viviendas")){
+    
+    dummy_inundaciones$viviendas[causa] <- 1
+    
+  }else{
+    dummy_inundaciones$viviendas[causa] <- 0
+  }
+  
+  
+  if(str_detect(dummy_inundaciones$clase_de_riesgo[causa],"Comercios")){
+    
+    dummy_inundaciones$comercios_industria[causa] <- 1
+    
+  }else{
+    dummy_inundaciones$comercios_industria[causa] <- 0
+  }
+  
+  if(str_detect(dummy_inundaciones$clase_de_riesgo[causa],"Industriales")){
+    
+    dummy_inundaciones$comercios_industria[causa] <- 1
+    
+  }else{
+    dummy_inundaciones$comercios_industria[causa] <- 0
+  }
+  
+  if(str_detect(dummy_inundaciones$clase_de_riesgo[causa],"Vehículos Automóviles")){
+    
+    dummy_inundaciones$vehiculos[causa] <- 1
+    
+  }else{
+    dummy_inundaciones$vehiculos[causa] <- 0
+  }
+}
+
+
+
+
+
+
+
+# CREACION COLUMNAS LUGARES-----------------------
+
+
+for (causa in 1:nrow(dummy_inundaciones)) {
+  
+  if(str_detect(dummy_inundaciones$lugar_de_ocurrencia[causa],"Generalizado")){
+    
+    dummy_inundaciones$generalizado[causa] <- 1
+    
+  }else{
+    dummy_inundaciones$generalizado[causa] <- 0
+  }
+  
+  if(str_detect(dummy_inundaciones$lugar_de_ocurrencia[causa],"Sureste Peninsular")){
+    
+    dummy_inundaciones$sureste_peninsular[causa] <- 1
+    
+  }else{
+    dummy_inundaciones$sureste_peninsular[causa] <- 0
+  }
+  
+  if(str_detect(dummy_inundaciones$lugar_de_ocurrencia[causa],"Cdad. Valenciana")){
+    
+    dummy_inundaciones$cdad_valenciana[causa] <- 1
+    
+  }else{
+    dummy_inundaciones$cdad_valenciana[causa] <- 0
+  }
+  
+}
+
+
 
 dummy_inundaciones$clase_de_riesgo <- NULL
 dummy_inundaciones$lugar_de_ocurrencia <- NULL
 dummy_inundaciones$`clase_de_riesgo_Daños personales` <- NULL
+dummy_inundaciones$causa_del_siniestro <- NULL
 
-View(dummy_inundaciones)
+
+quantile(dummy_inundaciones$indemnizaciones)
+
+
+# DISCRETIZACVION
+
+dummy_inundaciones$indemnizaciones <- arules::discretize(dummy_inundaciones$indemnizaciones,
+                                                         breaks = 4,
+                                                         infinity = T)
+
+
+dummy_inundaciones$indemnizaciones <- as.factor(dummy_inundaciones$indemnizaciones)
+
+
 
 
 

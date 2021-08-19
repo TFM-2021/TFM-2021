@@ -27,18 +27,24 @@ View(indemnizaciones)
 indemnizaciones <- data.frame(lapply(indemnizaciones, function(x) {
   gsub("-", "", x)}))
 indemnizaciones <- data.frame(lapply(indemnizaciones, function(x) {
-  gsub(",", ".", x)}))
+  gsub(",", "", x)}))
 
 
 indemnizaciones[,-c(1,2)] <- data.frame(lapply(indemnizaciones[,-c(1,2)], as.numeric))
 
 
 indemnizaciones %>% 
-  dplyr::filter(ID == "inundaciones") %>%
-  select(!ID) %>%
-  pivot_longer( !PROVINCIA, names_to = "año", values_to = "count" ) %>%
+  pivot_longer( !c(PROVINCIA,ID), names_to = "año", values_to = "count" ) %>%
+  select(!año) %>%
+  group_by(PROVINCIA, ID)%>%
+  summarise(coste = sum(count, na.rm = T))
+  
+  ggplot(aes(y = PROVINCIA, x = coste, group =ID))+
+  geom_col(position = "dodge")
   View()
 
+  
+  
 indemnizaciones %>% 
   dplyr::filter(ID == "teremoto") %>%
   select(!ID) %>%
@@ -67,27 +73,18 @@ grandes_eventos$media <- grandes_eventos$Indemnizaciones/grandes_eventos$`Nº de
 
 
 
+View(indemnizaciones)
 
-
-
-
-
-indemnizaciones[indemnizaciones=="-"] <- NA
-
-indemnizaciones <- indemnizaciones %>%
-  mutate_all(funs(str_replace(.,",","")))%>%
-  mutate_all(funs(str_replace(.,",","")))
-
-
-indemnizaciones[,-c(1,2)] <- apply(indemnizaciones[,-c(1,2)],2, as.numeric)
 
 indemnizaciones %>%
+  filter(ID != "terremoto",
+         ID != "tempestad") %>% #View()
   pivot_longer(!c(ID, PROVINCIA), names_to = "año", values_to = "coste") %>%
-  group_by(PROVINCIA, ID) %>%
+  group_by(PROVINCIA) %>%
   summarise(suma = sum(coste,na.rm = T)) %>% 
+  mutate(PROVINCIA = fct_reorder(PROVINCIA, suma)) %>%
   ggplot()+
-  geom_col(aes(suma,PROVINCIA)) +
-  facet_wrap(~ ID )
+  geom_bar(aes(PROVINCIA,suma),stat="identity") +coord_flip() 
 
 
 
