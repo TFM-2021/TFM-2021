@@ -23,6 +23,8 @@ datos_incendios <- datos_incendios[,-c(1:2)]
 datos_comunidades <- rename(datos_comunidades, 'idcomunidad' = 'X.U.FEFF.idcomunidad')
 datos_provincias <- rename(datos_provincias, 'idprovincia' = 'X.U.FEFF.idprovincia' )
 
+summary(datos_incendios)
+
 
 # Merge de dos ficheros para obtener el nombre de la comunidad y de la provincia
 
