@@ -120,7 +120,7 @@ terremotos_con_intensidad %>%
 #----------------------------------------------------------------------------
 
 terremotos_sin_intensidad <- terremotos_ign %>%
-  filter(is.na(Inten.))
+  filter(!is.na(Inten.))
 
 terremotos_sin_intensidad %>%
   dplyr::group_by(Inten.)  %>%
@@ -141,7 +141,7 @@ ggplot() +
   theme_bw() +
   
   geom_point(data=terremotos_sin_intensidad,aes(x= Longitud,
-                                                y=  Latitud))
+                                                y=  Latitud, color= Inten.))
 
 dim(terremotos_sin_intensidad)
 View(terremotos_ign)
@@ -188,7 +188,7 @@ ggplot() +
   coord_map("mercator") +
   
   labs(title = "Municipios de España (peninsula y Baleares)",
-       subtitle = "Color por comunidad aut?noma") +
+       subtitle = "Color por comunidad autónoma") +
   
   theme_bw() +
   
