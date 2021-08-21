@@ -15,9 +15,14 @@ terremotos_EVT <- terremotos_ign %>%
             ,Localización,
             Inten.,
             `Prof. (Km)`)) %>%
+  filter(!(Latitud < 42 & Longitud < -7 & Latitud > 36.7)) %>%
+  filter(!(Latitud < 35 & Longitud > -11.7)) %>%
   drop_na()
 
 my_data <- readRDS("data/mapa_ESP.rds")
+
+
+
 
 ggplot() +
   
@@ -35,8 +40,7 @@ ggplot() +
   
   geom_point(data=terremotos_EVT,aes(x= Longitud,
                                                 y=  Latitud,
-                                                color=Mag.))
-
+                             color=Mag.))
 
 saveRDS(terremotos_EVT, file = "02_Data_preparation/00_Select_data/terremotos_EVT_selected.rds")
 
