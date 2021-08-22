@@ -14,57 +14,60 @@ all_cores <- parallel::detectCores(logical = FALSE)
 cl <- makePSOCKcluster(all_cores)
 
 
-VAL_terremotos_mundo_MMI <- read_delim("data/data_VAL/VAL_terremotos_mundo_MMI.csv", 
-                                       ";", escape_double = FALSE, trim_ws = TRUE)
+#VAL_terremotos_mundo_MMI <- read_delim("data/data_VAL/VAL_terremotos_mundo_MMI.csv", 
+                                       #";", escape_double = FALSE, trim_ws = TRUE)
 
 
-VAL_terremotos_mundo_MMI <- VAL_terremotos_mundo_MMI %>%
-  mutate(MMI_inten = replace(MMI_inten, MMI_inten %in% c(1,2,3), "<IV"),
-         MMI_inten = replace(MMI_inten, MMI_inten == 4, "IV"),
-         MMI_inten = replace(MMI_inten, MMI_inten == 5, "V"),
-         MMI_inten = replace(MMI_inten, MMI_inten == 6, "VI"),
-         MMI_inten = replace(MMI_inten, MMI_inten == 7, "VII")) %>%
-  filter(MMI_inten %in% c("IV", "V","<IV","VI", "VII")) 
+#VAL_terremotos_mundo_MMI <- VAL_terremotos_mundo_MMI %>%
+#  mutate(MMI_inten = replace(MMI_inten, MMI_inten %in% c(1,2,3), "<IV"),
+#        MMI_inten = replace(MMI_inten, MMI_inten == 4, "IV"),
+#        MMI_inten = replace(MMI_inten, MMI_inten == 5, "V"),
+#         MMI_inten = replace(MMI_inten, MMI_inten == 6, "VI"),
+#        MMI_inten = replace(MMI_inten, MMI_inten == 7, "VII")) %>%
+# filter(MMI_inten %in% c("IV", "V","<IV","VI", "VII")) 
 
-VAL_terremotos_mundo_MMI$inten <- VAL_terremotos_mundo_MMI$MMI_inten
+#VAL_terremotos_mundo_MMI$inten <- VAL_terremotos_mundo_MMI$MMI_inten
 
+#VAL_terremotos_mundo_MMI$MMI_inten <- NULL
 
-VAL_terremotos_mundo_MMI$MMI_inten <- NULL
+#VAL_terremotos_mundo <- VAL_terremotos_mundo_MMI
 
-VAL_terremotos_mundo <- VAL_terremotos_mundo_MMI
-
-
-VAL_terremotos_mundo$inten <- as.factor(VAL_terremotos_mundo$inten)
+#VAL_terremotos_mundo$inten <- as.factor(VAL_terremotos_mundo$inten)
 
 
-VAL_terremotos_mundo %>%
-  ggplot(aes(log(prof_km)   ,mag , color= inten)) +
-  geom_point()
+#VAL_terremotos_mundo %>%
+#  ggplot(aes(log(prof_km)   ,mag , color= inten)) +
+# geom_point()
+
+
+#recipe(~., VAL_terremotos_mundo) %>%
+# step_upsample(inten, over_ratio = 0.5) %>%
+# prep() %>%
+# bake(new_data = NULL) %>%
+# ggplot(aes(log(prof_km)   ,mag , color= inten)) +
+# geom_point()
+
+VAL_terremotos_modelo_intensidad <- recipe(~., VAL_terremotos_modelo_intensidad) %>%
+ step_upsample(inten, over_ratio = 0.15) %>%
+ prep() %>%
+ bake(new_data = NULL)
 
 
 
+VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")
 
-recipe(~., VAL_terremotos_mundo) %>%
-  step_upsample(inten, over_ratio = 0.5) %>%
-  prep() %>%
-  bake(new_data = NULL) %>%
-  ggplot(aes(log(prof_km)   ,mag , color= inten)) +
-  geom_point()
 
-VAL_terremotos_mundo <- recipe(~., VAL_terremotos_mundo) %>%
-  step_upsample(inten, over_ratio = 0.5) %>%
-  prep() %>%
-  bake(new_data = NULL)
+
 
 # IMPUTACION
 
 
 
 
-VAL_terremotos_mundo$prof_km[is.na(VAL_terremotos_mundo$prof_km)]<-median(VAL_terremotos_mundo$prof_km,na.rm=TRUE)
+#VAL_terremotos_mundo$prof_km[is.na(VAL_terremotos_mundo$prof_km)]<-median(VAL_terremotos_mundo$prof_km,na.rm=TRUE)
 
 
-VAL_terremotos_mundo$mag[is.na(VAL_terremotos_mundo$mag)]<-median(VAL_terremotos_mundo$mag,na.rm=TRUE)
+#VAL_terremotos_mundo$mag[is.na(VAL_terremotos_mundo$mag)]<-median(VAL_terremotos_mundo$mag,na.rm=TRUE)
 
 
 
@@ -72,7 +75,7 @@ VAL_terremotos_mundo$mag[is.na(VAL_terremotos_mundo$mag)]<-median(VAL_terremotos
 
 set.seed(455)
 
-data_split <- initial_split(VAL_terremotos_mundo, strata = "inten", prop = 0.75)
+data_split <- initial_split(VAL_terremotos_modelo_intensidad, strata = "inten", prop = 0.75)
 
 train_data <- training(data_split)
 
@@ -142,8 +145,7 @@ rand_forest_hash <- tune_grid(
 )
 autoplot(rand_forest_hash)
 
-unique(rand_forest_hash$.metrics[[5]]$.metric)
-rand_forest_hash %>% show_best("roc_auc")
+rand_forest_hash %>% show_best("recall")
 
 final_param <- rand_forest_hash %>% 
   show_best("recall") %>% 
@@ -160,8 +162,8 @@ LDA_model <- discrim_linear(penalty = tune()) %>%
 
 
 
-LDA_grid <- grid_regular(parameters(LDA_model), levels = 3)
-LDA_grid
+LDA_grid <- grid_regular(parameters(LDA_model), filter = c(penalty>1),levels = 5000)
+LDA_grid <- tibble("penalty" = c(1,1.1,1.5,1.6,1.9))
 
 registerDoParallel(cl)
 
@@ -175,12 +177,12 @@ LDA_hash <- tune_grid(
 )
 autoplot(LDA_hash)
 
-LDA_hash %>% show_best("f_meas")
+LDA_hash %>% show_best("roc_auc")
 
 final_param <- LDA_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(trees, min_n)
+  select(penalty)
 
 
 # Regularized discriminant analysis--------------------------------------
@@ -216,7 +218,7 @@ rdm_hash %>% show_best("recall")
 
 final_param <- rdm_hash %>% 
   show_best("recall") %>% 
-  dplyr::slice(1 )%>%
+  dplyr::slice(1) %>%
   select(trees, min_n)
 
 
@@ -536,7 +538,7 @@ nearest_neighbor_hash %>% show_best("roc_auc")
 # Evaluate Confusion Matrix
 
 
-rand_forest_hash %>% 
+LDA_hash %>% 
   collect_predictions() %>% 
   inner_join(final_param) %>% 
   conf_mat(truth = inten, estimate = .pred_class)
@@ -545,7 +547,7 @@ rand_forest_hash %>%
 
 
 final_model <- workflow() %>% 
-  add_model(rand_forest_model) %>% 
+  add_model(LDA_model) %>% 
   add_recipe(hash_rec)
 
 final_model <- finalize_workflow(final_model, final_param)
@@ -576,19 +578,19 @@ final_res %>%
 
 
 
+VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")
 
 
-rand_forest_model_best <- rand_forest(trees = 1000,
-                                 min_n = 2) %>%
-  set_engine("ranger") %>%
+rand_forest_model_best <- discrim_linear(penalty = 1.5) %>%
+  set_engine("mda") %>%
   set_mode("classification")
 
 
 
-
+VAL_terremotos_modelo_intensidad
 
 fit <- rand_forest_model_best %>%
-  fit(inten~., data= VAL_terremotos_mundo)
+  fit(inten~., data= train_data)
 
 rf_testing_pred <- 
   predict(fit, VAL_terremotos_modelo_intensidad) %>% 
