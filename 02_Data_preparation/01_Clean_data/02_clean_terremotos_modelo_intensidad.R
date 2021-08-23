@@ -1,8 +1,15 @@
 
 terremotos_selected_modelo_intensidad <- readRDS("02_Data_preparation/00_Select_data/terremotos_selected_modelo_intensidad.rds")
 
+terremotos_selected_modelo_intensidad_FILTER <- terremotos_selected_modelo_intensidad %>%
+  filter(Inten. %in% c("IX-X", "VIII")) 
+
 terremotos_selected_modelo_intensidad <- terremotos_selected_modelo_intensidad %>%
   drop_na()
+
+terremotos_selected_modelo_intensidad <- rbind(terremotos_selected_modelo_intensidad_FILTER,
+              terremotos_selected_modelo_intensidad)
+
 
 
 unique(terremotos_selected_modelo_intensidad$`Prof. (Km)`)

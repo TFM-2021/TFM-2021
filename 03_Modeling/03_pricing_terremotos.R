@@ -47,15 +47,45 @@ cl <- makePSOCKcluster(all_cores)
 # ggplot(aes(log(prof_km)   ,mag , color= inten)) +
 # geom_point()
 
+VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")
+
+recipe(~., VAL_terremotos_modelo_intensidad) %>%
+  step_upsample(inten, over_ratio = 0.07) %>%
+  prep() %>%
+  bake(new_data = NULL) %>%
+  ggplot(aes(inten))+
+  geom_bar()
+
+
+VAL_terremotos_modelo_intensidad %>%
+  ggplot(aes(inten))+
+  geom_bar()
+
 VAL_terremotos_modelo_intensidad <- recipe(~., VAL_terremotos_modelo_intensidad) %>%
- step_upsample(inten, over_ratio = 0.15) %>%
+ step_upsample(inten, over_ratio = 0.7) %>%
  prep() %>%
  bake(new_data = NULL)
 
 
 
-VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")
 
+ggplot()+ 
+  geom_density(test_data,mapping = aes(log(prof_km)))+
+  geom_density(train_data,mapping = aes(log(prof_km)))
+
+
+ggplot()+ 
+  geom_density(test_data,mapping = aes(inten ,fill=inten), alpha =0.15)+
+  geom_density(train_data,mapping = aes(inten ,fill=inten), alpha =0.15)
+
+ggplot()+ 
+  geom_density(test_data,mapping = aes(mag ))+
+  geom_density(train_data,mapping = aes(mag ))
+
+
+ggplot()+ 
+  geom_density(test_data,mapping = aes(placa_tectonica , color= placa_tectonica ))+
+  geom_density(train_data,mapping = aes(placa_tectonica, color= placa_tectonica ))
 
 
 
@@ -64,7 +94,7 @@ VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos
 
 
 
-#VAL_terremotos_mundo$prof_km[is.na(VAL_terremotos_mundo$prof_km)]<-median(VAL_terremotos_mundo$prof_km,na.rm=TRUE)
+VAL_terremotos_modelo_intensidad$prof_km[is.na(VAL_terremotos_modelo_intensidad$prof_km)]<-median(VAL_terremotos_modelo_intensidad$prof_km,na.rm=TRUE)
 
 
 #VAL_terremotos_mundo$mag[is.na(VAL_terremotos_mundo$mag)]<-median(VAL_terremotos_mundo$mag,na.rm=TRUE)
@@ -73,7 +103,7 @@ VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos
 
 # SPLIT DATA
 
-set.seed(455)
+set.seed(88)
 
 data_split <- initial_split(VAL_terremotos_modelo_intensidad, strata = "inten", prop = 0.75)
 
@@ -147,11 +177,7 @@ autoplot(rand_forest_hash)
 
 rand_forest_hash %>% show_best("recall")
 
-final_param <- rand_forest_hash %>% 
-  show_best("recall") %>% 
-  dplyr::slice(1 )%>%
-  select(trees, min_n)
-
+saveRDS(rand_forest_hash, "03_Modeling/hash/rand_forest_hash.rds")
 
 # LDA ---------------------------------------------------------------------
 
@@ -179,12 +205,8 @@ autoplot(LDA_hash)
 
 LDA_hash %>% show_best("roc_auc")
 
-final_param <- LDA_hash %>% 
-  show_best("recall") %>% 
-  dplyr::slice(1 )%>%
-  select(penalty)
 
-
+saveRDS(LDA_hash, "03_Modeling/hash/LDA_hash.rds")
 # Regularized discriminant analysis--------------------------------------
 
 
@@ -216,12 +238,8 @@ autoplot(rdm_hash)
 
 rdm_hash %>% show_best("recall")
 
-final_param <- rdm_hash %>% 
-  show_best("recall") %>% 
-  dplyr::slice(1) %>%
-  select(trees, min_n)
 
-
+saveRDS(rdm_hash, "03_Modeling/hash/rdm_hash.rds")
 
 
 # NAIVE BAYES-------------------------------------------------------------------
@@ -253,11 +271,7 @@ autoplot(naive_Bayes_hash)
 
 naive_Bayes_hash %>% show_best("recall")
 
-final_param <- naive_Bayes_hash %>% 
-  show_best("recall") %>% 
-  dplyr::slice(1 )%>%
-  select(trees, min_n)
-
+saveRDS(naive_Bayes_hash, "03_Modeling/hash/naive_Bayes_hash.rds")
 
 
 # REGERSION MULTINOMIAL--------------------------------------------------------
@@ -265,15 +279,14 @@ final_param <- naive_Bayes_hash %>%
 
 multinom_reg_model <- multinom_reg(
   mode = "classification",
-  engine = "glmnet",
-  penalty = tune(),
-  mixture = tune()
+  engine = "nnet",
+  penalty = tune()
 )
 
 
-
-multinom_reg_grid <- grid_regular(parameters(multinom_reg_model))
-multinom_reg_grid
+grid_random(parameters(multinom_reg_model))
+multinom_reg_grid <- grid_regular(parameters(multinom_reg_model), 50)
+multinom_reg_grid <- grid_random(parameters(multinom_reg_model),size = 50)
 
 registerDoParallel(cl)
 
@@ -289,11 +302,8 @@ autoplot(multinom_reg_hash)
 
 multinom_reg_hash %>% show_best("recall")
 
-final_param <- multinom_reg_hash %>% 
-  show_best("recall") %>% 
-  dplyr::slice(1 )%>%
-  select(trees, min_n)
 
+saveRDS(multinom_reg_hash, "03_Modeling/hash/multinom_reg_hash.rds")
 
 
 # C5.0 Rule-Based---------------------------------------------------------------
@@ -304,7 +314,7 @@ c5_rules_model <- C5_rules(mode = "classification",
 
 
 
-c5_rules_grid <- grid_regular(parameters(c5_rules_model) )
+c5_rules_grid <- grid_random(parameters(c5_rules_model), size = 20)
 c5_rules_grid
 
 registerDoParallel(cl)
@@ -324,10 +334,7 @@ autoplot(c5_rules_hash)
 
 c5_rules_hash %>% show_best("roc_auc")
 
-final_param <- c5_rules_hash %>% 
-  show_best("recall") %>% 
-  dplyr::slice(1 )%>%
-  select(trees, min_n)
+saveRDS(c5_rules_hash, "03_Modeling/hash/c5_rules_hash.rds")
 
 
 
@@ -357,6 +364,7 @@ autoplot(bag_mars_hash)
 bag_mars_hash %>% show_best("roc_auc")
 
 
+saveRDS(bag_mars_hash, "03_Modeling/hash/bag_mars_hash.rds")
 
 
 
@@ -389,6 +397,7 @@ bagged_decision_tree_hash %>% show_best("recall")
 
 
 
+saveRDS(bagged_decision_tree_hash, "03_Modeling/hash/bagged_decision_tree_hash.rds")
 
 
 # BOOST TREE--------------------------------------------------------------------
@@ -396,10 +405,8 @@ bagged_decision_tree_hash %>% show_best("recall")
 
 
 boost_tree_model <- boost_tree(trees = tune(),
-                               min_n = tune(),
-                               tree_depth = tune(),
-                               learn_rate = tune(),
-                               loss_reduction = tune())  %>%
+                               
+                               tree_depth = tune())  %>%
   set_engine("xgboost") %>%
   set_mode("classification")
 
@@ -421,6 +428,7 @@ autoplot(boost_tree_model_hash)
 
 boost_tree_model_hash %>% show_best("roc_auc")
 
+saveRDS(boost_tree_model_hash, "03_Modeling/hash/boost_tree_model_hash.rds")
 
 
 
@@ -453,12 +461,13 @@ svm_poly_hash <- tune_grid(
 
 autoplot(svm_poly_hash)
 
-svm_poly_hash %>% show_best("roc_auc")
+svm_poly_hash %>% show_best("recall")
 
 
 
 
 
+saveRDS(svm_poly_hash, "03_Modeling/hash/svm_poly_hash.rds")
 
 
 
@@ -494,11 +503,12 @@ autoplot(svm_rbf_hash)
 svm_rbf_hash %>% show_best("roc_auc")
 
 
+saveRDS(svm_rbf_hash, "03_Modeling/hash/svm_rbf_hash.rds")
 
 
 # KNN ----------------------------------------------------------------------------
 
-
+library(kknn)
 
 
 nearest_neighbor_model <- nearest_neighbor( neighbors = tune(),
@@ -528,95 +538,7 @@ autoplot(nearest_neighbor_hash)
 nearest_neighbor_hash %>% show_best("roc_auc")
 
 
-
-
-
-
-
-
-
-# Evaluate Confusion Matrix
-
-
-LDA_hash %>% 
-  collect_predictions() %>% 
-  inner_join(final_param) %>% 
-  conf_mat(truth = inten, estimate = .pred_class)
-
-
-
-
-final_model <- workflow() %>% 
-  add_model(LDA_model) %>% 
-  add_recipe(hash_rec)
-
-final_model <- finalize_workflow(final_model, final_param)
-
-
-
-final_res <- last_fit(final_model, data_split)
-
-final_res %>% collect_metrics()
-
-final_res %>% 
-  collect_predictions() %>% 
-  conf_mat(truth = inten, estimate = .pred_class)
-
-
-
-
-
-
-
-
-
-
-
-
-
-#------------------------------------------
-
-
-
-VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")
-
-
-rand_forest_model_best <- discrim_linear(penalty = 1.5) %>%
-  set_engine("mda") %>%
-  set_mode("classification")
-
-
-
-VAL_terremotos_modelo_intensidad
-
-fit <- rand_forest_model_best %>%
-  fit(inten~., data= train_data)
-
-rf_testing_pred <- 
-  predict(fit, VAL_terremotos_modelo_intensidad) %>% 
-  bind_cols(predict(fit, VAL_terremotos_modelo_intensidad, type = "prob")) %>% 
-  bind_cols(VAL_terremotos_modelo_intensidad %>% select(inten))
-
-
-
-rf_testing_pred %>%
-  roc_curve(truth = inten, `.pred_<IV`:.pred_VII) %>%
-  ggplot(aes(1 - specificity, sensitivity, color = .level)) +
-  geom_abline(lty = 2, color = "gray80", size = 1.5) +
-  geom_path() +
-  coord_equal() +
-  labs(color = NULL)
-
-
-rf_testing_pred %>%
-  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VII)
-
-rf_testing_pred %>%
-  conf_mat(truth = inten, estimate = .pred_class)
-
-
-
-
+saveRDS(nearest_neighbor_hash, "03_Modeling/hash/nearest_neighbor_hash.rds")
 
 
 

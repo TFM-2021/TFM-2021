@@ -22,8 +22,31 @@ terremotos_ign %>%
   facet_wrap(~ `Tipo Mag.`)
 
 
-  
-  
+library(ggstatsplot)
+
+# plot
+ggbetweenstats(
+  data = terremotos_ign,
+  x = Inten.,
+  y = Mag.,
+  pairwise.comparisons = F,
+  title = "Relación magnitud vs intensidad",
+  plot.type = "violin",
+  ylab = "Magnitud",
+  xlab = "Intensidad"
+) + coord_flip()
+
+ggbetweenstats(
+  data = terremotos_ign,
+  x = Inten.,
+  y = log(`Prof. (Km)`),
+  pairwise.comparisons = F,title = "Relación magnitud vs intensidad"
+) + coord_flip()
+
+unique(terremotos_ign$Inten.)
+terremotos_ign %>%
+  filter(Inten. == "VIII")
+
 terremotos_ign %>%
   filter(Mag. > 5) %>%
   ggplot()+
@@ -40,7 +63,8 @@ terremotos_ign %>%
 terremotos_con_intensidad <- terremotos_ign %>%
   filter(!is.na(Inten.))
 
-
+terremotos_con_intensidad_filter <- terremotos_con_intensidad %>%
+  filter(Inten. %in% c("VIII","IX-X"))
   
 ggplot() +
   
@@ -51,14 +75,15 @@ ggplot() +
   
   coord_map("mercator") +
   
-  labs(title = "Municipios de España (peninsula y Baleares)",
-       subtitle = "Color por comunidad aut?noma") +
+  labs(title = "Terremotos en España",
+       subtitle = "Densidad por frecuencia") +
   
   theme_bw() +
-  
-  geom_point(data=terremotos_con_intensidad,aes(x= Longitud,
-                 y=  Latitud,
-                 color=Inten.))
+  stat_density2d(
+    aes(x = Longitud, y = Latitud, fill = ..level.., alpha = 0.25),
+    size = 0.01, bins = 50, data = terremotos_ign,
+    geom = "polygon"
+  )
 
 
 

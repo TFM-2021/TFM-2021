@@ -11,7 +11,9 @@ terremotos_modelo_intensidad <- terremotos_modelo_intensidad %>%
                 inten = replace(inten, inten == "II-III", "<IV"),
                 inten = replace(inten, inten == "III", "<IV"),
                 inten = replace(inten, inten == "III-IV", "IV"),
-                inten = replace(inten, inten == "IV-V", "V"))
+                inten = replace(inten, inten == "IV-V", "V"),
+                inten = replace(inten, inten == "VIII", ">VII"),
+                inten = replace(inten, inten == "IX-X", ">VII"))
 
 
 terremotos_modelo_intensidad$inten <- as.factor(terremotos_modelo_intensidad$inten)
@@ -42,7 +44,7 @@ terremotos_modelo_intensidad <- terremotos_modelo_intensidad %>%
                                                latitud >= 32), "1","0"))) %>%
   select(!c(latitud, longitud))
 
-  
+unique(terremotos_modelo_intensidad$inten)
   
 
 saveRDS(terremotos_modelo_intensidad, "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")

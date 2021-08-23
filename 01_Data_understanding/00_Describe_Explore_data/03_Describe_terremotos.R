@@ -10,7 +10,9 @@ terremotos_ign <- read_delim("data/data_raw/terremotos-ign.csv",
                              ";", escape_double = FALSE, trim_ws = TRUE)
 View(terremotos_ign)
 
-colnames(terremotos_ign)
+dim(terremotos_ign)
+terremotos_ign$Fecha <- as.Date(terremotos_ign$Fecha,"%d/%m/%Y")
+str(terremotos_ign)
 
 #[1] "Evento"       "Fecha"        "Hora"         "Latitud"      "Longitud"    
 #[6] "Prof. (Km)"   "Inten."       "Mag."         "Tipo Mag."    "Localización"
@@ -92,7 +94,7 @@ terremotos_ign_na <- drop_na(terremotos_ign_nums)
 
 cor(terremotos_ign_na$`Prof. (Km)`,terremotos_ign_na$Mag.)
 ggcorrplot(cor(terremotos_ign_na), hc.order = TRUE, type = "lower",
-           outline.col = "white", lab = TRUE, title = "corrplot")
+           outline.col = "white", lab = TRUE, title = "Correlaciones variables terremotos")
 
 
 
@@ -101,7 +103,7 @@ ggcorrplot(cor(terremotos_ign_na), hc.order = TRUE, type = "lower",
 
 summary(terremotos_ign_nums) # hay negativos en magnitud
   
-skimr::skim(terremotos_ign_nums) # prof, mag y tipo mag siguen distribuciones extremas
+skimr::skim(terremotos_ign) # prof, mag y tipo mag siguen distribuciones extremas
 
 
 
@@ -110,4 +112,4 @@ describe(terremotos_ign_nums)
 
 # Determine if the attribute meaning is used consistently
 # la magnitud no puesto que hay varias formas de medirla (ver InT)
-
+unique(terremotos_ign$`Tipo Mag.`)
