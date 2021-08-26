@@ -5,7 +5,7 @@ library(readr)
 
 terremotos_ign <- read_delim("data/data_raw/terremotos-ign.csv", 
                              ";", escape_double = FALSE, trim_ws = TRUE)
-colnames(terremotos_ign)
+colnames(terremotos_EVT)
 View(terremotos_EVT)
 
 terremotos_EVT <- terremotos_ign %>%
@@ -13,8 +13,7 @@ terremotos_EVT <- terremotos_ign %>%
             Hora, 
             `Tipo Mag.` 
             ,Localización,
-            Inten.,
-            `Prof. (Km)`)) %>%
+            Inten.,`Prof. (Km)`)) %>%
   filter(!(Latitud < 42 & Longitud < -7 & Latitud > 36.7)) %>%
   filter(!(Latitud < 35 & Longitud > -11.7)) %>%
   drop_na()
@@ -36,7 +35,7 @@ ggplot() +
   labs(title = "Terremotos españa",
        subtitle = "Color por comunidad aut?noma") +
   
-  theme_bw() +
+  theme_light() +
   
   geom_point(data=terremotos_EVT,aes(x= Longitud,
                                                 y=  Latitud,

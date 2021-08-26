@@ -1,7 +1,7 @@
 
 library(tidyverse)
 library(factoextra)
-
+library(cluster)
 
 VAL_terremotos_EVT <- readRDS("data/data_VAL/VAL_terremotos_EVT.rds")
 
@@ -10,38 +10,30 @@ VAL_terremotos_EVT_scale <- scale(VAL_terremotos_EVT[,c(-1,-4)] )
 
 
 
-saveRDS(summary(intern), "03_Modeling/cluter_terremoto.rds")
-
-
-library(clValid)
-# Iris data set:
-# - Remove Species column and scale
-
-
 # Compute clValid
 
 rows <- sample(nrow(VAL_terremotos_EVT_scale))
 sample_terremotos <- VAL_terremotos_EVT_scale[rows, ]
 
-clmethods <- c("clara","kmeans","pam")
-intern <- clValid(sample_terremotos[1:10000,], nClust = 2:5,
-                  clMethods = clmethods, 
-                  validation = c("internal", "stability", "biological"))
-summary(intern)
 
 
-km.res <- kmeans(VAL_terremotos_EVT_scale, 4, nstart = 25)
-clara.res <- clara(VAL_terremotos_EVT_scale, 4, samples = 50, pamLike = TRUE)
+# Elbow method
+fviz_nbclust(sample_terremotos[20000:35000,], clara, method = "wss") +
+  geom_vline(xintercept = 4, linetype = 2)+
+  labs(subtitle = "Elbow method")
 
 
-VAL_terremotos_EVT_clusters_kmeans <- cbind(VAL_terremotos_EVT, cluster = km.res$cluster)
+
+
+clara.res <- clara(VAL_terremotos_EVT_scale , 4, samples = 15, pamLike = T)
+
+
+clara.res
+
 VAL_terremotos_EVT_clusters_clara <- cbind(VAL_terremotos_EVT, cluster = clara.res$cluster)
 
 
 
-
-
-VAL_terremotos_EVT_clusters_kmeans$cluster <- as.factor(VAL_terremotos_EVT_clusters_kmeans$cluster)
 VAL_terremotos_EVT_clusters_clara$cluster <- as.factor(VAL_terremotos_EVT_clusters_clara$cluster)
 
 
@@ -62,7 +54,7 @@ ggplot() +
   
   theme_bw() +
   
-  geom_point(data=dd,
+  geom_point(data=VAL_terremotos_EVT_clusters_clara,
              aes(x= longitud,
                  y=  latitud,
                  color=cluster))
