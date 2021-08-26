@@ -83,57 +83,105 @@ terremotos_cluster_4 %>%
 
 # EVT---------------------------------------------------------------------------
 
-
 # Cluster 1
-View(terremotos_cluster_1)
-max(terremotos_cluster_1$mag)
 
 fit_cluster_1 <- TFMevt::fitGEV(terremotos_cluster_1$mag, c(0.1,0.1,0.1))
 fit_cluster_1
 
 
-TFMevt::qq_gev(fit_cluster_1,terremotos_cluster_1$mag)
+TFMevt::return_level_GEV(fit_cluster_1, 
+                         terremotos_cluster_1$mag,
+                         5*365)
+TFMevt::return_level_GEV(fit_cluster_1, 
+                         terremotos_cluster_1$mag,
+                         10*365)
+TFMevt::return_level_GEV(fit_cluster_1, 
+                         terremotos_cluster_1$mag,
+                         25*365)
+TFMevt::return_level_GEV(fit_cluster_1, 
+                         terremotos_cluster_1$mag,
+                         50*365)
+TFMevt::return_level_GEV(fit_cluster_1, 
+                         terremotos_cluster_1$mag,
+                         100*365)
 
 TFMevt::return_level_GEV(fit_cluster_1, 
                          terremotos_cluster_1$mag,
-                         100)
-
-TFMevt::return_level_GEV(fit_cluster_1, 
-                         terremotos_cluster_1$mag,
-                         100, 
+                         100*365, 
                          "plot")
 
-plot_location
-plot_scale
-plot_shape
 
-terremotos_cluster_1 %>% View()
 
 
 TFMevt::mean_excess_GEV(terremotos_cluster_1$mag)
 
-fit_cluster_1_GP <- TFMevt::fitGPD(terremotos_cluster_1$mag, 2.25)
+
+
+threshold <- 3
+
+fit_cluster_1_GP <- TFMevt::fitGPD(terremotos_cluster_1$mag, threshold)
 fit_cluster_1_GP
 
-TFMevt::qq_gpd(fit_cluster_1_GP, terremotos_cluster_1$mag)
-
-TFMevt::return_level_GPD(fit_cluster_1_GP,
-                         terremotos_cluster_1$mag,
-                         threshold = 2.25,
-                         year = 500)
 
 
 TFMevt::return_level_GPD(fit_cluster_1_GP,
                          terremotos_cluster_1$mag,
-                         threshold = 2.25,
-                         year = 500,
+                         threshold = threshold,
+                         year = 5)
+TFMevt::return_level_GPD(fit_cluster_1_GP,
+                         terremotos_cluster_1$mag,
+                         threshold = threshold,
+                         year = 10)
+TFMevt::return_level_GPD(fit_cluster_1_GP,
+                         terremotos_cluster_1$mag,
+                         threshold = threshold,
+                         year = 25)
+TFMevt::return_level_GPD(fit_cluster_1_GP,
+                         terremotos_cluster_1$mag,
+                         threshold = threshold,
+                         year = 50)
+TFMevt::return_level_GPD(fit_cluster_1_GP,
+                         terremotos_cluster_1$mag,
+                         threshold = threshold,
+                         year = 100)
+
+
+TFMevt::return_level_GPD(fit_cluster_1_GP,
+                         terremotos_cluster_1$mag,
+                         threshold = 3,
+                         year = 100,
                          "plot")
 
 
 
 fit_cluster_1_Gumbel <- TFMevt::fitGumbel(terremotos_cluster_1$mag)
+fit_cluster_1_Gumbel
 
-qq_gumbel(fit_cluster_1_Gumbel, terremotos_cluster_1$mag)
+
+
+
+
+TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
+                            terremotos_cluster_1$mag,
+                            year = 5*365)
+
+TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
+                            terremotos_cluster_1$mag,
+                            year = 10*365)
+
+TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
+                            terremotos_cluster_1$mag,
+                            year = 25*365)
+
+TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
+                            terremotos_cluster_1$mag,
+                            year = 50*365)
+
+TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
+                            terremotos_cluster_1$mag,
+                            year = 100*365)
+
+
 TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
                             terremotos_cluster_1$mag,
                             year = 100,
@@ -147,44 +195,109 @@ TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
 
 # Cluster 2
 
-max(terremotos_cluster_2$mag)
-
 fit_cluster_2 <- TFMevt::fitGEV(terremotos_cluster_2$mag, c(0.1,0.1,0.1))
 fit_cluster_2
 
 
-TFMevt::qq_gev(fit_cluster_2,terremotos_cluster_2$mag)
+TFMevt::return_level_GEV(fit_cluster_2, 
+                         terremotos_cluster_2$mag,
+                         5)
+TFMevt::return_level_GEV(fit_cluster_2, 
+                         terremotos_cluster_2$mag,
+                         10)
+TFMevt::return_level_GEV(fit_cluster_2, 
+                         terremotos_cluster_2$mag,
+                         25)
+TFMevt::return_level_GEV(fit_cluster_2, 
+                         terremotos_cluster_2$mag,
+                         50)
+TFMevt::return_level_GEV(fit_cluster_2, 
+                         terremotos_cluster_2$mag,
+                         100)
 
 TFMevt::return_level_GEV(fit_cluster_2, 
                          terremotos_cluster_2$mag,
-                         500)
-
-TFMevt::return_level_GEV(fit_cluster_2, 
-                         terremotos_cluster_2$mag,
-                         500, 
+                         100, 
                          "plot")
 
-plot_location
-plot_scale
-plot_shape
+
 
 
 TFMevt::mean_excess_GEV(terremotos_cluster_2$mag)
 
-fit_cluster_2_GP <- TFMevt::fitGPD(terremotos_cluster_2$mag, 4.5)
+
+
+threshold <- 2.25
+
+fit_cluster_2_GP <- TFMevt::fitGPD(terremotos_cluster_2$mag, threshold)
 fit_cluster_2_GP
 
-TFMevt::return_level_GPD(fit_cluster_2_GP,
-                         terremotos_cluster_2$mag,
-                         threshold = 4.5,
-                         year = 500)
 
 
 TFMevt::return_level_GPD(fit_cluster_2_GP,
                          terremotos_cluster_2$mag,
-                         threshold = 4.5,
-                         year = 500,
+                         threshold = threshold,
+                         year = 5)
+TFMevt::return_level_GPD(fit_cluster_2_GP,
+                         terremotos_cluster_2$mag,
+                         threshold = threshold,
+                         year = 10)
+TFMevt::return_level_GPD(fit_cluster_2_GP,
+                         terremotos_cluster_2$mag,
+                         threshold = threshold,
+                         year = 25)
+TFMevt::return_level_GPD(fit_cluster_2_GP,
+                         terremotos_cluster_2$mag,
+                         threshold = threshold,
+                         year = 50)
+TFMevt::return_level_GPD(fit_cluster_2_GP,
+                         terremotos_cluster_2$mag,
+                         threshold = threshold,
+                         year = 100)
+
+
+TFMevt::return_level_GPD(fit_cluster_2_GP,
+                         terremotos_cluster_2$mag,
+                         threshold = 2.25,
+                         year = 100,
                          "plot")
+
+
+
+fit_cluster_2_Gumbel <- TFMevt::fitGumbel(terremotos_cluster_2$mag)
+fit_cluster_2_Gumbel
+
+
+
+
+TFMevt::return_level_Gumbel(fit_cluster_2_Gumbel,
+                            terremotos_cluster_2$mag,
+                            year = 5)
+
+TFMevt::return_level_Gumbel(fit_cluster_2_Gumbel,
+                            terremotos_cluster_2$mag,
+                            year = 10)
+
+TFMevt::return_level_Gumbel(fit_cluster_2_Gumbel,
+                            terremotos_cluster_2$mag,
+                            year = 25)
+
+TFMevt::return_level_Gumbel(fit_cluster_2_Gumbel,
+                            terremotos_cluster_2$mag,
+                            year = 50)
+
+TFMevt::return_level_Gumbel(fit_cluster_2_Gumbel,
+                            terremotos_cluster_2$mag,
+                            year = 100)
+
+
+TFMevt::return_level_Gumbel(fit_cluster_2_Gumbel,
+                            terremotos_cluster_2$mag,
+                            year = 100,
+                            "plot")
+
+
+
 
 
 
@@ -192,44 +305,108 @@ TFMevt::return_level_GPD(fit_cluster_2_GP,
 
 # Cluster 3
 
-max(terremotos_cluster_3$mag)
 
 fit_cluster_3 <- TFMevt::fitGEV(terremotos_cluster_3$mag, c(0.1,0.1,0.1))
 fit_cluster_3
 
 
-TFMevt::qq_gev(fit_cluster_3,terremotos_cluster_3$mag)
+TFMevt::return_level_GEV(fit_cluster_3, 
+                         terremotos_cluster_3$mag,
+                         5)
+TFMevt::return_level_GEV(fit_cluster_3, 
+                         terremotos_cluster_3$mag,
+                         10)
+TFMevt::return_level_GEV(fit_cluster_3, 
+                         terremotos_cluster_3$mag,
+                         25)
+TFMevt::return_level_GEV(fit_cluster_3, 
+                         terremotos_cluster_3$mag,
+                         50)
+TFMevt::return_level_GEV(fit_cluster_3, 
+                         terremotos_cluster_3$mag,
+                         100)
 
 TFMevt::return_level_GEV(fit_cluster_3, 
                          terremotos_cluster_3$mag,
-                         500)
-
-TFMevt::return_level_GEV(fit_cluster_3, 
-                         terremotos_cluster_3$mag,
-                         500, 
+                         100, 
                          "plot")
 
-plot_location
-plot_scale
-plot_shape
+
 
 
 TFMevt::mean_excess_GEV(terremotos_cluster_3$mag)
 
-fit_cluster_3_GP <- TFMevt::fitGPD(terremotos_cluster_3$mag, 3)
+
+
+threshold <- 2.25
+
+fit_cluster_3_GP <- TFMevt::fitGPD(terremotos_cluster_3$mag, threshold)
 fit_cluster_3_GP
 
-TFMevt::return_level_GPD(fit_cluster_3_GP,
-                         terremotos_cluster_3$mag,
-                         threshold = 4.5,
-                         year = 500)
 
 
 TFMevt::return_level_GPD(fit_cluster_3_GP,
                          terremotos_cluster_3$mag,
-                         threshold = 4.5,
-                         year = 500,
+                         threshold = threshold,
+                         year = 5)
+TFMevt::return_level_GPD(fit_cluster_3_GP,
+                         terremotos_cluster_3$mag,
+                         threshold = threshold,
+                         year = 10)
+TFMevt::return_level_GPD(fit_cluster_3_GP,
+                         terremotos_cluster_3$mag,
+                         threshold = threshold,
+                         year = 25)
+TFMevt::return_level_GPD(fit_cluster_3_GP,
+                         terremotos_cluster_3$mag,
+                         threshold = threshold,
+                         year = 50)
+TFMevt::return_level_GPD(fit_cluster_3_GP,
+                         terremotos_cluster_3$mag,
+                         threshold = threshold,
+                         year = 100)
+
+
+TFMevt::return_level_GPD(fit_cluster_3_GP,
+                         terremotos_cluster_3$mag,
+                         threshold = 2.25,
+                         year = 100,
                          "plot")
+
+
+
+fit_cluster_3_Gumbel <- TFMevt::fitGumbel(terremotos_cluster_3$mag)
+fit_cluster_3_Gumbel
+
+
+
+
+TFMevt::return_level_Gumbel(fit_cluster_3_Gumbel,
+                            terremotos_cluster_3$mag,
+                            year = 5)
+
+TFMevt::return_level_Gumbel(fit_cluster_3_Gumbel,
+                            terremotos_cluster_3$mag,
+                            year = 10)
+
+TFMevt::return_level_Gumbel(fit_cluster_3_Gumbel,
+                            terremotos_cluster_3$mag,
+                            year = 25)
+
+TFMevt::return_level_Gumbel(fit_cluster_3_Gumbel,
+                            terremotos_cluster_3$mag,
+                            year = 50)
+
+TFMevt::return_level_Gumbel(fit_cluster_3_Gumbel,
+                            terremotos_cluster_3$mag,
+                            year = 100)
+
+
+TFMevt::return_level_Gumbel(fit_cluster_3_Gumbel,
+                            terremotos_cluster_3$mag,
+                            year = 100,
+                            "plot")
+
 
 
 
@@ -239,42 +416,107 @@ TFMevt::return_level_GPD(fit_cluster_3_GP,
 # Cluster 4
 
 
-max(terremotos_cluster_4$mag)
-
 fit_cluster_4 <- TFMevt::fitGEV(terremotos_cluster_4$mag, c(0.1,0.1,0.1))
 fit_cluster_4
 
 
-TFMevt::qq_gev(fit_cluster_4,terremotos_cluster_4$mag)
+TFMevt::return_level_GEV(fit_cluster_4, 
+                         terremotos_cluster_4$mag,
+                         5)
+TFMevt::return_level_GEV(fit_cluster_4, 
+                         terremotos_cluster_4$mag,
+                         10)
+TFMevt::return_level_GEV(fit_cluster_4, 
+                         terremotos_cluster_4$mag,
+                         25)
+TFMevt::return_level_GEV(fit_cluster_4, 
+                         terremotos_cluster_4$mag,
+                         50)
+TFMevt::return_level_GEV(fit_cluster_4, 
+                         terremotos_cluster_4$mag,
+                         100)
 
 TFMevt::return_level_GEV(fit_cluster_4, 
                          terremotos_cluster_4$mag,
-                         500)
-
-TFMevt::return_level_GEV(fit_cluster_4, 
-                         terremotos_cluster_4$mag,
-                         500, 
+                         100, 
                          "plot")
 
-plot_location
-plot_scale
-plot_shape
+
 
 
 TFMevt::mean_excess_GEV(terremotos_cluster_4$mag)
 
-fit_cluster_4_GP <- TFMevt::fitGPD(terremotos_cluster_4$mag, 2)
+
+
+threshold <- 2.25
+
+fit_cluster_4_GP <- TFMevt::fitGPD(terremotos_cluster_4$mag, threshold)
 fit_cluster_4_GP
 
-TFMevt::return_level_GPD(fit_cluster_4_GP,
-                         terremotos_cluster_4$mag,
-                         threshold = 2,
-                         year = 500)
 
 
 TFMevt::return_level_GPD(fit_cluster_4_GP,
                          terremotos_cluster_4$mag,
-                         threshold = 2,
-                         year = 500,
+                         threshold = threshold,
+                         year = 5)
+TFMevt::return_level_GPD(fit_cluster_4_GP,
+                         terremotos_cluster_4$mag,
+                         threshold = threshold,
+                         year = 10)
+TFMevt::return_level_GPD(fit_cluster_4_GP,
+                         terremotos_cluster_4$mag,
+                         threshold = threshold,
+                         year = 25)
+TFMevt::return_level_GPD(fit_cluster_4_GP,
+                         terremotos_cluster_4$mag,
+                         threshold = threshold,
+                         year = 50)
+TFMevt::return_level_GPD(fit_cluster_4_GP,
+                         terremotos_cluster_4$mag,
+                         threshold = threshold,
+                         year = 100)
+
+
+TFMevt::return_level_GPD(fit_cluster_4_GP,
+                         terremotos_cluster_4$mag,
+                         threshold = 2.25,
+                         year = 100,
                          "plot")
+
+
+
+fit_cluster_4_Gumbel <- TFMevt::fitGumbel(terremotos_cluster_4$mag)
+fit_cluster_4_Gumbel
+
+
+
+
+TFMevt::return_level_Gumbel(fit_cluster_4_Gumbel,
+                            terremotos_cluster_4$mag,
+                            year = 5)
+
+TFMevt::return_level_Gumbel(fit_cluster_4_Gumbel,
+                            terremotos_cluster_4$mag,
+                            year = 10)
+
+TFMevt::return_level_Gumbel(fit_cluster_4_Gumbel,
+                            terremotos_cluster_4$mag,
+                            year = 25)
+
+TFMevt::return_level_Gumbel(fit_cluster_4_Gumbel,
+                            terremotos_cluster_4$mag,
+                            year = 50)
+
+TFMevt::return_level_Gumbel(fit_cluster_4_Gumbel,
+                            terremotos_cluster_4$mag,
+                            year = 100)
+
+
+TFMevt::return_level_Gumbel(fit_cluster_4_Gumbel,
+                            terremotos_cluster_4$mag,
+                            year = 100,
+                            "plot")
+
+
+
 
