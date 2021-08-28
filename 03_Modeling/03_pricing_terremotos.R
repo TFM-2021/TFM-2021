@@ -179,6 +179,11 @@ rand_forest_hash %>% show_best("recall")
 
 saveRDS(rand_forest_hash, "03_Modeling/hash/rand_forest_hash.rds")
 
+
+
+
+
+
 # LDA ---------------------------------------------------------------------
 
 
@@ -207,6 +212,11 @@ LDA_hash %>% show_best("roc_auc")
 
 
 saveRDS(LDA_hash, "03_Modeling/hash/LDA_hash.rds")
+
+
+
+
+
 # Regularized discriminant analysis--------------------------------------
 
 

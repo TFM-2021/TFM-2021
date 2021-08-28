@@ -33,7 +33,7 @@ ggplot() +
   
   theme_bw() +
   
-  geom_point(data=terremotos_modelo_intensidad,aes(x= longitud,
+  geom_point(data=terremotos_modelo_intensidad_filter,aes(x= longitud,
                                                 y=  latitud, color= inten))
 
 

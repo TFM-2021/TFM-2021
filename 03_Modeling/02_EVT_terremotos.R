@@ -83,31 +83,33 @@ terremotos_cluster_4 %>%
 
 # EVT---------------------------------------------------------------------------
 
-# Cluster 1
-
+#-------------------------------------------------------------------------------
+# cluster_1
+quantile(terremotos_cluster_1$mag)
+1/
 fit_cluster_1 <- TFMevt::fitGEV(terremotos_cluster_1$mag, c(0.1,0.1,0.1))
 fit_cluster_1
 
 
 TFMevt::return_level_GEV(fit_cluster_1, 
                          terremotos_cluster_1$mag,
-                         5*365)
+                         5)
 TFMevt::return_level_GEV(fit_cluster_1, 
                          terremotos_cluster_1$mag,
-                         10*365)
+                         10)
 TFMevt::return_level_GEV(fit_cluster_1, 
                          terremotos_cluster_1$mag,
-                         25*365)
+                         25)
 TFMevt::return_level_GEV(fit_cluster_1, 
                          terremotos_cluster_1$mag,
-                         50*365)
+                         50)
 TFMevt::return_level_GEV(fit_cluster_1, 
                          terremotos_cluster_1$mag,
-                         100*365)
+                         100)
 
 TFMevt::return_level_GEV(fit_cluster_1, 
                          terremotos_cluster_1$mag,
-                         100*365, 
+                         100, 
                          "plot")
 
 
@@ -156,30 +158,30 @@ TFMevt::return_level_GPD(fit_cluster_1_GP,
 
 fit_cluster_1_Gumbel <- TFMevt::fitGumbel(terremotos_cluster_1$mag)
 fit_cluster_1_Gumbel
-
+extRemes::fevd(terremotos_cluster_1$mag, type = "Gumbel")
 
 
 
 
 TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
                             terremotos_cluster_1$mag,
-                            year = 5*365)
+                            year = 5)
 
 TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
                             terremotos_cluster_1$mag,
-                            year = 10*365)
+                            year = 10)
 
 TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
                             terremotos_cluster_1$mag,
-                            year = 25*365)
+                            year = 25)
 
 TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
                             terremotos_cluster_1$mag,
-                            year = 50*365)
+                            year = 50)
 
 TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
                             terremotos_cluster_1$mag,
-                            year = 100*365)
+                            year = 100)
 
 
 TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
@@ -188,13 +190,9 @@ TFMevt::return_level_Gumbel(fit_cluster_1_Gumbel,
                             "plot")
 
 
-
-
-
-#----------------------------------------------------------------------------
-
-# Cluster 2
-
+#-------------------------------------------------------------------------------
+# cluster_2
+max(terremotos_cluster_2$mag)
 fit_cluster_2 <- TFMevt::fitGEV(terremotos_cluster_2$mag, c(0.1,0.1,0.1))
 fit_cluster_2
 
@@ -227,7 +225,7 @@ TFMevt::mean_excess_GEV(terremotos_cluster_2$mag)
 
 
 
-threshold <- 2.25
+threshold <- 5
 
 fit_cluster_2_GP <- TFMevt::fitGPD(terremotos_cluster_2$mag, threshold)
 fit_cluster_2_GP
@@ -258,7 +256,7 @@ TFMevt::return_level_GPD(fit_cluster_2_GP,
 
 TFMevt::return_level_GPD(fit_cluster_2_GP,
                          terremotos_cluster_2$mag,
-                         threshold = 2.25,
+                         threshold = 3,
                          year = 100,
                          "plot")
 
@@ -266,7 +264,6 @@ TFMevt::return_level_GPD(fit_cluster_2_GP,
 
 fit_cluster_2_Gumbel <- TFMevt::fitGumbel(terremotos_cluster_2$mag)
 fit_cluster_2_Gumbel
-
 
 
 
@@ -298,14 +295,9 @@ TFMevt::return_level_Gumbel(fit_cluster_2_Gumbel,
 
 
 
-
-
-
 #-------------------------------------------------------------------------------
-
-# Cluster 3
-
-
+# cluster_3
+summary(terremotos_cluster_3$mag)
 fit_cluster_3 <- TFMevt::fitGEV(terremotos_cluster_3$mag, c(0.1,0.1,0.1))
 fit_cluster_3
 
@@ -328,17 +320,18 @@ TFMevt::return_level_GEV(fit_cluster_3,
 
 TFMevt::return_level_GEV(fit_cluster_3, 
                          terremotos_cluster_3$mag,
-                         100, 
+                         100*365, 
                          "plot")
 
 
 
-
+fit <- extRemes::fevd(terremotos_cluster_3$mag)
+extRemes::return.level(fit, return.period = 365*5)
 TFMevt::mean_excess_GEV(terremotos_cluster_3$mag)
 
 
 
-threshold <- 2.25
+threshold <- 3.2
 
 fit_cluster_3_GP <- TFMevt::fitGPD(terremotos_cluster_3$mag, threshold)
 fit_cluster_3_GP
@@ -369,7 +362,7 @@ TFMevt::return_level_GPD(fit_cluster_3_GP,
 
 TFMevt::return_level_GPD(fit_cluster_3_GP,
                          terremotos_cluster_3$mag,
-                         threshold = 2.25,
+                         threshold = 3,
                          year = 100,
                          "plot")
 
@@ -377,6 +370,7 @@ TFMevt::return_level_GPD(fit_cluster_3_GP,
 
 fit_cluster_3_Gumbel <- TFMevt::fitGumbel(terremotos_cluster_3$mag)
 fit_cluster_3_Gumbel
+extRemes::fevd(terremotos_cluster_3$mag, type = "Gumbel")
 
 
 
@@ -412,10 +406,8 @@ TFMevt::return_level_Gumbel(fit_cluster_3_Gumbel,
 
 
 #-------------------------------------------------------------------------------
-
-# Cluster 4
-
-
+# cluster_4
+max(terremotos_cluster_4$mag)
 fit_cluster_4 <- TFMevt::fitGEV(terremotos_cluster_4$mag, c(0.1,0.1,0.1))
 fit_cluster_4
 
@@ -438,7 +430,7 @@ TFMevt::return_level_GEV(fit_cluster_4,
 
 TFMevt::return_level_GEV(fit_cluster_4, 
                          terremotos_cluster_4$mag,
-                         100, 
+                         100*365, 
                          "plot")
 
 
@@ -448,7 +440,7 @@ TFMevt::mean_excess_GEV(terremotos_cluster_4$mag)
 
 
 
-threshold <- 2.25
+threshold <- 3
 
 fit_cluster_4_GP <- TFMevt::fitGPD(terremotos_cluster_4$mag, threshold)
 fit_cluster_4_GP
@@ -479,7 +471,7 @@ TFMevt::return_level_GPD(fit_cluster_4_GP,
 
 TFMevt::return_level_GPD(fit_cluster_4_GP,
                          terremotos_cluster_4$mag,
-                         threshold = 2.25,
+                         threshold = 3,
                          year = 100,
                          "plot")
 
@@ -487,6 +479,7 @@ TFMevt::return_level_GPD(fit_cluster_4_GP,
 
 fit_cluster_4_Gumbel <- TFMevt::fitGumbel(terremotos_cluster_4$mag)
 fit_cluster_4_Gumbel
+extRemes::fevd(terremotos_cluster_4$mag, type = "Gumbel")
 
 
 
@@ -516,7 +509,5 @@ TFMevt::return_level_Gumbel(fit_cluster_4_Gumbel,
                             terremotos_cluster_4$mag,
                             year = 100,
                             "plot")
-
-
 
 
