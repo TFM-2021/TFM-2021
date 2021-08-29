@@ -9,7 +9,6 @@ unique(VAL_terremotos_modelo_intensidad$inten)
 
 
 
-
 # RAND FOREST
 
 autoplot(rand_forest_hash)
@@ -22,17 +21,113 @@ final_param <- rand_forest_hash %>%
   select(trees, min_n)
 
 
+
+# Evaluate Confusion Matrix
+
+
+rand_forest_model <- rand_forest(trees = 1000,
+                                 min_n = 2) %>%
+  set_engine("ranger") %>%
+  set_mode("classification")
+
+
+
+fit <- rand_forest_model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+
+
+
 # LDA ---------------------------------------------------------------------
 
 
 autoplot(LDA_hash)
 
-LDA_hash %>% show_best("roc_auc")
+LDA_hash %>% show_best("recall")
 
 final_param <- LDA_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
   select(penalty)
+
+
+model <- discrim_linear(penalty = 1) %>%
+  set_engine("mda") %>%
+  set_mode("classification")
+
+
+
+
+
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+
 
 
 # Regularized discriminant analysis--------------------------------------
@@ -50,6 +145,49 @@ final_param <- rdm_hash %>%
 
 
 
+model <- discrim_regularized(
+  mode = "classification",
+  engine = "klaR",
+  frac_common_cov =  0,
+  frac_identity =  0)
+
+
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
 
 # NAIVE BAYES-------------------------------------------------------------------
 
@@ -64,6 +202,48 @@ final_param <- naive_Bayes_hash %>%
   select(trees, min_n)
 
 
+model <-naive_Bayes(
+  mode = "classification",
+  engine = "klaR",
+  smoothness = 0.5,
+  Laplace = 0)
+
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
 
 # REGERSION MULTINOMIAL--------------------------------------------------------
 
@@ -74,7 +254,48 @@ multinom_reg_hash %>% show_best("recall")
 final_param <- multinom_reg_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(trees, min_n)
+  select(penalty)
+
+
+model <- multinom_reg(
+  mode = "classification",
+  engine = "nnet",
+  penalty = .0769  
+)
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
 
 
 
@@ -82,7 +303,7 @@ final_param <- multinom_reg_hash %>%
 
 autoplot(c5_rules_hash)
 
-c5_rules_hash %>% show_best("roc_auc")
+c5_rules_hash %>% show_best("recall")
 
 final_param <- c5_rules_hash %>% 
   show_best("recall") %>% 
@@ -90,20 +311,44 @@ final_param <- c5_rules_hash %>%
   select(trees, min_n)
 
 
-
-# BAGS MARS-----------------------------------------------------------------------
-
-
-
-autoplot(bag_mars_hash)
-
-bag_mars_hash %>% show_best("roc_auc")
+model <- C5_rules(mode = "classification", 
+                  trees = 3, 
+                  engine = "C5.0")
 
 
-final_param <- bag_mars_hash %>% 
-  show_best("recall") %>% 
-  dplyr::slice(1 )%>%
-  select(trees, min_n)
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
 
 
 
@@ -120,6 +365,47 @@ final_param <- bag_mars_hash %>%
   dplyr::slice(1 )%>%
   select(trees, min_n)
 
+model <- bag_tree(cost_complexity = .00000316 ,
+                  tree_depth = 15,
+                  min_n = 2)  %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+
+
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
 
 
 
@@ -128,12 +414,51 @@ final_param <- bag_mars_hash %>%
 
 autoplot(boost_tree_model_hash)
 
-boost_tree_model_hash %>% show_best("roc_auc")
+boost_tree_model_hash %>% show_best("recall")
 
 final_param <- boost_tree_model_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
   select(trees, min_n)
+
+model <- boost_tree(trees = 9)  %>%
+  set_engine("C5.0") %>%
+  set_mode("classification")
+
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
 
 
 
@@ -143,7 +468,7 @@ final_param <- boost_tree_model_hash %>%
 
 autoplot(svm_poly_hash)
 
-svm_poly_hash %>% show_best("roc_auc")
+svm_poly_hash %>% show_best("recall")
 
 
 final_param <- svm_poly_hash %>% 
@@ -153,6 +478,48 @@ final_param <- svm_poly_hash %>%
 
 
 
+model <- svm_poly(cost = 32,
+                  degree = 3,
+                  scale_factor =0.1,
+                  margin = 0)  %>%
+  set_engine("kernlab") %>%
+  set_mode("classification")
+
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
 
 
 # SVM RBF MODEL-----------------------------------------------------------------
@@ -161,12 +528,54 @@ final_param <- svm_poly_hash %>%
 
 autoplot(svm_rbf_hash)
 
-svm_rbf_hash %>% show_best("roc_auc")
+svm_rbf_hash %>% show_best("recall")
 
 final_param <- svm_rbf_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
   select(trees, min_n)
+
+
+model <- svm_rbf( cost = 32,
+                  rbf_sigma = 1,
+                  margin = 0.1)  %>%
+  set_engine("kernlab") %>%
+  set_mode("classification")
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
 
 
 # KNN ----------------------------------------------------------------------------
@@ -175,7 +584,7 @@ final_param <- svm_rbf_hash %>%
 
 autoplot(nearest_neighbor_hash)
 
-nearest_neighbor_hash %>% show_best("roc_auc")
+nearest_neighbor_hash %>% show_best("recall")
 
 
 final_param <- nearest_neighbor_hash %>% 
@@ -184,6 +593,47 @@ final_param <- nearest_neighbor_hash %>%
   select(neighbors, weight_func,dist_power)
 
 
+
+model <- nearest_neighbor( neighbors = 8,
+                           weight_func =  "triangular",
+                           dist_power =  2)  %>%
+  set_engine("kknn") %>%
+  set_mode("classification")
+
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+rf_training_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_training_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+rf_testing_pred%>%
+  yardstick::recall(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, .pred_class)
+
+rf_testing_pred%>%
+  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VI)
 
 
 
@@ -269,7 +719,7 @@ rf_testing_pred %>%
 View(rf_testing_pred)
 
 rf_testing_pred %>%
-  yardstick::roc_auc(truth = inten, `.pred_<IV`:.pred_VII)
+  yardstick::recall(truth = inten, .pred_class)
 
 rf_testing_pred %>%
   conf_mat(truth = inten, estimate = .pred_class)
@@ -278,5 +728,98 @@ rf_testing_pred %>%
 
 
 
+#--------------------------------------------------------------------------
+#--------------------------------------------------------------------------
+#--------------------------------------------------------------------------
 
 
+
+
+
+
+
+
+
+
+
+bagged_decision_tree_hash %>% show_best("recall")
+
+
+
+model <- bag_tree(cost_complexity = .00000316 ,
+                  tree_depth = 15,
+                  min_n = 2)  %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+
+
+
+fit <- model %>%
+  fit(inten~., data= train_data)
+
+
+rf_training_pred <- 
+  predict(fit, train_data) %>% 
+  bind_cols(predict(fit, train_data, type = "prob")) %>% 
+  bind_cols(train_data %>% select(inten))
+
+
+
+rf_testing_pred <- 
+  predict(fit, test_data) %>% 
+  bind_cols(predict(fit, test_data, type = "prob")) %>% 
+  bind_cols(test_data %>% select(inten))
+
+
+
+
+
+
+
+rf_testing_pred %>%
+  roc_curve(truth = inten, `.pred_<IV`:.pred_VI) %>%
+  ggplot(aes(1 - specificity, sensitivity, color = .level)) +
+  geom_abline(lty = 2, color = "gray80", size = 2) +
+  theme_minimal()+
+  geom_path()+
+  labs(title = "Curva ROC",
+       subtitle = "Modelo bagged tree")
+
+
+
+
+
+library("DALEXtra")
+
+wflow <- workflow() %>%
+  add_recipe( recipe(inten ~ ., data = train_data)) %>%
+  add_model(model) %>%
+  fit(train_data)
+
+
+
+
+a <- explain_tidymodels(wflow, data = train_data, y = train_data$inten)
+a$y_hat
+
+pdp_time <- model_profile(
+  a,
+  variables = "inten",
+  N = NULL,
+  groups = "type"
+)
+b <-model_profile(a)
+plot(b)
+
+
+
+as_tibble(b$agr_profiles) %>%
+  mutate(`_label_` = str_remove(`_label_`, "workflow.")) %>%
+  ggplot(aes(`_x_`, `_yhat_`, color = `_label_`)) +
+  geom_line(size = 1.2, alpha = 0.5) +
+  labs(
+    x = "Time to complete track",
+    y = "Predicted probability of shortcut",
+    title = "Partial dependence plot for Mario Kart world records",
+    subtitle = "Predictions from a decision tree model"
+  )

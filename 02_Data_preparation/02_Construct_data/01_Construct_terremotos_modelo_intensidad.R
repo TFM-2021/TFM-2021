@@ -2,7 +2,7 @@ library(tidyverse)
 
 terremotos_modelo_intensidad <- readRDS(file = "02_Data_preparation/01_Clean_data/terremotos_clean_modelo_intensidad.rds")
 my_data <- readRDS("data/mapa_ESP.rds")
-
+unique(terremotos_modelo_intensidad$inten)
 
 terremotos_modelo_intensidad <- terremotos_modelo_intensidad %>%
   dplyr::mutate(inten = replace(inten, inten == "I", "<IV"),

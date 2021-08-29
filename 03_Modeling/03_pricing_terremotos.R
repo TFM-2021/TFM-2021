@@ -49,61 +49,76 @@ cl <- makePSOCKcluster(all_cores)
 
 VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")
 
-recipe(~., VAL_terremotos_modelo_intensidad) %>%
-  step_upsample(inten, over_ratio = 0.07) %>%
-  prep() %>%
-  bake(new_data = NULL) %>%
-  ggplot(aes(inten))+
-  geom_bar()
 
-
-VAL_terremotos_modelo_intensidad %>%
-  ggplot(aes(inten))+
-  geom_bar()
-
-VAL_terremotos_modelo_intensidad <- recipe(~., VAL_terremotos_modelo_intensidad) %>%
- step_upsample(inten, over_ratio = 0.7) %>%
- prep() %>%
- bake(new_data = NULL)
-
-
-
-
-ggplot()+ 
-  geom_density(test_data,mapping = aes(log(prof_km)))+
-  geom_density(train_data,mapping = aes(log(prof_km)))
-
-
-ggplot()+ 
-  geom_density(test_data,mapping = aes(inten ,fill=inten), alpha =0.15)+
-  geom_density(train_data,mapping = aes(inten ,fill=inten), alpha =0.15)
-
-ggplot()+ 
-  geom_density(test_data,mapping = aes(mag ))+
-  geom_density(train_data,mapping = aes(mag ))
-
-
-ggplot()+ 
-  geom_density(test_data,mapping = aes(placa_tectonica , color= placa_tectonica ))+
-  geom_density(train_data,mapping = aes(placa_tectonica, color= placa_tectonica ))
 
 
 
 # IMPUTACION
 
 
+VAL_terremotos_modelo_intensidad %>%
+  filter(is.na(prof_km))
+
+VAL_terremotos_modelo_intensidad %>%
+  group_by(inten)%>%
+  summarise(median(prof_km, na.rm=T))
 
 
-VAL_terremotos_modelo_intensidad$prof_km[is.na(VAL_terremotos_modelo_intensidad$prof_km)]<-median(VAL_terremotos_modelo_intensidad$prof_km,na.rm=TRUE)
+VAL_terremotos_modelo_intensidad <- VAL_terremotos_modelo_intensidad %>%
+  mutate(prof_km = if_else(is.na(prof_km) & inten=="<IV",11,
+                          ifelse(is.na(prof_km) & inten=="IV",10.5,
+                          ifelse(is.na(prof_km) & inten=="V", 10,
+                          ifelse(is.na(prof_km) & inten=="VI", 6, prof_km))) ))
 
 
-#VAL_terremotos_mundo$mag[is.na(VAL_terremotos_mundo$mag)]<-median(VAL_terremotos_mundo$mag,na.rm=TRUE)
+
+
+# OVERSAMPLING
+
+
+
+VAL_terremotos_modelo_intensidad %>%
+  ggplot(aes(inten))+
+  geom_bar(aes(fill=inten))+
+  theme_minimal()+
+  
+  labs(title = "Número de valores",
+       subtitle = "Variable objetivo") +
+  geom_text(stat='count', aes(label=..count..), vjust=1.2)
+
+
+recipe(~., VAL_terremotos_modelo_intensidad) %>%
+  step_upsample(inten, over_ratio = 0.11) %>%
+  prep() %>%
+  bake(new_data = NULL) %>%
+  ggplot(aes(inten))+
+  geom_bar(aes(fill=inten))+
+  theme_minimal()+
+  
+  labs(title = "Número de valores - oversampling",
+       subtitle = "Variable objetivo") +
+  geom_text(stat='count', aes(label=..count..), vjust=1.2)
+
+VAL_terremotos_modelo_intensidad <- recipe(~., VAL_terremotos_modelo_intensidad) %>%
+  step_upsample(inten, over_ratio = 0.11) %>%
+  prep() %>%
+  bake(new_data = NULL)
+
+
+
+
+VAL_terremotos_modelo_intensidad$prof_km <- log(VAL_terremotos_modelo_intensidad$prof_km)
+
+VAL_terremotos_modelo_intensidad[,c(1,3)] <- scale(VAL_terremotos_modelo_intensidad[,c(1,3)])
+
+
+
 
 
 
 # SPLIT DATA
 
-set.seed(88)
+set.seed(12345)
 
 data_split <- initial_split(VAL_terremotos_modelo_intensidad, strata = "inten", prop = 0.75)
 
@@ -121,6 +136,42 @@ k_folds_data <- vfold_cv(train_data, strata = inten,v = 5)
 
 
 hash_rec <- recipe(inten~., data = train_data)
+
+
+
+
+# SHIFT FUNCTION
+
+
+a <- ggplot()+ 
+  geom_density(test_data,mapping = aes(log(prof_km)))+
+  geom_density(train_data,mapping = aes(log(prof_km)))+
+  theme_minimal()
+
+
+b <- ggplot()+ 
+  geom_density(test_data,mapping = aes(inten ,fill=inten), alpha =0.15)+
+  geom_density(train_data,mapping = aes(inten ,fill=inten), alpha =0.15)+
+  theme_minimal()
+
+c <- ggplot()+ 
+  geom_density(test_data,mapping = aes(mag ))+
+  geom_density(train_data,mapping = aes(mag ))+
+  theme_minimal()
+
+
+d <- ggplot()+ 
+  geom_density(test_data,mapping = aes(placa_tectonica , color= placa_tectonica ))+
+  geom_density(train_data,mapping = aes(placa_tectonica, color= placa_tectonica ))+
+  theme_minimal()
+
+
+gridExtra::grid.arrange(a,b,c,d)
+
+
+
+
+
 
 
 #-------------------------------------------------------------------------------
@@ -142,10 +193,9 @@ f_score_terremotos <- function(data, truth, estimate, na_rm = TRUE, ...) {
 }
 
 
-f_score_terremotos <- new_class_metric(f_score_terremotos,"maximize")
 
 model_control <- control_grid(save_pred = TRUE)
-model_metrics <- metric_set(recall,precision,f_score_terremotos,roc_auc)
+model_metrics <- metric_set(recall,precision,roc_auc)
 
 # Tune hash models-----------------------------------------------------
 
@@ -173,9 +223,11 @@ rand_forest_hash <- tune_grid(
   metrics = model_metrics,
   resamples = k_folds_data
 )
-autoplot(rand_forest_hash)
+#autoplot(rand_forest_hash)
 
 rand_forest_hash %>% show_best("recall")
+
+
 
 saveRDS(rand_forest_hash, "03_Modeling/hash/rand_forest_hash.rds")
 
@@ -206,7 +258,7 @@ LDA_hash <- tune_grid(
   metrics = model_metrics,
   resamples = k_folds_data
 )
-autoplot(LDA_hash)
+#autoplot(LDA_hash)
 
 LDA_hash %>% show_best("roc_auc")
 
@@ -244,7 +296,7 @@ rdm_hash <- tune_grid(
   metrics = model_metrics,
   resamples = k_folds_data
 )
-autoplot(rdm_hash)
+#autoplot(rdm_hash)
 
 rdm_hash %>% show_best("recall")
 
@@ -277,7 +329,7 @@ naive_Bayes_hash <- tune_grid(
   metrics = model_metrics,
   resamples = k_folds_data
 )
-autoplot(naive_Bayes_hash)
+#autoplot(naive_Bayes_hash)
 
 naive_Bayes_hash %>% show_best("recall")
 
@@ -308,7 +360,7 @@ multinom_reg_hash <- tune_grid(
   metrics = model_metrics,
   resamples = k_folds_data
 )
-autoplot(multinom_reg_hash)
+#autoplot(multinom_reg_hash)
 
 multinom_reg_hash %>% show_best("recall")
 
@@ -340,41 +392,11 @@ c5_rules_hash <- tune_grid(
 
 
 
-autoplot(c5_rules_hash)
+#autoplot(c5_rules_hash)
 
 c5_rules_hash %>% show_best("roc_auc")
 
 saveRDS(c5_rules_hash, "03_Modeling/hash/c5_rules_hash.rds")
-
-
-
-# BAGS MARS-----------------------------------------------------------------------
-
-
-bag_mars_model <- bag_mars(num_terms = tune(),
-                           prod_degree = tune(),
-                           prune_method = tune())  %>%
-  set_engine("earth") %>%
-  set_mode("classification")
-
-
-bag_mars_grid <- grid_regular(parameters(bag_mars_model))
-
-bag_mars_hash <- tune_grid(
-  bag_mars_model,
-  hash_rec,
-  grid = bag_mars_grid,
-  control = model_control,
-  metrics = model_metrics,
-  resamples = k_folds_data
-)
-
-autoplot(bag_mars_hash)
-
-bag_mars_hash %>% show_best("roc_auc")
-
-
-saveRDS(bag_mars_hash, "03_Modeling/hash/bag_mars_hash.rds")
 
 
 
@@ -400,7 +422,7 @@ bagged_decision_tree_hash <- tune_grid(
   resamples = k_folds_data
 )
 
-autoplot(bagged_decision_tree_hash)
+#autoplot(bagged_decision_tree_hash)
 
 bagged_decision_tree_hash %>% show_best("recall")
 
@@ -414,14 +436,12 @@ saveRDS(bagged_decision_tree_hash, "03_Modeling/hash/bagged_decision_tree_hash.r
 
 
 
-boost_tree_model <- boost_tree(trees = tune(),
-                               
-                               tree_depth = tune())  %>%
-  set_engine("xgboost") %>%
+boost_tree_model <- boost_tree(trees = tune())  %>%
+  set_engine("C5.0") %>%
   set_mode("classification")
 
 
-boost_tree_model_grid <- grid_regular(parameters(boost_tree_model))
+boost_tree_model_grid <- grid_regular(parameters(boost_tree_model), levels = 50)
 
 registerDoParallel(cl)
 
@@ -434,7 +454,7 @@ boost_tree_model_hash <- tune_grid(
   resamples = k_folds_data
 )
 
-autoplot(boost_tree_model_hash)
+#autoplot(boost_tree_model_hash)
 
 boost_tree_model_hash %>% show_best("roc_auc")
 
@@ -469,7 +489,7 @@ svm_poly_hash <- tune_grid(
   resamples = k_folds_data
 )
 
-autoplot(svm_poly_hash)
+#autoplot(svm_poly_hash)
 
 svm_poly_hash %>% show_best("recall")
 
@@ -508,7 +528,7 @@ svm_rbf_hash <- tune_grid(
   resamples = k_folds_data
 )
 
-autoplot(svm_rbf_hash)
+#autoplot(svm_rbf_hash)
 
 svm_rbf_hash %>% show_best("roc_auc")
 
@@ -543,7 +563,7 @@ nearest_neighbor_hash <- tune_grid(
   resamples = k_folds_data
 )
 
-autoplot(nearest_neighbor_hash)
+#autoplot(nearest_neighbor_hash)
 
 nearest_neighbor_hash %>% show_best("roc_auc")
 
