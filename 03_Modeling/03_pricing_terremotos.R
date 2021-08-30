@@ -404,7 +404,7 @@ saveRDS(c5_rules_hash, "03_Modeling/hash/c5_rules_hash.rds")
 
 
 
-bagged_decision_tree_model <- bag_tree(cost_complexity = tune(),
+bagged_decision_tree_model <- bag_tree(cost_complexity = 0.02,
                                        tree_depth = tune(),
                                        min_n = tune())  %>%
   set_engine("rpart") %>%

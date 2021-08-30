@@ -1,4 +1,5 @@
-
+library(tidyverse)
+library(tidymodels)
 
 VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")
 
@@ -365,8 +366,7 @@ final_param <- bag_mars_hash %>%
   dplyr::slice(1 )%>%
   select(trees, min_n)
 
-model <- bag_tree(cost_complexity = .00000316 ,
-                  tree_depth = 15,
+model <- bag_tree(cost_complexity = 0.1, tree_depth = 15,
                   min_n = 2)  %>%
   set_engine("rpart") %>%
   set_mode("classification")
@@ -579,7 +579,7 @@ rf_testing_pred%>%
 
 
 # KNN ----------------------------------------------------------------------------
-
+library(kknn)
 
 
 autoplot(nearest_neighbor_hash)
@@ -684,16 +684,16 @@ final_res %>%
 VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos_modelo_intensidad.rds")
 
 
-rand_forest_model_best <- rand_forest(trees = 2000,
-                                 min_n = 2) %>%
-  set_engine("ranger") %>%
+model <- bag_tree(cost_complexity = 0.02, tree_depth = 8,
+                  min_n = 21)  %>%
+  set_engine("rpart") %>%
   set_mode("classification")
 
 
 
 
 
-fit <- rand_forest_model_best %>%
+fit <- model %>%
   fit(inten~., data= train_data)
 
 rf_testing_pred <- 
@@ -710,21 +710,37 @@ rf_testing_pred <-
 
 
 rf_testing_pred %>%
-  roc_curve(truth = inten, `.pred_<IV`:.pred_VII) %>%
+  roc_curve(truth = inten, `<IV`:VI) %>%
   ggplot(aes(1 - specificity, sensitivity, color = .level)) +
   geom_abline(lty = 2, color = "gray80", size = 1.5) +
   geom_path() +
-  coord_equal() +
-  labs(color = NULL)
-View(rf_testing_pred)
+  labs(color = NULL)+
+  labs(title = "Curva ROC en testing",
+       subtitle = "Modelo árbol de decisión") 
 
 rf_testing_pred %>%
-  yardstick::recall(truth = inten, .pred_class)
+  yardstick::recall(truth = inten, predict)
+
+rf_testing_pred%>%
+  yardstick::precision(truth = inten, predict)
+
 
 rf_testing_pred %>%
-  conf_mat(truth = inten, estimate = .pred_class)
+  conf_mat(truth = inten, estimate = predict)
 
 
+
+
+
+rf_training_pred %>%
+  yardstick::recall(truth = inten, predict)
+
+rf_training_pred%>%
+  yardstick::precision(truth = inten, predict)
+
+
+rf_training_pred %>%
+  conf_mat(truth = inten, estimate = predict)
 
 
 
@@ -746,38 +762,26 @@ bagged_decision_tree_hash %>% show_best("recall")
 
 
 
-model <- bag_tree(cost_complexity = .00000316 ,
-                  tree_depth = 15,
-                  min_n = 2)  %>%
-  set_engine("rpart") %>%
-  set_mode("classification")
+fit <-rpart::rpart(inten~., data= train_data, method = "class",
+                   control = rpart::rpart.control(cp = 0.02,minsplit = 21,maxdepth = 8))
 
-
-
-fit <- model %>%
-  fit(inten~., data= train_data)
-
+rpart.plot::rpart.plot(fit)
 
 rf_training_pred <- 
-  predict(fit, train_data) %>% 
-  bind_cols(predict(fit, train_data, type = "prob")) %>% 
-  bind_cols(train_data %>% select(inten))
-
+  cbind("predict"=predict(fit,train_data, type = "class"),
+        predict(fit, train_data, type = "prob"),
+        train_data %>% select(inten))
 
 
 rf_testing_pred <- 
-  predict(fit, test_data) %>% 
-  bind_cols(predict(fit, test_data, type = "prob")) %>% 
-  bind_cols(test_data %>% select(inten))
+  cbind("predict"=predict(fit,test_data, type = "class"),
+        predict(fit, test_data, type = "prob"),
+        test_data %>% select(inten))
 
 
 
-
-
-
-
-rf_testing_pred %>%
-  roc_curve(truth = inten, `.pred_<IV`:.pred_VI) %>%
+rf_testing_pred%>%
+  roc_curve(truth = inten, `<IV`:VI) %>%
   ggplot(aes(1 - specificity, sensitivity, color = .level)) +
   geom_abline(lty = 2, color = "gray80", size = 2) +
   theme_minimal()+
@@ -785,41 +789,69 @@ rf_testing_pred %>%
   labs(title = "Curva ROC",
        subtitle = "Modelo bagged tree")
 
+rpart.plot::rpart.plot(fit,type = 0,
+                       main = "Árbol modelo elegido")
 
 
 
-
-library("DALEXtra")
-
-wflow <- workflow() %>%
-  add_recipe( recipe(inten ~ ., data = train_data)) %>%
-  add_model(model) %>%
-  fit(train_data)
+rf_testing_pred %>%
+  yardstick::recall(truth = inten, predict)
 
 
+library("DALEX")
+exp_rf <- DALEX::explain(fit, data = test_data)
 
+plot(fit)
+library("shapper")
 
-a <- explain_tidymodels(wflow, data = train_data, y = train_data$inten)
-a$y_hat
-
-pdp_time <- model_profile(
-  a,
-  variables = "inten",
-  N = NULL,
-  groups = "type"
+muestra <-tibble("prof_km"=300,
+                 "inten"=as.factor("VII"),
+                 "mag"=10,
+                 "placa_tectonica"=as.factor(0)
 )
-b <-model_profile(a)
-plot(b)
+
+muestra$mag <- (muestra$mag - 2.850961)/0.9478287
+muestra$prof_km <- log(muestra$prof_km)
+
+
+ive_rf <- shap(exp_rf, new_observation = muestra)
+ive_rf
+
+a <- plot(ive_rf)+
+  labs(title = "Deep earthquake")
 
 
 
-as_tibble(b$agr_profiles) %>%
-  mutate(`_label_` = str_remove(`_label_`, "workflow.")) %>%
-  ggplot(aes(`_x_`, `_yhat_`, color = `_label_`)) +
-  geom_line(size = 1.2, alpha = 0.5) +
-  labs(
-    x = "Time to complete track",
-    y = "Predicted probability of shortcut",
-    title = "Partial dependence plot for Mario Kart world records",
-    subtitle = "Predictions from a decision tree model"
-  )
+
+
+
+
+
+muestra <-tibble("prof_km"=1,
+                 "inten"=as.factor("VII"),
+                 "mag"=5,
+                 "placa_tectonica"=as.factor(0)
+)
+
+muestra$mag <- (muestra$mag - 2.850961)/0.9478287
+muestra$prof_km <- log(muestra$prof_km)
+
+
+ive_rf <- shap(exp_rf, new_observation = muestra)
+ive_rf
+
+plot(ive_rf)+
+  labs(title = "Terremoto superficial, magnitud media")
+
+
+predict(fit,muestra, type = "class")
+gridExtra::grid.arrange(a,b)
+
+
+
+
+
+saveRDS(fit, "05_Deployment/models/arbol_intensidad_terremotos.rds")
+
+
+
