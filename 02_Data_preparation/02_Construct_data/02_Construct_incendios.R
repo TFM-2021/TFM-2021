@@ -37,15 +37,15 @@ datos2 <- merge(datos1, datos_provincias, by = "idprovincia", all.x = TRUE)
 datos_finales <- datos2[,-c(1:2)]
 
 
-ggplot(datos_finales, aes(lng, lat), color = "grey99") +
-  borders("state") + geom_point() +
-  geom_label_repel(aes(label = provincia)) +
-  theme_void()
-
+# ggplot(datos_finales, aes(lng, lat), color = "grey99") +
+#   borders("state") + geom_point() +
+#   geom_label_repel(aes(label = provincia)) +
+#   theme_void()
+# 
 
 # Cambiar las variables de tiempo?
 
-
+summary(datos_finales)
 
 
 
