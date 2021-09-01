@@ -1,0 +1,14 @@
+name: 05_Deployment
+title: 05_Deployment
+username:
+account: sercala97
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4573142
+bundleId: 4989627
+url: https://sercala97.shinyapps.io/05_Deployment/
+when: 1630513605.64536
+lastSyncTime: 1630513605.64536
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app|README.txt

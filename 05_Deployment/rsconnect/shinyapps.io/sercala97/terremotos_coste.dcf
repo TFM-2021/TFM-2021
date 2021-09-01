@@ -1,0 +1,14 @@
+name: terremotos_coste
+title: terremotos_coste
+username:
+account: sercala97
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4566639
+bundleId: 4989833
+url: https://sercala97.shinyapps.io/terremotos_coste/
+when: 1630517026.97619
+lastSyncTime: 1630517026.97619
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: app|README.txt
