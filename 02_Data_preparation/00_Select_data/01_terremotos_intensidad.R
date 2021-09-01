@@ -9,14 +9,16 @@ colnames(terremotos_ign)
 
   
 
-# Selección de atributos o características (columnas)
+# Selección de atributos o características (columnas) y Selección de elementos (filas)
 
 terremotos_intensidad <- terremotos_ign %>%
-    select(`Prof. (Km)`, Inten., Mag., `Tipo Mag.`)
+  dplyr::filter(`Tipo Mag.` %in% c(2, 3, 4)) %>%
+    dplyr::select(`Prof. (Km)`, Inten., Mag.,Latitud,Longitud)
 
-# Selección de elementos (filas)
+
 
 terremotos_intensidad <- terremotos_intensidad %>%
-  select(!`Tipo Mag.`)
+  dplyr::filter(!is.na(Inten.))
+
 
 saveRDS(terremotos_intensidad, file = "02_Data_preparation/00_Select_data/terremotos_selected_modelo_intensidad.rds")
