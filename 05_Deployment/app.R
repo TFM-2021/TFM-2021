@@ -14,28 +14,53 @@ matriz_costes <- read_delim("matriz_costes.csv",
 
 # Define UI ----
 ui <- dashboardPage(
+  
   dashboardHeader(title = "CALCULADORA"),
+  
   dashboardSidebar(
-    menuItem(
-      "CALCULADORA TERREMOTOS",
+    menuItem("CALCULADORA TERREMOTOS",
+             
       tabName = "calculadora_terremotos"
-    )
-  ),
+      )
+    ),
+  
   dashboardBody(
-    tabItem(
-      
-      tabName = "calculadora_terremotos",
-      
-      div(
+    fluidRow(
+     tabBox(
+       title =  "calculadora_terremotos",
+       width = "550px", 
+       height = "510px",
+       
+      tabPanel("Frecuencia"
+                
+                
+        
+                
+                ),
+       
+       
+       
+       
+     tabPanel("Intensidad",
+               
           box(valueBoxOutput("pred_inten", width = 12)),
       
           box(solidHeader = TRUE,
-           sliderInput("magnitud", label = "Magnitud",
-                      min = 0, max = 10, value = 5, step = 0.1)),
+              
+           sliderInput("magnitud", 
+                       label = "Magnitud",
+                      min = 0, 
+                      max = 10, 
+                      value = 5, 
+                      step = 0.1)),
+          
            box(sliderInput("profundidad", label = "Profundidad",
-                      min = 0, max = 300, value = 10,step = 0.1)),
+                      min = 0, 
+                      max = 300, 
+                      value = 10,
+                      step = 0.1)),
           ),
-      div(
+     tabPanel("Coste",
         
         box(valueBoxOutput("pred_coste", width = 12)),
         
@@ -64,9 +89,13 @@ ui <- dashboardPage(
       
     )
   )
-  
+  )
   
 )
+
+
+
+
 
 
 # Define server logic ----
@@ -98,11 +127,13 @@ server <- function(input, output) {
     
     
     valueBox(
-      value = paste0(round(100*as.numeric(prediction_prob), 0), "%"),
-      subtitle = paste0("Intensidad: ",as.character(prediction)),
+      subtitle = paste0(round(100*as.numeric(prediction_prob), 0), "% de probabilidad"),
+      value = paste0("Intensidad: ",as.character(prediction)),
     )
     
-  })
+  }) %>%
+    bindCache(input$profundidad,
+              input$magnitud)
   
   
   
