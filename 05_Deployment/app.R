@@ -39,7 +39,7 @@ ui <- dashboardPage(
                 ),
        
        
-       
+      
        
      tabPanel("Intensidad",
                
