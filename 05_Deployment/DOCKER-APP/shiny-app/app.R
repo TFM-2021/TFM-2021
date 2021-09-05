@@ -5,12 +5,12 @@ library(ggplot2)
 library(shinydashboard)
 library(tidyr)
 
-arbol <- read_rds("arbol_intensidad_terremotos.rds")
+arbol <- read_rds("../shiny-server/arbol_intensidad_terremotos.rds")
 
-matriz_costes <- readRDS("matriz_costes.rds")
+matriz_costes <- readRDS("../shiny-server/matriz_costes.rds")
 
 
-terremotos_evt <- readRDS("VAL_terremotos_EVT_clusters_clara.rds")
+terremotos_evt <- readRDS("../shiny-server/VAL_terremotos_EVT_clusters_clara.rds")
 
 terremotos_evt$fecha <- as.Date(terremotos_evt$fecha, format="%d/%m/%Y")
 
@@ -40,7 +40,7 @@ fitGumbel <- function(x, metodo_optimizacion=NULL){
     -(-length(x)*log(desv)-sum((x-media)/desv)-sum(exp(-(x-media)/desv)))
     
   }
-
+  
   optimizacion <<- optim(par=c(0.1,0.1), fn = eq, hessian = T, method = "SANN")
 }
 
@@ -54,111 +54,111 @@ ui <- dashboardPage(
     
     menuItem("CALCULADORA TERREMOTOS",
              
-      tabName = "calculadora terremotos")),
+             tabName = "calculadora terremotos")),
   
   dashboardBody(
     fluidRow(
-     tabBox(
-       title =  "calculadora_terremotos",
-       width = "550px", 
-       height = "5000px",
-       
-      tabPanel("Frecuencia",
-               
-                box(width = 12,selectInput(
-                  "select_cluster",
-                  label = "Seleccione cluster",
-                  choices = c(1,2,3,4)
-                  
-                )
-                ),
-               div(
+      tabBox(
+        title =  "calculadora_terremotos",
+        width = "550px", 
+        height = "5000px",
+        
+        tabPanel("Frecuencia",
                  
-                 box(width = 50,background = "purple",
-                  box(width = 12,background = "navy",
-                   h1("Modelo GEV")),
-                   box(plotOutput("location_plot"),background = "olive"),
+                 box(width = 12,selectInput(
+                   "select_cluster",
+                   label = "Seleccione cluster",
+                   choices = c(1,2,3,4)
                    
-                   box(plotOutput("scale_plot"),background = "olive"),
-                   
-                   box(plotOutput("shape_plot"),background = "olive"),
-                   box(title = "Calidad del ajuste",tableOutput("summary_GEV"),background = "olive", width = 4),
-                   box(title = "Desviaciones típicas estimadas",tableOutput("summary_GEV2"),background = "olive", width = 4),
-                   box(title = "Matriz covarianzas",tableOutput("summary_GEV3"),background = "olive", width = 4),
-                   box(numericInput("return_level_GEV",value = 5,label = "Introduzca el año de cálculo"),
-                       tableOutput("calculo_return_GEV"),background = "olive"))
+                 )
                  ),
-               div(
-                 
-                 box(width = 50,background = "purple",
-                 box(width = 12,background = "navy",
-                       h1("Modelo GUMBEL")),
-                 
-                 box(plotOutput("location_plotgumbel"),background = "olive"),
-                 
-                 box(plotOutput("scale_plotgumbel"),background = "olive"),
-                 
-                 box(title = "Calidad del ajuste",tableOutput("summary_GUMBEL"),background = "olive", width = 4),
-                 box(title = "Desviaciones típicas estimadas",tableOutput("summary_GUMBEL2"),background = "olive", width = 4),
-                 box(title = "Matriz covarianzas",tableOutput("summary_GUMBEL3"),background = "olive", width = 4),
-                 box(numericInput("return_level_GUMBEL",value = 5,label = "Introduzca el año de cálculo"),
-                     tableOutput("calculo_return_GUMBEL"),background = "olive"))
-                 
+                 div(
+                   
+                   box(width = 50,background = "purple",
+                       box(width = 12,background = "navy",
+                           h1("Modelo GEV")),
+                       box(plotOutput("location_plot"),background = "olive"),
+                       
+                       box(plotOutput("scale_plot"),background = "olive"),
+                       
+                       box(plotOutput("shape_plot"),background = "olive"),
+                       box(title = "Calidad del ajuste",tableOutput("summary_GEV"),background = "olive", width = 4),
+                       box(title = "Desviaciones típicas estimadas",tableOutput("summary_GEV2"),background = "olive", width = 4),
+                       box(title = "Matriz covarianzas",tableOutput("summary_GEV3"),background = "olive", width = 4),
+                       box(numericInput("return_level_GEV",value = 5,label = "Introduzca el año de cálculo"),
+                           tableOutput("calculo_return_GEV"),background = "olive"))
+                 ),
+                 div(
+                   
+                   box(width = 50,background = "purple",
+                       box(width = 12,background = "navy",
+                           h1("Modelo GUMBEL")),
+                       
+                       box(plotOutput("location_plotgumbel"),background = "olive"),
+                       
+                       box(plotOutput("scale_plotgumbel"),background = "olive"),
+                       
+                       box(title = "Calidad del ajuste",tableOutput("summary_GUMBEL"),background = "olive", width = 4),
+                       box(title = "Desviaciones típicas estimadas",tableOutput("summary_GUMBEL2"),background = "olive", width = 4),
+                       box(title = "Matriz covarianzas",tableOutput("summary_GUMBEL3"),background = "olive", width = 4),
+                       box(numericInput("return_level_GUMBEL",value = 5,label = "Introduzca el año de cálculo"),
+                           tableOutput("calculo_return_GUMBEL"),background = "olive"))
+                   
                  )),
-       
-       
-      
-       
-     tabPanel("Intensidad",
-               
-          box(valueBoxOutput("pred_inten", width = 12)),
-      
-          box(solidHeader = TRUE,
-              
-           sliderInput("magnitud", 
-                       label = "Magnitud",
-                      min = 0, 
-                      max = 10, 
-                      value = 5, 
-                      step = 0.1)),
-          
-           box(sliderInput("profundidad", label = "Profundidad",
-                      min = 0, 
-                      max = 300, 
-                      value = 10,
-                      step = 0.1)),
-          ),
-     tabPanel("Coste",
-        
-        box(valueBoxOutput("pred_coste", width = 12)),
-        
-        box(numericInput("m2_ladrillo",
-                     label = "Metros cuadrados ladrillo",
-                     value = 10000,
-                     step = 10000)),
-        
-            box(numericInput("m2_hormigon",
-                     label = "Metros cuadrados hormigón",
-                     value = 10000,
-                     step = 10000)),
-        
-            box(numericInput("m2_coste",
-                     label = "Coste metros cuadrados",
-                     value = 1000,
-                     step = 10)),
-            box( selectInput("intensidad_terremoto",
-                    label = "Elija la intensidad",
-                    choices = unique(matriz_costes$Terremoto)))
         
         
         
+        
+        tabPanel("Intensidad",
+                 
+                 box(valueBoxOutput("pred_inten", width = 12)),
+                 
+                 box(solidHeader = TRUE,
+                     
+                     sliderInput("magnitud", 
+                                 label = "Magnitud",
+                                 min = 0, 
+                                 max = 10, 
+                                 value = 5, 
+                                 step = 0.1)),
+                 
+                 box(sliderInput("profundidad", label = "Profundidad",
+                                 min = 0, 
+                                 max = 300, 
+                                 value = 10,
+                                 step = 0.1)),
+        ),
+        tabPanel("Coste",
+                 
+                 box(valueBoxOutput("pred_coste", width = 12)),
+                 
+                 box(numericInput("m2_ladrillo",
+                                  label = "Metros cuadrados ladrillo",
+                                  value = 10000,
+                                  step = 10000)),
+                 
+                 box(numericInput("m2_hormigon",
+                                  label = "Metros cuadrados hormigón",
+                                  value = 10000,
+                                  step = 10000)),
+                 
+                 box(numericInput("m2_coste",
+                                  label = "Coste metros cuadrados",
+                                  value = 1000,
+                                  step = 10)),
+                 box( selectInput("intensidad_terremoto",
+                                  label = "Elija la intensidad",
+                                  choices = unique(matriz_costes$Terremoto)))
+                 
+                 
+                 
+                 
+        )
         
       )
-      
     )
-  )
   ))
-  
+
 
 
 
@@ -359,7 +359,7 @@ server <- function(input, output) {
     
   })
   
-
+  
   
   output$calculo_return_GEV <- renderTable({
     
@@ -401,7 +401,7 @@ server <- function(input, output) {
   # GUMBEL----------------------------------------------------------------------
   
   evt_gumbel <- reactive({
-  
+    
     x <<- terremotos_evt %>%
       filter(cluster == input$select_cluster)%>%
       group_by(fecha)%>%
@@ -487,7 +487,7 @@ server <- function(input, output) {
     # agrupamos para plotear
     df <- data.frame(secuencia, verosimilitud_funcion_media)
     
-   ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
+    ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
       geom_line() +
       xlim(as.double(valor_scale-0.1),
            as.double(valor_scale+0.1)) +
@@ -513,7 +513,7 @@ server <- function(input, output) {
   output$summary_GUMBEL <- renderTable({
     
     resultados_fit <- tibble("Parametro"= c("location", "scale"),
-                            "Valores_optimos"= evt_gumbel()$par)
+                             "Valores_optimos"= evt_gumbel()$par)
     
     verosimilitud <<- c( evt_gumbel()$value)
     
@@ -555,16 +555,16 @@ server <- function(input, output) {
     
     location <- as.double(resultados_fit[1,2])
     scale <-  as.double(resultados_fit[2,2])
-
-
+    
+    
     p <- 1/(input$return_level_GUMBEL*365)
     
-      
-      Z <- as.numeric(location-scale*log(-log(1-p)))
-      
-      
-      
-      tibble(media=Z)
+    
+    Z <- as.numeric(location-scale*log(-log(1-p)))
+    
+    
+    
+    tibble(media=Z)
     
   })
   
@@ -645,8 +645,6 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
-
-
 
 
 

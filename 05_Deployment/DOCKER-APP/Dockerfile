@@ -5,10 +5,7 @@ RUN apt-get update && apt-get install -y \
     libssl-dev
 
 
-RUN R -e 'install.packages(c(\
-              "shiny", \
-              "shinydashboard", \
-              "tidyr" ,"dplyr"))'
+RUN R -e 'install.packages(c("shiny","dplyr","ggplot2","readr","shinydashboard","tidyr"))'
           
 # copy the app directory into the image
 COPY ./shiny-app/* /srv/shiny-server/
