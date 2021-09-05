@@ -5,6 +5,7 @@
 # ARCHIVOS > 100Mb
 /data/data_raw/AEMET/datos_diario/aemet_diarios_join.csv
 /data/data_raw/AEMET/datos_diario/aemet_diarios_join_completo.csv
+/05_Deployment/Spark/*
 
 # Session Data files
 .RData
