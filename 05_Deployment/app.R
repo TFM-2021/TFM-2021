@@ -5,30 +5,20 @@ library(ggplot2)
 library(shinydashboard)
 library(tidyr)
 
+#arbol <- read_rds("05_Deployment/arbol_intensidad_terremotos.rds")
+#matriz_costes <- readRDS("05_Deployment/matriz_costes.rds")
+#terremotos_evt <- readRDS("05_Deployment/VAL_terremotos_EVT_clusters_clara.rds")
+
 arbol <- read_rds("arbol_intensidad_terremotos.rds")
-
 matriz_costes <- readRDS("matriz_costes.rds")
-
-
 terremotos_evt <- readRDS("VAL_terremotos_EVT_clusters_clara.rds")
+
+
 
 terremotos_evt$fecha <- as.Date(terremotos_evt$fecha, format="%d/%m/%Y")
 
 
 
-fitGEV <-  function(x, parametros_iniciales, metodo_optimizacion=NULL){
-  
-  eq = function(par){
-    media <- par[1]
-    desv <- par[2]
-    E <- par[3]
-    (-length(x)*log(desv)   -(1+1/E)*sum(log(1+E*((x-media)/desv))) -sum((1+E*((x-media)/desv))^(-1/E)))*-1
-    
-    
-  }
-  
-  optimizacion <<- optim(parametros_iniciales,fn = eq,hessian = TRUE,method = metodo_optimizacion)
-}
 
 
 fitGumbel <- function(x, metodo_optimizacion=NULL){
@@ -41,7 +31,7 @@ fitGumbel <- function(x, metodo_optimizacion=NULL){
     
   }
 
-  optimizacion <<- optim(par=c(0.1,0.1), fn = eq, hessian = T, method = "SANN")
+  optimizacion <- optim(par=c(0.1,0.1), fn = eq, hessian = T, method = "SANN")
 }
 
 
@@ -154,10 +144,10 @@ ui <- dashboardPage(
         
         
       )
-      
     )
   )
-  ))
+)
+)
   
 
 
@@ -168,7 +158,26 @@ ui <- dashboardPage(
 
 # Define server logic ----
 server <- function(input, output) {
-  values <- reactiveValues()
+
+  fitGEV <-  function(x, parametros_iniciales, metodo_optimizacion=NULL){
+    
+    eq = function(par){
+      media <- par[1]
+      desv <- par[2]
+      E <- par[3]
+      (-length(x)*log(desv)   -(1+1/E)*sum(log(1+E*((x-media)/desv))) -sum((1+E*((x-media)/desv))^(-1/E)))*-1
+      
+      
+    }
+    
+    optimizacion <- optim(parametros_iniciales,fn = eq,hessian = TRUE,method = metodo_optimizacion)
+  }
+  
+  
+  
+  
+  
+  
   
   evt <- reactive({
     
@@ -181,30 +190,47 @@ server <- function(input, output) {
     fitGEV(x$mag, c(0.1,0.1,0.1))
   }) 
   
+  
+  resultados_fit <- reactive({
+    
+    tibble("Parametro"= c("location", "scale", "shape"),
+           "Valores_optimos"= evt()$par)
+  })
+  
+  valor_location <- reactive({
+    as.double(resultados_fit()[1,2])
+    
+  })
+  
+  valor_scale <- reactive({
+    as.double(resultados_fit()[2,2])
+    
+  })
+  
+  valor_shape <- reactive({
+    as.double(resultados_fit()[3,2])
+    
+  })
+  
   output$location_plot <- renderPlot({
     
-    resultados_fit <- tibble("Parametro"= c("location", "scale", "shape"),
-                             "Valores_optimos"= evt()$par)
+
     
     verosimilitud <- c(evt()$value)
     
-    
-    valor_location <- as.double(resultados_fit[1,2])
-    valor_scale <-  as.double(resultados_fit[2,2])
-    valor_shape <-  as.double(resultados_fit[3,2])
-    
+
     # PLOT LOCATION -------------------------------------------------------
     
     # secuencia son los numeros de la variable location para calcular y graficar
-    secuencia <-seq(valor_location-0.1,
-                    valor_location+0.1,
+    secuencia <-seq(valor_location()-0.1,
+                    valor_location()+0.1,
                     0.01)
     
     #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
     
     verosimilitud_funcion_media <- sapply(secuencia, function(media){
-      E <- as.double(resultados_fit[3,2])
-      desv <- as.double(resultados_fit[2,2])
+      E <- as.double(resultados_fit()[3,2])
+      desv <- as.double(resultados_fit()[2,2])
       
       (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
     })
@@ -214,8 +240,8 @@ server <- function(input, output) {
     
     ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
       geom_line() +
-      xlim(as.double(valor_location-0.1),
-           as.double(valor_location+0.1)) +
+      xlim(as.double(valor_location()-0.1),
+           as.double(valor_location()+0.1)) +
       
       labs(title = "Relación Verosimilitud / Location",
            x = "Location",
@@ -235,27 +261,19 @@ server <- function(input, output) {
   
   output$scale_plot <- renderPlot({
     
-    resultados_fit <- tibble("Parametro"= c("location", "scale", "shape"),
-                             "Valores_optimos"= evt()$par)
     
-    verosimilitud <<- c(evt()$value)
-    
-    
-    valor_location <- as.double(resultados_fit[1,2])
-    valor_scale <-  as.double(resultados_fit[2,2])
-    valor_shape <-  as.double(resultados_fit[3,2])
     # PLOT SCALE -------------------------------------------------------
     
     # secuencia son los numeros de la variable SCALE para calcular y graficar
-    secuencia <-seq(valor_scale-0.1,
-                    valor_scale+0.1,
+    secuencia <-seq(valor_scale()-0.1,
+                    valor_scale()+0.1,
                     0.01)
     
     #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
     
     verosimilitud_funcion_media <- sapply(secuencia, function(desv){
-      E <- valor_shape
-      media <- valor_location
+      E <- valor_shape()
+      media <- valor_location()
       
       (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
     })
@@ -265,8 +283,8 @@ server <- function(input, output) {
     
     ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
       geom_line() +
-      xlim(as.double(valor_scale-0.1),
-           as.double(valor_scale+0.1)) +
+      xlim(as.double(valor_scale()-0.1),
+           as.double(valor_scale()+0.1)) +
       
       labs(title = "Relación Verosimilitud / Scale",
            x = "Scale",
@@ -284,27 +302,19 @@ server <- function(input, output) {
   
   output$shape_plot <- renderPlot({
     
-    resultados_fit <<- tibble("Parametro"= c("location", "scale", "shape"),
-                              "Valores_optimos"= evt()$par)
     
-    verosimilitud <<- c(evt()$value)
-    
-    
-    valor_location <- as.double(resultados_fit[1,2])
-    valor_scale <-  as.double(resultados_fit[2,2])
-    valor_shape <-  as.double(resultados_fit[3,2])
-    
+
     
     # secuencia son los numeros de la variable SHAPE para calcular y graficar
-    secuencia <-seq(valor_shape-0.1,
-                    valor_shape+0.1,
+    secuencia <-seq(valor_shape()-0.1,
+                    valor_shape()+0.1,
                     0.01)
     
     #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
     
     verosimilitud_funcion_media <- sapply(secuencia, function(E){
-      media <- valor_location
-      desv <- valor_scale
+      media <- valor_location()
+      desv <- valor_scale()
       
       (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
     })
@@ -314,8 +324,8 @@ server <- function(input, output) {
     
     ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
       geom_line() +
-      xlim(as.double(valor_shape-0.1),
-           as.double(valor_shape+0.1)) +
+      xlim(as.double(valor_shape()-0.1),
+           as.double(valor_shape()+0.1)) +
       
       labs(title = "Relación Verosimilitud / Shape",
            x = "Scale",
@@ -332,6 +342,8 @@ server <- function(input, output) {
   
   
   output$summary_GEV <- renderTable({
+    verosimilitud <- c( evt()$value)
+    
     
     tibble("Negative log likelihood"=verosimilitud,
            
@@ -345,17 +357,17 @@ server <- function(input, output) {
   
   output$summary_GEV2 <- renderTable({
     
-    data.frame("location"=sqrt(solve(optimizacion$hessian)[1,1]),
-               "scale"=sqrt(solve(optimizacion$hessian)[2,2]),
-               "shape"=sqrt(solve(optimizacion$hessian)[3,3]))
+    data.frame("location"=sqrt(solve(evt()$hessian)[1,1]),
+               "scale"=sqrt(solve(evt()$hessian)[2,2]),
+               "shape"=sqrt(solve(evt()$hessian)[3,3]))
     
   })
   
   output$summary_GEV3 <- renderTable({
     
-    data.frame("location"=solve(optimizacion$hessian)[1,],
-               "scale"=solve(optimizacion$hessian)[2,],
-               "shape"=solve(optimizacion$hessian)[3,])
+    data.frame("location"=solve(evt()$hessian)[1,],
+               "scale"=solve(evt()$hessian)[2,],
+               "shape"=solve(evt()$hessian)[3,])
     
   })
   
@@ -367,9 +379,9 @@ server <- function(input, output) {
                              "Valores_optimos"= evt()$par)
     
     
-    V <- as.matrix(tibble("location"=solve(optimizacion$hessian)[1,],
-                          "scale"=solve(optimizacion$hessian)[2,],
-                          "shape"=solve(optimizacion$hessian)[3,]))
+    V <- as.matrix(tibble("location"=solve(evt()$hessian)[1,],
+                          "scale"=solve(evt()$hessian)[2,],
+                          "shape"=solve(evt()$hessian)[3,]))
     
     location <- as.double(resultados_fit[1,2])
     scale <-  as.double(resultados_fit[2,2])
@@ -508,17 +520,13 @@ server <- function(input, output) {
     
   })
   
-  
-  
+
   output$summary_GUMBEL <- renderTable({
     
-    resultados_fit <- tibble("Parametro"= c("location", "scale"),
-                            "Valores_optimos"= evt_gumbel()$par)
     
-    verosimilitud <<- c( evt_gumbel()$value)
     
-    valor_location <- as.double(resultados_fit[1,2])
-    valor_scale <-  as.double(resultados_fit[2,2])
+    verosimilitud <- c( evt_gumbel()$value)
+    
     
     tibble("Negative log likelihood"=verosimilitud,
            
@@ -533,16 +541,16 @@ server <- function(input, output) {
   
   output$summary_GUMBEL2 <- renderTable({
     
-    data.frame("location"=sqrt(solve(optimizacion$hessian)[1,1]),
-               "scale"=sqrt(solve(optimizacion$hessian)[2,2]))
+    data.frame("location"=sqrt(solve(evt_gumbel()$hessian)[1,1]),
+               "scale"=sqrt(solve(evt_gumbel()$hessian)[2,2]))
     
   })
   
   
   output$summary_GUMBEL3 <- renderTable({
     
-    data.frame("location"=solve(optimizacion$hessian)[1,],
-               "scale"=solve(optimizacion$hessian)[2,])
+    data.frame("location"=solve(evt_gumbel()$hessian)[1,],
+               "scale"=solve(evt_gumbel()$hessian)[2,])
     
   })
   
@@ -645,7 +653,6 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
-
 
 
 

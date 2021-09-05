@@ -12,23 +12,12 @@ matriz_costes <- readRDS("../shiny-server/matriz_costes.rds")
 
 terremotos_evt <- readRDS("../shiny-server/VAL_terremotos_EVT_clusters_clara.rds")
 
+
+
 terremotos_evt$fecha <- as.Date(terremotos_evt$fecha, format="%d/%m/%Y")
 
 
 
-fitGEV <-  function(x, parametros_iniciales, metodo_optimizacion=NULL){
-  
-  eq = function(par){
-    media <- par[1]
-    desv <- par[2]
-    E <- par[3]
-    (-length(x)*log(desv)   -(1+1/E)*sum(log(1+E*((x-media)/desv))) -sum((1+E*((x-media)/desv))^(-1/E)))*-1
-    
-    
-  }
-  
-  optimizacion <<- optim(parametros_iniciales,fn = eq,hessian = TRUE,method = metodo_optimizacion)
-}
 
 
 fitGumbel <- function(x, metodo_optimizacion=NULL){
@@ -40,8 +29,8 @@ fitGumbel <- function(x, metodo_optimizacion=NULL){
     -(-length(x)*log(desv)-sum((x-media)/desv)-sum(exp(-(x-media)/desv)))
     
   }
-  
-  optimizacion <<- optim(par=c(0.1,0.1), fn = eq, hessian = T, method = "SANN")
+
+  optimizacion <- optim(par=c(0.1,0.1), fn = eq, hessian = T, method = "SANN")
 }
 
 
@@ -54,111 +43,111 @@ ui <- dashboardPage(
     
     menuItem("CALCULADORA TERREMOTOS",
              
-             tabName = "calculadora terremotos")),
+      tabName = "calculadora terremotos")),
   
   dashboardBody(
     fluidRow(
-      tabBox(
-        title =  "calculadora_terremotos",
-        width = "550px", 
-        height = "5000px",
-        
-        tabPanel("Frecuencia",
+     tabBox(
+       title =  "calculadora_terremotos",
+       width = "550px", 
+       height = "5000px",
+       
+      tabPanel("Frecuencia",
+               
+                box(width = 12,selectInput(
+                  "select_cluster",
+                  label = "Seleccione cluster",
+                  choices = c(1,2,3,4)
+                  
+                )
+                ),
+               div(
                  
-                 box(width = 12,selectInput(
-                   "select_cluster",
-                   label = "Seleccione cluster",
-                   choices = c(1,2,3,4)
+                 box(width = 50,background = "purple",
+                  box(width = 12,background = "navy",
+                   h1("Modelo GEV")),
+                   box(plotOutput("location_plot"),background = "olive"),
                    
-                 )
+                   box(plotOutput("scale_plot"),background = "olive"),
+                   
+                   box(plotOutput("shape_plot"),background = "olive"),
+                   box(title = "Calidad del ajuste",tableOutput("summary_GEV"),background = "olive", width = 4),
+                   box(title = "Desviaciones típicas estimadas",tableOutput("summary_GEV2"),background = "olive", width = 4),
+                   box(title = "Matriz covarianzas",tableOutput("summary_GEV3"),background = "olive", width = 4),
+                   box(numericInput("return_level_GEV",value = 5,label = "Introduzca el año de cálculo"),
+                       tableOutput("calculo_return_GEV"),background = "olive"))
                  ),
-                 div(
-                   
-                   box(width = 50,background = "purple",
-                       box(width = 12,background = "navy",
-                           h1("Modelo GEV")),
-                       box(plotOutput("location_plot"),background = "olive"),
-                       
-                       box(plotOutput("scale_plot"),background = "olive"),
-                       
-                       box(plotOutput("shape_plot"),background = "olive"),
-                       box(title = "Calidad del ajuste",tableOutput("summary_GEV"),background = "olive", width = 4),
-                       box(title = "Desviaciones típicas estimadas",tableOutput("summary_GEV2"),background = "olive", width = 4),
-                       box(title = "Matriz covarianzas",tableOutput("summary_GEV3"),background = "olive", width = 4),
-                       box(numericInput("return_level_GEV",value = 5,label = "Introduzca el año de cálculo"),
-                           tableOutput("calculo_return_GEV"),background = "olive"))
-                 ),
-                 div(
-                   
-                   box(width = 50,background = "purple",
-                       box(width = 12,background = "navy",
-                           h1("Modelo GUMBEL")),
-                       
-                       box(plotOutput("location_plotgumbel"),background = "olive"),
-                       
-                       box(plotOutput("scale_plotgumbel"),background = "olive"),
-                       
-                       box(title = "Calidad del ajuste",tableOutput("summary_GUMBEL"),background = "olive", width = 4),
-                       box(title = "Desviaciones típicas estimadas",tableOutput("summary_GUMBEL2"),background = "olive", width = 4),
-                       box(title = "Matriz covarianzas",tableOutput("summary_GUMBEL3"),background = "olive", width = 4),
-                       box(numericInput("return_level_GUMBEL",value = 5,label = "Introduzca el año de cálculo"),
-                           tableOutput("calculo_return_GUMBEL"),background = "olive"))
-                   
+               div(
+                 
+                 box(width = 50,background = "purple",
+                 box(width = 12,background = "navy",
+                       h1("Modelo GUMBEL")),
+                 
+                 box(plotOutput("location_plotgumbel"),background = "olive"),
+                 
+                 box(plotOutput("scale_plotgumbel"),background = "olive"),
+                 
+                 box(title = "Calidad del ajuste",tableOutput("summary_GUMBEL"),background = "olive", width = 4),
+                 box(title = "Desviaciones típicas estimadas",tableOutput("summary_GUMBEL2"),background = "olive", width = 4),
+                 box(title = "Matriz covarianzas",tableOutput("summary_GUMBEL3"),background = "olive", width = 4),
+                 box(numericInput("return_level_GUMBEL",value = 5,label = "Introduzca el año de cálculo"),
+                     tableOutput("calculo_return_GUMBEL"),background = "olive"))
+                 
                  )),
+       
+       
+      
+       
+     tabPanel("Intensidad",
+               
+          box(valueBoxOutput("pred_inten", width = 12)),
+      
+          box(solidHeader = TRUE,
+              
+           sliderInput("magnitud", 
+                       label = "Magnitud",
+                      min = 0, 
+                      max = 10, 
+                      value = 5, 
+                      step = 0.1)),
+          
+           box(sliderInput("profundidad", label = "Profundidad",
+                      min = 0, 
+                      max = 300, 
+                      value = 10,
+                      step = 0.1)),
+          ),
+     tabPanel("Coste",
+        
+        box(valueBoxOutput("pred_coste", width = 12)),
+        
+        box(numericInput("m2_ladrillo",
+                     label = "Metros cuadrados ladrillo",
+                     value = 10000,
+                     step = 10000)),
+        
+            box(numericInput("m2_hormigon",
+                     label = "Metros cuadrados hormigón",
+                     value = 10000,
+                     step = 10000)),
+        
+            box(numericInput("m2_coste",
+                     label = "Coste metros cuadrados",
+                     value = 1000,
+                     step = 10)),
+            box( selectInput("intensidad_terremoto",
+                    label = "Elija la intensidad",
+                    choices = unique(matriz_costes$Terremoto)))
         
         
         
-        
-        tabPanel("Intensidad",
-                 
-                 box(valueBoxOutput("pred_inten", width = 12)),
-                 
-                 box(solidHeader = TRUE,
-                     
-                     sliderInput("magnitud", 
-                                 label = "Magnitud",
-                                 min = 0, 
-                                 max = 10, 
-                                 value = 5, 
-                                 step = 0.1)),
-                 
-                 box(sliderInput("profundidad", label = "Profundidad",
-                                 min = 0, 
-                                 max = 300, 
-                                 value = 10,
-                                 step = 0.1)),
-        ),
-        tabPanel("Coste",
-                 
-                 box(valueBoxOutput("pred_coste", width = 12)),
-                 
-                 box(numericInput("m2_ladrillo",
-                                  label = "Metros cuadrados ladrillo",
-                                  value = 10000,
-                                  step = 10000)),
-                 
-                 box(numericInput("m2_hormigon",
-                                  label = "Metros cuadrados hormigón",
-                                  value = 10000,
-                                  step = 10000)),
-                 
-                 box(numericInput("m2_coste",
-                                  label = "Coste metros cuadrados",
-                                  value = 1000,
-                                  step = 10)),
-                 box( selectInput("intensidad_terremoto",
-                                  label = "Elija la intensidad",
-                                  choices = unique(matriz_costes$Terremoto)))
-                 
-                 
-                 
-                 
-        )
         
       )
     )
-  ))
-
+  )
+)
+)
+  
 
 
 
@@ -168,7 +157,26 @@ ui <- dashboardPage(
 
 # Define server logic ----
 server <- function(input, output) {
-  values <- reactiveValues()
+
+  fitGEV <-  function(x, parametros_iniciales, metodo_optimizacion=NULL){
+    
+    eq = function(par){
+      media <- par[1]
+      desv <- par[2]
+      E <- par[3]
+      (-length(x)*log(desv)   -(1+1/E)*sum(log(1+E*((x-media)/desv))) -sum((1+E*((x-media)/desv))^(-1/E)))*-1
+      
+      
+    }
+    
+    optimizacion <- optim(parametros_iniciales,fn = eq,hessian = TRUE,method = metodo_optimizacion)
+  }
+  
+  
+  
+  
+  
+  
   
   evt <- reactive({
     
@@ -181,30 +189,47 @@ server <- function(input, output) {
     fitGEV(x$mag, c(0.1,0.1,0.1))
   }) 
   
+  
+  resultados_fit <- reactive({
+    
+    tibble("Parametro"= c("location", "scale", "shape"),
+           "Valores_optimos"= evt()$par)
+  })
+  
+  valor_location <- reactive({
+    as.double(resultados_fit()[1,2])
+    
+  })
+  
+  valor_scale <- reactive({
+    as.double(resultados_fit()[2,2])
+    
+  })
+  
+  valor_shape <- reactive({
+    as.double(resultados_fit()[3,2])
+    
+  })
+  
   output$location_plot <- renderPlot({
     
-    resultados_fit <- tibble("Parametro"= c("location", "scale", "shape"),
-                             "Valores_optimos"= evt()$par)
+
     
     verosimilitud <- c(evt()$value)
     
-    
-    valor_location <- as.double(resultados_fit[1,2])
-    valor_scale <-  as.double(resultados_fit[2,2])
-    valor_shape <-  as.double(resultados_fit[3,2])
-    
+
     # PLOT LOCATION -------------------------------------------------------
     
     # secuencia son los numeros de la variable location para calcular y graficar
-    secuencia <-seq(valor_location-0.1,
-                    valor_location+0.1,
+    secuencia <-seq(valor_location()-0.1,
+                    valor_location()+0.1,
                     0.01)
     
     #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
     
     verosimilitud_funcion_media <- sapply(secuencia, function(media){
-      E <- as.double(resultados_fit[3,2])
-      desv <- as.double(resultados_fit[2,2])
+      E <- as.double(resultados_fit()[3,2])
+      desv <- as.double(resultados_fit()[2,2])
       
       (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
     })
@@ -214,8 +239,8 @@ server <- function(input, output) {
     
     ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
       geom_line() +
-      xlim(as.double(valor_location-0.1),
-           as.double(valor_location+0.1)) +
+      xlim(as.double(valor_location()-0.1),
+           as.double(valor_location()+0.1)) +
       
       labs(title = "Relación Verosimilitud / Location",
            x = "Location",
@@ -235,27 +260,19 @@ server <- function(input, output) {
   
   output$scale_plot <- renderPlot({
     
-    resultados_fit <- tibble("Parametro"= c("location", "scale", "shape"),
-                             "Valores_optimos"= evt()$par)
     
-    verosimilitud <<- c(evt()$value)
-    
-    
-    valor_location <- as.double(resultados_fit[1,2])
-    valor_scale <-  as.double(resultados_fit[2,2])
-    valor_shape <-  as.double(resultados_fit[3,2])
     # PLOT SCALE -------------------------------------------------------
     
     # secuencia son los numeros de la variable SCALE para calcular y graficar
-    secuencia <-seq(valor_scale-0.1,
-                    valor_scale+0.1,
+    secuencia <-seq(valor_scale()-0.1,
+                    valor_scale()+0.1,
                     0.01)
     
     #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
     
     verosimilitud_funcion_media <- sapply(secuencia, function(desv){
-      E <- valor_shape
-      media <- valor_location
+      E <- valor_shape()
+      media <- valor_location()
       
       (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
     })
@@ -265,8 +282,8 @@ server <- function(input, output) {
     
     ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
       geom_line() +
-      xlim(as.double(valor_scale-0.1),
-           as.double(valor_scale+0.1)) +
+      xlim(as.double(valor_scale()-0.1),
+           as.double(valor_scale()+0.1)) +
       
       labs(title = "Relación Verosimilitud / Scale",
            x = "Scale",
@@ -284,27 +301,19 @@ server <- function(input, output) {
   
   output$shape_plot <- renderPlot({
     
-    resultados_fit <<- tibble("Parametro"= c("location", "scale", "shape"),
-                              "Valores_optimos"= evt()$par)
     
-    verosimilitud <<- c(evt()$value)
-    
-    
-    valor_location <- as.double(resultados_fit[1,2])
-    valor_scale <-  as.double(resultados_fit[2,2])
-    valor_shape <-  as.double(resultados_fit[3,2])
-    
+
     
     # secuencia son los numeros de la variable SHAPE para calcular y graficar
-    secuencia <-seq(valor_shape-0.1,
-                    valor_shape+0.1,
+    secuencia <-seq(valor_shape()-0.1,
+                    valor_shape()+0.1,
                     0.01)
     
     #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
     
     verosimilitud_funcion_media <- sapply(secuencia, function(E){
-      media <- valor_location
-      desv <- valor_scale
+      media <- valor_location()
+      desv <- valor_scale()
       
       (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
     })
@@ -314,8 +323,8 @@ server <- function(input, output) {
     
     ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
       geom_line() +
-      xlim(as.double(valor_shape-0.1),
-           as.double(valor_shape+0.1)) +
+      xlim(as.double(valor_shape()-0.1),
+           as.double(valor_shape()+0.1)) +
       
       labs(title = "Relación Verosimilitud / Shape",
            x = "Scale",
@@ -332,6 +341,8 @@ server <- function(input, output) {
   
   
   output$summary_GEV <- renderTable({
+    verosimilitud <- c( evt()$value)
+    
     
     tibble("Negative log likelihood"=verosimilitud,
            
@@ -345,21 +356,21 @@ server <- function(input, output) {
   
   output$summary_GEV2 <- renderTable({
     
-    data.frame("location"=sqrt(solve(optimizacion$hessian)[1,1]),
-               "scale"=sqrt(solve(optimizacion$hessian)[2,2]),
-               "shape"=sqrt(solve(optimizacion$hessian)[3,3]))
+    data.frame("location"=sqrt(solve(evt()$hessian)[1,1]),
+               "scale"=sqrt(solve(evt()$hessian)[2,2]),
+               "shape"=sqrt(solve(evt()$hessian)[3,3]))
     
   })
   
   output$summary_GEV3 <- renderTable({
     
-    data.frame("location"=solve(optimizacion$hessian)[1,],
-               "scale"=solve(optimizacion$hessian)[2,],
-               "shape"=solve(optimizacion$hessian)[3,])
+    data.frame("location"=solve(evt()$hessian)[1,],
+               "scale"=solve(evt()$hessian)[2,],
+               "shape"=solve(evt()$hessian)[3,])
     
   })
   
-  
+
   
   output$calculo_return_GEV <- renderTable({
     
@@ -367,9 +378,9 @@ server <- function(input, output) {
                              "Valores_optimos"= evt()$par)
     
     
-    V <- as.matrix(tibble("location"=solve(optimizacion$hessian)[1,],
-                          "scale"=solve(optimizacion$hessian)[2,],
-                          "shape"=solve(optimizacion$hessian)[3,]))
+    V <- as.matrix(tibble("location"=solve(evt()$hessian)[1,],
+                          "scale"=solve(evt()$hessian)[2,],
+                          "shape"=solve(evt()$hessian)[3,]))
     
     location <- as.double(resultados_fit[1,2])
     scale <-  as.double(resultados_fit[2,2])
@@ -401,7 +412,7 @@ server <- function(input, output) {
   # GUMBEL----------------------------------------------------------------------
   
   evt_gumbel <- reactive({
-    
+  
     x <<- terremotos_evt %>%
       filter(cluster == input$select_cluster)%>%
       group_by(fecha)%>%
@@ -487,7 +498,7 @@ server <- function(input, output) {
     # agrupamos para plotear
     df <- data.frame(secuencia, verosimilitud_funcion_media)
     
-    ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
+   ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
       geom_line() +
       xlim(as.double(valor_scale-0.1),
            as.double(valor_scale+0.1)) +
@@ -508,17 +519,13 @@ server <- function(input, output) {
     
   })
   
-  
-  
+
   output$summary_GUMBEL <- renderTable({
     
-    resultados_fit <- tibble("Parametro"= c("location", "scale"),
-                             "Valores_optimos"= evt_gumbel()$par)
     
-    verosimilitud <<- c( evt_gumbel()$value)
     
-    valor_location <- as.double(resultados_fit[1,2])
-    valor_scale <-  as.double(resultados_fit[2,2])
+    verosimilitud <- c( evt_gumbel()$value)
+    
     
     tibble("Negative log likelihood"=verosimilitud,
            
@@ -533,16 +540,16 @@ server <- function(input, output) {
   
   output$summary_GUMBEL2 <- renderTable({
     
-    data.frame("location"=sqrt(solve(optimizacion$hessian)[1,1]),
-               "scale"=sqrt(solve(optimizacion$hessian)[2,2]))
+    data.frame("location"=sqrt(solve(evt_gumbel()$hessian)[1,1]),
+               "scale"=sqrt(solve(evt_gumbel()$hessian)[2,2]))
     
   })
   
   
   output$summary_GUMBEL3 <- renderTable({
     
-    data.frame("location"=solve(optimizacion$hessian)[1,],
-               "scale"=solve(optimizacion$hessian)[2,])
+    data.frame("location"=solve(evt_gumbel()$hessian)[1,],
+               "scale"=solve(evt_gumbel()$hessian)[2,])
     
   })
   
@@ -555,16 +562,16 @@ server <- function(input, output) {
     
     location <- as.double(resultados_fit[1,2])
     scale <-  as.double(resultados_fit[2,2])
-    
-    
+
+
     p <- 1/(input$return_level_GUMBEL*365)
     
-    
-    Z <- as.numeric(location-scale*log(-log(1-p)))
-    
-    
-    
-    tibble(media=Z)
+      
+      Z <- as.numeric(location-scale*log(-log(1-p)))
+      
+      
+      
+      tibble(media=Z)
     
   })
   
@@ -645,6 +652,9 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
+
+
+
 
 
 

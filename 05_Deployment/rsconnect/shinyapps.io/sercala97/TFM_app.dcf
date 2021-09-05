@@ -5,10 +5,10 @@ account: sercala97
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4592931
-bundleId: 5000267
+bundleId: 5002687
 url: https://sercala97.shinyapps.io/TFM_app/
-when: 1630777409.36416
-lastSyncTime: 1630777409.36419
+when: 1630875507.66438
+lastSyncTime: 1630875507.66438
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: app|README.txt|DOCKER-APP
+ignoredFiles: app|DOCKER-APP/Dockerfile|DOCKER-APP/shiny-app/app.R|DOCKER-APP/shiny-app/arbol_intensidad_terremotos.rds|DOCKER-APP/shiny-app/matriz_costes.rds|DOCKER-APP/shiny-app/VAL_terremotos_EVT_clusters_clara.rds|README.txt|spark-java|Spark
