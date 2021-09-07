@@ -44,7 +44,7 @@ hash_rec <- recipe(superficie~., data = train_data)
 # Tune Models
 
 
-model_control <- control_grid(save_pred = TRUE)
+model_control <- control_grid(save_pred = TRUE, verbose = TRUE)
 model_metrics <- metric_set(rmse, rsq)
 
 
@@ -55,14 +55,13 @@ model_metrics <- metric_set(rmse, rsq)
 # RAND FOREST
 
 
-rand_forest_model <- rand_forest(trees = tune(),
-                                 min_n = tune()) %>%
+rand_forest_model <- rand_forest(trees = tune()) %>%
   set_engine("ranger") %>%
   set_mode("regression")
 
 rand_forest_grid <- grid_regular(parameters(rand_forest_model))
 
-registerDoParallel(cl)
+
 
 rand_forest_hash <- tune_grid(
   rand_forest_model,
@@ -77,6 +76,7 @@ autoplot(rand_forest_hash)
 
 rand_forest_hash %>% show_best("rsq")
 
+saveRDS(rand_forest_hash, "03_Modeling/hash_incendios/rand_forest_hash.rds")
 
 
 
@@ -103,6 +103,9 @@ bag_mars_hash <- tune_grid(
 
 autoplot(bag_mars_hash)
 
+saveRDS(bag_mars_hash, "03_Modeling/hash_incendios/bag_mars_hash.rds")
+
+
 bag_mars_hash %>% show_best("rsq")
 
 
@@ -110,14 +113,14 @@ bag_mars_hash %>% show_best("rsq")
 
 
 
-bagged_decision_tree_model <- bag_tree(cost_complexity = tune(),
-                                       tree_depth = tune(),
-                                       min_n = tune())  %>%
+bagged_decision_tree_model <- bag_tree(
+                                       tree_depth = tune())  %>%
   set_engine("rpart") %>%
   set_mode("regression")
 
 
 bagged_decision_tree_grid <- grid_regular(parameters(bagged_decision_tree_model))
+
 
 bagged_decision_tree_hash <- tune_grid(
   bagged_decision_tree_model,
@@ -132,6 +135,7 @@ autoplot(bagged_decision_tree_hash)
 
 bagged_decision_tree_hash %>% show_best("rsq")
 
+saveRDS(bagged_decision_tree_hash, "03_Modeling/hash_incendios/bagged_decision_tree_hash.rds")
 
 
 # BOOST TREE
@@ -149,7 +153,7 @@ boost_tree_model <- boost_tree(trees = tune(),
 
 boost_tree_model_grid <- grid_regular(parameters(boost_tree_model))
 
-registerDoParallel(cl)
+
 
 boost_tree_model_hash <- tune_grid(
   boost_tree_model,
@@ -165,6 +169,7 @@ autoplot(boost_tree_model_hash)
 boost_tree_model_hash %>% show_best("rsq")
 
 
+saveRDS(boost_tree_model_hash, "03_Modeling/hash_incendios/boost_tree_model_hash.rds")
 
 
 # SVM PLOY MODEL
@@ -184,7 +189,6 @@ svm_poly_model <- svm_poly(cost = tune(),
 svm_poly_grid <- grid_regular(parameters(svm_poly_model))
 
 
-registerDoParallel(cl)
 svm_poly_hash <- tune_grid(
   svm_poly_model,
   hash_rec,
@@ -198,6 +202,7 @@ autoplot(svm_poly_hash)
 
 svm_poly_hash %>% show_best("rsq")
 
+saveRDS(svm_poly_hash, "03_Modeling/hash_incendios/svm_poly_hash.rds")
 
 
 
@@ -221,7 +226,7 @@ svm_rbf_model <- svm_rbf( cost = tune(),
 svm_rbf_grid <- grid_regular(parameters(svm_rbf_model))
 
 
-registerDoParallel(cl)
+
 
 svm_rbf_hash <- tune_grid(
   svm_rbf_model,
@@ -237,6 +242,7 @@ autoplot(svm_rbf_hash)
 svm_rbf_hash %>% show_best("rsq")
 
 
+saveRDS(svm_rbf_hash, "03_Modeling/hash_incendios/svm_rbf_hash.rds")
 
 
 # KNN 
@@ -255,7 +261,7 @@ nearest_neighbor_model <- nearest_neighbor( neighbors = tune(),
 nearest_neighbor_grid <- grid_regular(parameters(nearest_neighbor_model))
 
 
-registerDoParallel(cl)
+
 
 nearest_neighbor_hash <- tune_grid(
   nearest_neighbor_model,
@@ -271,6 +277,7 @@ autoplot(nearest_neighbor_hash)
 nearest_neighbor_hash %>% show_best("rsq")
 
 
+saveRDS(nearest_neighbor_hash, "03_Modeling/hash_incendios/nearest_neighbor_hash.rds")
 
 
 # CUBIST RULES
@@ -290,7 +297,7 @@ cubis_model <- cubist_rules(committees = tune(),
 cubis_grid <- grid_regular(parameters(cubis_model), levels = 4)
 
 
-registerDoParallel(cl)
+
 
 cubis_hash <- tune_grid(
   cubis_model,
@@ -309,6 +316,7 @@ cubis_hash %>% show_best("rsq")
 
 
 
+saveRDS(cubis_hash, "03_Modeling/hash_incendios/cubis_hash.rds")
 
 
 
