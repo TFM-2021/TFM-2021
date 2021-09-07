@@ -2,6 +2,7 @@ library(jsonlite)
 
 arbol_intensidad_terremotos <- readRDS("arbol_intensidad_terremotos.rds")
 
+
 #* @post /prediccion
 predict.intensidad <- function(profundidad,
                                magnitud,

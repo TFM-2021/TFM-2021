@@ -1,16 +1,15 @@
 library(tidyverse)
 library(factoextra)
 library(cluster)
-install.packages('mapproj')
 library(mapproj)
 
 
 VAL_incendios_EVT <- read.csv("data/data_VAL/incendios_clean_final.csv")
 
-VAL_incendios_EVT <- VAL_incendios_EVT[,-1]
+VAL_incendios_EVT <- VAL_incendios_EVT[, c(2,3, 4,5)]
 
 
-VAL_incendios_EVT <- VAL_incendios_EVT %>% filter(superficie > 50)
+VAL_incendios_EVT <- VAL_incendios_EVT %>% filter(superficie > 35)
 
 VAL_incendios_EVT <- VAL_incendios_EVT %>% filter(lat > 35 & lng > -10 | 
                                                     lat < 30 & lng < -10 )
@@ -39,8 +38,14 @@ fviz_nbclust(sample_incendios[1000:3000,], clara, method = "wss") +
   geom_vline(xintercept = 4, linetype = 2) +
   labs(subtitle = "Elbow method")
 
+fviz_nbclust(sample_incendios[1000:3000,], clara, method = "gap_stat") + geom_vline(xintercept = 4, linetype = 2)
+
+
+
 
 clara.res <- clara(VAL_incendios_EVT_scale , 4, samples = 15, pamLike = T)
+
+
 
 
 clara.res
@@ -52,7 +57,7 @@ VAL_incendios_EVT_clusters_clara <- cbind(VAL_incendios_EVT, cluster = clara.res
 VAL_incendios_EVT_clusters_clara$cluster <- as.factor(VAL_incendios_EVT_clusters_clara$cluster)
 
 
-
+VAL_incendios_EVT_clusters_clara <- VAL_incendios_EVT_clusters_clara %>% filter(lat < 50)
 
 mapa_espana <- readRDS("data/mapa_ESP.rds")
 ggplot() +
@@ -64,7 +69,7 @@ ggplot() +
   
   coord_map("mercator") +
   
-  labs(title = "Terremotos españa",
+  labs(title = "Incendios España",
        subtitle = "Color por cluster") +
   
   theme_bw() +
