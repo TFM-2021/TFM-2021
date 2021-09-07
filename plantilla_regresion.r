@@ -12,6 +12,8 @@ all_cores <- parallel::detectCores(logical = FALSE)
 
 cl <- makePSOCKcluster(all_cores)
 
+VAL_incendios <- read.csv('data/VAL/incendios_clean_final.csv')
+
 
 # SPLIT DATA
 

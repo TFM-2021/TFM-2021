@@ -152,7 +152,7 @@ ggplot(datos_incendios, aes(time_ext)) +
   geom_histogram()
 
 
-# Causa desc ?
+
 
 ggplot(data = datos_incendios) + 
   geom_bar(mapping = aes(x = causa_desc), fill = 'lightblue')
@@ -163,12 +163,22 @@ datos_incendios %>%
 
 unique(causa_desc)
 
+# Causa
+
+datos_incendios$causa <- as.character(datos_incendios$causa)
+summary(datos_incendios)
+
+causa <- read.csv('data/data_raw/causas_incendios.csv', sep= ';')
 
 
-# ? Mapas
+causa <- rename(causa, 'causa' = 'ï..causa')
+causa$causa <- as.character(causa$causa)
+datos_causa <- merge(datos_incendios, causa, by = "causa", all.x = TRUE )
 
 
+write.csv(datos_causa,file = './data/data_raw/incendios.csv')
 
+hist(datos_causa$superficie, bin = 0.01)
 
 
 
