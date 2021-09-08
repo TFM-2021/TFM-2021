@@ -9,7 +9,19 @@ library(tidyr)
 #matriz_costes <- readRDS("05_Deployment/matriz_costes.rds")
 #terremotos_evt <- readRDS("05_Deployment/VAL_terremotos_EVT_clusters_clara.rds")
 
-arbol <- read_rds("arbol_intensidad_terremotos.rds")
+bag_tree_trained <- read_rds("modelos_terremotos/bag_tree_trained.rds")
+boost_tree_trained <- read_rds("modelos_terremotos/boost_tree_model_hash_trained.rds")
+C5_rules_trained <- read_rds("modelos_terremotos/C5_rules_trained.rds")
+multinom_reg_trained <- read_rds("modelos_terremotos/multinom_reg_trained.rds")
+naive_Bayes_trained <- read_rds("modelos_terremotos/naive_Bayes_trained.rds")
+
+
+
+
+
+
+
+
 matriz_costes <- readRDS("matriz_costes.rds")
 terremotos_evt <- readRDS("VAL_terremotos_EVT_clusters_clara.rds")
 
@@ -142,7 +154,10 @@ ui <- dashboardPage(
           box(valueBoxOutput("pred_inten", width = 12)),
       
           box(solidHeader = TRUE,
-              
+              selectInput("MODELO_TERREMOTOS", 
+                          choices =c("bagged","boost tree",
+                                     "C5" ,"Multinom",
+                                     "Bayes"),label = "Elija modelo" ),
            sliderInput("magnitud", 
                        label = "Magnitud",
                       min = 0, 
@@ -755,30 +770,40 @@ server <- function(input, output) {
   
   
   
-  
-  
-  
-  
-  
+
   
   output$pred_inten <- renderValueBox({ 
     
+    new_data <- tibble("prof_km"=log(input$profundidad),
+                        "inten"=as.factor("."),
+                        "mag"=(input$magnitud - 2.850961)/0.9478287,
+                        "placa_tectonica"=as.factor(0))
     
-    prediction <- predict(
-      arbol,
-      tibble("prof_km"=log(input$profundidad),
-             "inten"=as.factor("."),
-             "mag"=(input$magnitud - 2.850961)/0.9478287,
-             "placa_tectonica"=as.factor(0)),
-      type = "class")
+    
+    modelo_seleccionado <- if(input$MODELO_TERREMOTOS == "bagged"){
+      (bag_tree_trained)
+    }else if(input$MODELO_TERREMOTOS == "boost tree"){
+      (boost_tree_trained)
+    }else if(input$MODELO_TERREMOTOS == "C5"){
+      (C5_rules_trained)
+    }else if(input$MODELO_TERREMOTOS == "Multinom"){
+      (multinom_reg_trained)
+    }else if(input$MODELO_TERREMOTOS == "Bayes"){
+      (naive_Bayes_trained)
+    }
+    
+    
+    prediction <- as_tibble(predict(
+      modelo_seleccionado,new_data,
+      type = "class"))%>%
+      gather()%>% 
+      arrange(desc(value)) %>% 
+      slice(1) %>% 
+      select(value)
     
     
     prediction_prob <- as_tibble(predict(
-      arbol,
-      tibble("prof_km"=log(input$profundidad),
-             "inten"=as.factor("."),
-             "mag"=(input$magnitud - 2.850961)/0.9478287,
-             "placa_tectonica"=as.factor(0)),
+      modelo_seleccionado,new_data,
       type = "prob"))%>%
       gather()%>% 
       arrange(desc(value)) %>% 
@@ -791,10 +816,7 @@ server <- function(input, output) {
       value = paste0("Intensidad: ",as.character(prediction)),
     )
     
-  }) %>%
-    bindCache(input$profundidad,
-              input$magnitud)
-  
+  })
   
   
   output$pred_coste <- renderValueBox({
