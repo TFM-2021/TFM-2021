@@ -4,6 +4,14 @@ library(dplyr)
 library(ggplot2)
 library(shinydashboard)
 library(tidyr)
+library(ranger)
+library(xgboost)
+library(kknn)
+library(baguette)
+library(Cubist)
+library(rules)
+library(discrim)
+library(klaR)
 
 #arbol <- read_rds("05_Deployment/arbol_intensidad_terremotos.rds")
 #matriz_costes <- readRDS("05_Deployment/matriz_costes.rds")
@@ -379,7 +387,7 @@ server <- function(input, output) {
       filter(cluster == input$select_cluster)%>%
       group_by(fecha)%>%
       summarise(mag = max(mag))%>%
-      select(mag)
+      dplyr::select(mag)
     
     fitGEV(x$mag, c(0.1,0.1,0.1))
   }) 
@@ -612,7 +620,7 @@ server <- function(input, output) {
       filter(cluster == input$select_cluster)%>%
       group_by(fecha)%>%
       summarise(mag = max(mag))%>%
-      select(mag)
+      dplyr::select(mag)
     
     fitGumbel(x$mag)
   })
@@ -801,17 +809,16 @@ server <- function(input, output) {
       type = "class"))%>%
       gather()%>% 
       arrange(desc(value)) %>% 
-      slice(1) %>% 
-      select(value)
-    
-    
+      dplyr::slice(1) %>% 
+      dplyr::select(value)
+
     prediction_prob <- as_tibble(predict(
       modelo_seleccionado,new_data,
       type = "prob"))%>%
       gather()%>% 
       arrange(desc(value)) %>% 
-      slice(1) %>% 
-      select(value)
+      dplyr::slice(1) %>% 
+      dplyr::select(value)
     
     
     valueBox(
@@ -881,7 +888,7 @@ server <- function(input, output) {
       filter(cluster == input$select_cluster_incendios)%>%
       group_by(fecha)%>%
       summarise(superficie = max(superficie))%>%
-      select(superficie)
+      dplyr::select(superficie)
     
     fitGEV(x$superficie, c(0.1,0.1,0.1))
   }) 
@@ -1114,7 +1121,7 @@ server <- function(input, output) {
       filter(cluster == input$select_cluster_incendios)%>%
       group_by(fecha)%>%
       summarise(superficie = max(superficie))%>%
-      select(superficie)
+      dplyr::select(superficie)
     
     fitGumbel(x$superficie)
   })
@@ -1305,8 +1312,8 @@ server <- function(input, output) {
       type = "class")%>%
       gather()%>% 
       arrange(desc(value)) %>% 
-      slice(1) %>% 
-      select(value)
+      dplyr::slice(1) %>% 
+      dplyr::select(value)
 
       valueBox(
       value =  paste0(round(exp(1)^(prediction_incendios),2)," €"),
