@@ -5,36 +5,76 @@ library(baguette)
 library(survival)
 library(rules)
 
-library(doParallel)
 
-all_cores <- parallel::detectCores(logical = FALSE)
-
-cl <- makePSOCKcluster(all_cores)
 
 VAL_incendios <- read.csv('data/data_VAL/incendios_clean_final.csv')
 
-VAL_incendios <- VAL_incendios[, c(2, 8:13)]
+VAL_incendios$fecha <- as.Date(VAL_incendios$fecha, format = "%Y-%m-%d")
+
+VAL_incendios$coste <- VAL_incendios$gastos + VAL_incendios$perdidas
+
+VAL_incendios <-VAL_incendios %>%
+  mutate(year = as.numeric(format(fecha, format = "%Y")),
+         month = as.numeric(format(fecha, format = "%m")),
+         day = as.numeric(format(fecha, format = "%d")))
+
+
+
+VAL_incendios$CCAA_riesgo <- ifelse(VAL_incendios$comunidad == "Galicia",2,
+                                    ifelse(VAL_incendios$comunidad == "Aragón",1,
+                                    0))
+
+
+VAL_incendios$mes_sin <- sin(VAL_incendios$month*pi*2/12)
+VAL_incendios$mes_cos <- cos(VAL_incendios$month*pi*2/12)
+
+meses <- unique(data.frame(sin=VAL_incendios$mes_sin,
+                    cos=VAL_incendios$mes_cos))
+
+
+
+VAL_incendios <- VAL_incendios %>%
+  filter(perdidas>=0)%>%
+  select(perdidas, CCAA_riesgo, mes_cos, mes_sin, muertos, heridos, superficie) %>%
+  mutate(perdidas = ifelse(perdidas==0,1, perdidas))
+
+
+plot(density(log(VAL_incendios$superficie)^0.5))
+plot(density(log(VAL_incendios$perdidas)))
+
+VAL_incendios$perdidas <- log(VAL_incendios$perdidas)
+VAL_incendios$superficie <-log(VAL_incendios$superficie)^0.5
+
+
+e1071::skewness(VAL_incendios$perdidas)
+
+e1071::skewness(VAL_incendios$superficie)
+
+
+
 
 # SPLIT DATA
 
 set.seed(4595)
 
-data_split <- initial_split(VAL_incendios, strata = "superficie", prop = 0.75)
+data_split <- initial_split(VAL_incendios, strata = "perdidas", prop = 0.75)
 
 train_data <- training(data_split)
 
 test_data <- testing(data_split)
 
 
-train_data <- recipe(superficie~., data = train_data) %>% 
+train_data <- recipe(perdidas~., data = train_data) %>% 
   prep() %>% 
   juice()
 
 
-k_folds_data <- vfold_cv(train_data, strata = superficie,v = 2)
+
+k_folds_data <- vfold_cv(train_data, strata = perdidas,v = 2)
 
 
-hash_rec <- recipe(superficie~., data = train_data)
+hash_rec <- recipe(perdidas~., data = train_data)
+
 
 
 #-------------------------------------------------------------------------------
@@ -109,33 +149,6 @@ saveRDS(bag_mars_hash, "03_Modeling/hash_incendios/bag_mars_hash.rds")
 bag_mars_hash %>% show_best("rsq")
 
 
-#  BAGGED DECISION TREE
-
-
-# bagged_decision_tree_model <- bag_tree(
-#                                        tree_depth = tune())  %>%
-#   set_engine("rpart") %>%
-#   set_mode("regression")
-# 
-# 
-# bagged_decision_tree_grid <- grid_regular(parameters(bagged_decision_tree_model))
-# 
-# 
-# bagged_decision_tree_hash <- tune_grid(
-#   bagged_decision_tree_model,
-#   hash_rec,
-#   grid = bagged_decision_tree_grid,
-#   control = model_control,
-#   metrics = model_metrics,
-#   resamples = k_folds_data
-# )
-# 
-# autoplot(bagged_decision_tree_hash)
-# 
-# bagged_decision_tree_hash %>% show_best("rsq")
-# 
-# saveRDS(bagged_decision_tree_hash, "03_Modeling/hash_incendios/bagged_decision_tree_hash.rds")
-# 
 
 # BOOST TREE
 
@@ -143,9 +156,7 @@ bag_mars_hash %>% show_best("rsq")
 
 boost_tree_model <- boost_tree(trees = tune(),
                                min_n = tune(),
-                               tree_depth = tune(),
-                               learn_rate = tune(),
-                               loss_reduction = tune())  %>%
+                               tree_depth = tune())  %>%
   set_engine("xgboost") %>%
   set_mode("regression")
 
@@ -171,77 +182,6 @@ boost_tree_model_hash %>% show_best("rsq")
 saveRDS(boost_tree_model_hash, "03_Modeling/hash_incendios/boost_tree_model_hash.rds")
 
 
-# SVM PLOY MODEL
-
-
-
-# svm_poly_model <- svm_poly(cost = tune(),
-#                            degree = tune(),
-#                            scale_factor = tune(),
-#                            margin = tune())  %>%
-#   set_engine("kernlab") %>%
-#   set_mode("regression")
-# 
-# 
-# 
-# 
-# svm_poly_grid <- grid_regular(parameters(svm_poly_model))
-# 
-# 
-# svm_poly_hash <- tune_grid(
-#   svm_poly_model,
-#   hash_rec,
-#   grid = svm_poly_grid,
-#   control = model_control,
-#   metrics = model_metrics,
-#   resamples = k_folds_data
-# )
-# 
-# autoplot(svm_poly_hash)
-# 
-# svm_poly_hash %>% show_best("rsq")
-# 
-# saveRDS(svm_poly_hash, "03_Modeling/hash_incendios/svm_poly_hash.rds")
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# # SVM RBF MODEL
-# 
-# 
-# 
-# svm_rbf_model <- svm_rbf( cost = tune(),
-#                           rbf_sigma = tune(),
-#                           margin = tune())  %>%
-#   set_engine("kernlab") %>%
-#   set_mode("regression")
-# 
-# 
-# 
-# 
-# svm_rbf_grid <- grid_regular(parameters(svm_rbf_model))
-# 
-# 
-# 
-# 
-# svm_rbf_hash <- tune_grid(
-#   svm_rbf_model,
-#   hash_rec,
-#   grid = svm_rbf_grid,
-#   control = model_control,
-#   metrics = model_metrics,
-#   resamples = k_folds_data
-# )
-# 
-# autoplot(svm_rbf_hash)
-# 
-# svm_rbf_hash %>% show_best("rsq")
-# 
-# 
-# saveRDS(svm_rbf_hash, "03_Modeling/hash_incendios/svm_rbf_hash.rds")
 
 
 # KNN 

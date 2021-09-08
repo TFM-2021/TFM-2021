@@ -5,8 +5,55 @@ VAL_terremotos_modelo_intensidad <- readRDS(file = "data/data_VAL/VAL_terremotos
 
 VAL_terremotos_modelo_intensidad$inten <- as.factor(VAL_terremotos_modelo_intensidad$inten)
 
-unique(VAL_terremotos_modelo_intensidad$inten)
 
+
+
+VAL_terremotos_modelo_intensidad <- VAL_terremotos_modelo_intensidad %>%
+  mutate(prof_km = if_else(is.na(prof_km) & inten=="<IV",11,
+                           ifelse(is.na(prof_km) & inten=="IV",10.5,
+                           ifelse(is.na(prof_km) & inten=="V", 10,
+                           ifelse(is.na(prof_km) & inten=="VI", 6, prof_km))) ))
+
+
+VAL_terremotos_modelo_intensidad <- recipe(~., VAL_terremotos_modelo_intensidad) %>%
+  step_upsample(inten, over_ratio = 0.11) %>%
+  prep() %>%
+  bake(new_data = NULL)
+
+
+VAL_terremotos_modelo_intensidad$mag <- (VAL_terremotos_modelo_intensidad$mag - 2.850961)/0.9478287
+VAL_terremotos_modelo_intensidad$prof_km <- log(VAL_terremotos_modelo_intensidad$prof_km)
+
+
+
+rand_forest_hash <- readRDS( "03_Modeling/hash/rand_forest_hash.rds")
+LDA_hash <- readRDS( "03_Modeling/hash/LDA_hash.rds")
+rdm_hash <- readRDS( "03_Modeling/hash/rdm_hash.rds")
+naive_Bayes_hash <- readRDS( "03_Modeling/hash/naive_Bayes_hash.rds")
+multinom_reg_hash <- readRDS( "03_Modeling/hash/multinom_reg_hash.rds")
+c5_rules_hash <- readRDS( "03_Modeling/hash/c5_rules_hash.rds")
+bagged_decision_tree_hash <- readRDS( "03_Modeling/hash/bagged_decision_tree_hash.rds")
+boost_tree_model_hash <- readRDS( "03_Modeling/hash/boost_tree_model_hash.rds")
+svm_poly_hash <- readRDS( "03_Modeling/hash/svm_poly_hash.rds")
+svm_rbf_hash <- readRDS( "03_Modeling/hash/svm_rbf_hash.rds")
+nearest_neighbor_hash <- readRDS( "03_Modeling/hash/nearest_neighbor_hash.rds")
+
+
+
+# SPLIT DATA
+
+set.seed(12345)
+
+data_split <- initial_split(VAL_terremotos_modelo_intensidad, strata = "inten", prop = 0.75)
+
+train_data <- training(data_split)
+
+test_data <- testing(data_split)
+
+
+train_data <- recipe(inten~., data = train_data) %>% 
+  prep() %>% 
+  juice()
 
 
 
@@ -18,15 +65,12 @@ rand_forest_hash %>% show_best("recall")
 
 final_param <- rand_forest_hash %>% 
   show_best("recall") %>% 
-  dplyr::slice(1 )%>%
+  dplyr::slice(1)%>%
   select(trees, min_n)
+final_param
 
 
-
-# Evaluate Confusion Matrix
-
-
-rand_forest_model <- rand_forest(trees = 1000,
+rand_forest_model <- rand_forest(trees = 2000,
                                  min_n = 2) %>%
   set_engine("ranger") %>%
   set_mode("classification")
@@ -36,11 +80,14 @@ rand_forest_model <- rand_forest(trees = 1000,
 fit <- rand_forest_model %>%
   fit(inten~., data= train_data)
 
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/bag_mars_trained.rds")
+
 
 rf_training_pred <- 
   predict(fit, train_data) %>% 
   bind_cols(predict(fit, train_data, type = "prob")) %>% 
   bind_cols(train_data %>% select(inten))
+
 
 
 rf_training_pred%>%
@@ -95,6 +142,8 @@ model <- discrim_linear(penalty = 1) %>%
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/discrim_linear_trained.rds")
+
 
 
 rf_training_pred <- 
@@ -142,7 +191,7 @@ rdm_hash %>% show_best("recall")
 final_param <- rdm_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1) %>%
-  select(trees, min_n)
+  select(frac_common_cov , frac_identity )
 
 
 
@@ -156,6 +205,9 @@ model <- discrim_regularized(
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/discrim_regularized_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -200,18 +252,21 @@ naive_Bayes_hash %>% show_best("recall")
 final_param <- naive_Bayes_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(trees, min_n)
+  select(smoothness, Laplace)
 
 
 model <-naive_Bayes(
   mode = "classification",
   engine = "klaR",
   smoothness = 0.5,
-  Laplace = 0)
+  Laplace = 3)
 
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/naive_Bayes_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -261,11 +316,14 @@ final_param <- multinom_reg_hash %>%
 model <- multinom_reg(
   mode = "classification",
   engine = "nnet",
-  penalty = .0769  
+  penalty = 0.00000000214  
 )
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/multinom_reg_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -309,7 +367,7 @@ c5_rules_hash %>% show_best("recall")
 final_param <- c5_rules_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(trees, min_n)
+  select(trees)
 
 
 model <- C5_rules(mode = "classification", 
@@ -319,6 +377,9 @@ model <- C5_rules(mode = "classification",
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/C5_rules_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -361,13 +422,13 @@ autoplot(bagged_decision_tree_hash)
 bagged_decision_tree_hash %>% show_best("recall")
 
 
-final_param <- bag_mars_hash %>% 
+final_param <- bagged_decision_tree_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(trees, min_n)
+  select(tree_depth , min_n)
 
-model <- bag_tree(cost_complexity = 0.1, tree_depth = 15,
-                  min_n = 2)  %>%
+model <- bag_tree(tree_depth = 15,
+                  min_n = 40)  %>%
   set_engine("rpart") %>%
   set_mode("classification")
 
@@ -375,6 +436,9 @@ model <- bag_tree(cost_complexity = 0.1, tree_depth = 15,
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/bag_tree_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -419,15 +483,18 @@ boost_tree_model_hash %>% show_best("recall")
 final_param <- boost_tree_model_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(trees, min_n)
+  select(trees)
 
-model <- boost_tree(trees = 9)  %>%
+model <- boost_tree(trees = 97)  %>%
   set_engine("C5.0") %>%
   set_mode("classification")
 
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/boost_tree_model_hash_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -474,13 +541,11 @@ svm_poly_hash %>% show_best("recall")
 final_param <- svm_poly_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(trees, min_n)
+  select(degree , margin )
 
 
 
-model <- svm_poly(cost = 32,
-                  degree = 3,
-                  scale_factor =0.1,
+model <- svm_poly(degree = 3,
                   margin = 0)  %>%
   set_engine("kernlab") %>%
   set_mode("classification")
@@ -488,6 +553,9 @@ model <- svm_poly(cost = 32,
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/svm_poly_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -533,17 +601,20 @@ svm_rbf_hash %>% show_best("recall")
 final_param <- svm_rbf_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(trees, min_n)
+  select(cost, rbf_sigma,margin)
 
 
 model <- svm_rbf( cost = 32,
                   rbf_sigma = 1,
-                  margin = 0.1)  %>%
+                  margin = 0)  %>%
   set_engine("kernlab") %>%
   set_mode("classification")
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/svm_rbf_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -590,19 +661,21 @@ nearest_neighbor_hash %>% show_best("recall")
 final_param <- nearest_neighbor_hash %>% 
   show_best("recall") %>% 
   dplyr::slice(1 )%>%
-  select(neighbors, weight_func,dist_power)
+  select(neighbors,dist_power)
 
 
 
 model <- nearest_neighbor( neighbors = 8,
-                           weight_func =  "triangular",
-                           dist_power =  2)  %>%
+                           dist_power =  1.05)  %>%
   set_engine("kknn") %>%
   set_mode("classification")
 
 
 fit <- model %>%
   fit(inten~., data= train_data)
+saveRDS(fit, "04_Evaluacion/trained_models_terremotos/nearest_neighbor_trained.rds")
+
+
 
 
 rf_training_pred <- 
@@ -781,7 +854,7 @@ rf_testing_pred <-
 
 
 rf_testing_pred%>%
-  roc_curve(truth = inten, `<IV`:VI) %>%
+  roc_curve(truth = inten, `.pred_<IV`:.pred_VI) %>%
   ggplot(aes(1 - specificity, sensitivity, color = .level)) +
   geom_abline(lty = 2, color = "gray80", size = 2) +
   theme_minimal()+
