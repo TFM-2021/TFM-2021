@@ -9,11 +9,11 @@ library(tidyr)
 #matriz_costes <- readRDS("05_Deployment/matriz_costes.rds")
 #terremotos_evt <- readRDS("05_Deployment/VAL_terremotos_EVT_clusters_clara.rds")
 
-bag_tree_trained <- read_rds("modelos_terremotos/bag_tree_trained.rds")
-boost_tree_trained <- read_rds("modelos_terremotos/boost_tree_model_hash_trained.rds")
-C5_rules_trained <- read_rds("modelos_terremotos/C5_rules_trained.rds")
-multinom_reg_trained <- read_rds("modelos_terremotos/multinom_reg_trained.rds")
-naive_Bayes_trained <- read_rds("modelos_terremotos/naive_Bayes_trained.rds")
+bag_tree_trained <- read_rds("bag_tree_trained.rds")
+boost_tree_trained <- read_rds("boost_tree_model_hash_trained.rds")
+C5_rules_trained <- read_rds("C5_rules_trained.rds")
+multinom_reg_trained <- read_rds("multinom_reg_trained.rds")
+naive_Bayes_trained <- read_rds("naive_Bayes_trained.rds")
 
 
 
@@ -26,10 +26,26 @@ matriz_costes <- readRDS("matriz_costes.rds")
 terremotos_evt <- readRDS("VAL_terremotos_EVT_clusters_clara.rds")
 
 
-incendios_evt <- readRDS("incendios_evt.rds")
 
 
 terremotos_evt$fecha <- as.Date(terremotos_evt$fecha, format="%d/%m/%Y")
+
+#----------------------------------------------------------------------------
+
+
+incendios_evt <- readRDS("incendios_evt.rds")
+
+CCAA <- readRDS("CCAA.rds")
+
+
+rand_forest_trained.rds <- readRDS("rand_forest_trained.rds")
+bag_mars_trained.rds <- readRDS("bag_mars_trained.rds")
+boost_tree_trained.rds <- readRDS("boost_tree_trained.rds")
+cubist_rules_trained.rds <- readRDS("cubist_rules_trained.rds")
+nearest_neighbor_trained.rds <- readRDS("nearest_neighbor_trained.rds")
+
+
+
 
 
 
@@ -163,13 +179,13 @@ ui <- dashboardPage(
                       min = 0, 
                       max = 10, 
                       value = 5, 
-                      step = 0.1)),
+                      step = 0.1),background = "orange"),
           
            box(sliderInput("profundidad", label = "Profundidad",
                       min = 0, 
                       max = 300, 
                       value = 10,
-                      step = 0.1)),
+                      step = 0.1),background = "orange"),
           ),
      tabPanel("Coste",
         
@@ -290,47 +306,34 @@ tabItem("calculadora_incendios",
           
           
           
-          tabPanel("Intensidad",
-                   
-                   box(valueBoxOutput("pred_inten_incendios", width = 12)),
-                   
-                   box(solidHeader = TRUE,
-                       
-                       sliderInput("magnitud_incendios", 
-                                   label = "Magnitud",
-                                   min = 0, 
-                                   max = 10, 
-                                   value = 5, 
-                                   step = 0.1)),
-                   
-                   box(sliderInput("profundidad_incendios", label = "Profundidad",
-                                   min = 0, 
-                                   max = 300, 
-                                   value = 10,
-                                   step = 0.1)),
-          ),
           tabPanel("Coste",
                    
                    box(valueBoxOutput("pred_coste_incendios", width = 12)),
                    
-                   box(numericInput("m2_ladrillo_incendios",
-                                    label = "Metros cuadrados ladrillo",
-                                    value = 10000,
-                                    step = 10000)),
                    
-                   box(numericInput("m2_hormigon_incendios",
-                                    label = "Metros cuadrados hormigón",
-                                    value = 10000,
-                                    step = 10000)),
-                   
-                   box(numericInput("m2_coste_incendios",
-                                    label = "Coste metros cuadrados",
-                                    value = 1000,
-                                    step = 10)),
-                   box( selectInput("intensidad_terremoto_incendios",
-                                    label = "Elija la intensidad",
-                                    choices = unique(matriz_costes$Terremoto)))
-                   
+                   box( selectInput("ccaa_incendios",
+                                    label = "Elija la CCAA",
+                                    choices = CCAA)),
+                   box(selectInput("mes_incendios",
+                                    label = "Mes del incendio",
+                                    choices = seq(1,12,1))),
+                   box( numericInput("fallecidos_incendios",
+                                    label = "Fallecidos en el incendio",
+                                    value = 5,
+                                    max = 25)),
+                   box( numericInput("heridos_incendios",
+                                     label = "Heridos en el incendio",
+                                     value = 12,
+                                     max = 50)),
+                   box( numericInput("superficie_incendios",
+                                     label = "Superficie quemada",
+                                     value = 20,
+                                     max = 30000)),
+                   box(selectInput("modelo_elegido_incendios",
+                                   label = "Seleccione el modelo",
+                                   choices = c("Rand Forest", "Bag Mars",
+                                               "Boost tree", "Cubist Rules",
+                                               "KNN")))
                    
                    
                    
@@ -1268,6 +1271,56 @@ server <- function(input, output) {
     tibble(media=Z)
     
   })
+  
+  
+  output$pred_coste_incendios <- renderValueBox({
+
+   
+    
+    modelo_incendios <- if(input$modelo_elegido_incendios == "Rand Forest"){
+      (rand_forest_trained.rds)
+    }else if(input$modelo_elegido_incendios == "Bag Mars"){
+      (bag_mars_trained.rds)
+    }else if(input$modelo_elegido_incendios == "Boost tree"){
+      (boost_tree_trained.rds)
+    }else if(input$modelo_elegido_incendios == "Cubist Rules"){
+      (cubist_rules_trained.rds)
+    }else if(input$modelo_elegido_incendios == "KNN"){
+      (nearest_neighbor_trained.rds)
+    }
+
+      newdata_incendios <- tibble("perdidas"=log(5),
+                                "CCAA_riesgo"=as.numeric(ifelse(input$ccaa_incendios == "Galicia",2,
+                                                                ifelse(input$ccaa_incendios == "Aragón",1,
+                                                                       0))),
+                                "mes_cos"=cos(as.numeric(input$mes_incendios)*pi*2/12),
+                                "mes_sin"=sin(as.numeric(input$mes_incendios)*pi*2/12),
+                                "muertos"=as.numeric(input$fallecidos_incendios),
+                                "heridos"=as.numeric(input$heridos_incendios),
+                                "superficie"=as.numeric(log(input$superficie_incendios)^0.5))
+    
+
+        prediction_incendios <- as_tibble(predict(
+      modelo_incendios,newdata_incendios),
+      type = "class")%>%
+      gather()%>% 
+      arrange(desc(value)) %>% 
+      slice(1) %>% 
+      select(value)
+
+      valueBox(
+      value =  paste0(round(exp(1)^(prediction_incendios),2)," €"),
+      subtitle = ""
+    )
+    
+  })
+  
+  
+  
+  
+  
+  
+  
 }
 
 
