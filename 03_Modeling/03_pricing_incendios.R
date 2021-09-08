@@ -31,7 +31,7 @@ train_data <- recipe(superficie~., data = train_data) %>%
   juice()
 
 
-k_folds_data <- vfold_cv(train_data, strata = superficie,v = 4)
+k_folds_data <- vfold_cv(train_data, strata = superficie,v = 2)
 
 
 hash_rec <- recipe(superficie~., data = train_data)
@@ -112,31 +112,30 @@ bag_mars_hash %>% show_best("rsq")
 #  BAGGED DECISION TREE
 
 
-
-bagged_decision_tree_model <- bag_tree(
-                                       tree_depth = tune())  %>%
-  set_engine("rpart") %>%
-  set_mode("regression")
-
-
-bagged_decision_tree_grid <- grid_regular(parameters(bagged_decision_tree_model))
-
-
-bagged_decision_tree_hash <- tune_grid(
-  bagged_decision_tree_model,
-  hash_rec,
-  grid = bagged_decision_tree_grid,
-  control = model_control,
-  metrics = model_metrics,
-  resamples = k_folds_data
-)
-
-autoplot(bagged_decision_tree_hash)
-
-bagged_decision_tree_hash %>% show_best("rsq")
-
-saveRDS(bagged_decision_tree_hash, "03_Modeling/hash_incendios/bagged_decision_tree_hash.rds")
-
+# bagged_decision_tree_model <- bag_tree(
+#                                        tree_depth = tune())  %>%
+#   set_engine("rpart") %>%
+#   set_mode("regression")
+# 
+# 
+# bagged_decision_tree_grid <- grid_regular(parameters(bagged_decision_tree_model))
+# 
+# 
+# bagged_decision_tree_hash <- tune_grid(
+#   bagged_decision_tree_model,
+#   hash_rec,
+#   grid = bagged_decision_tree_grid,
+#   control = model_control,
+#   metrics = model_metrics,
+#   resamples = k_folds_data
+# )
+# 
+# autoplot(bagged_decision_tree_hash)
+# 
+# bagged_decision_tree_hash %>% show_best("rsq")
+# 
+# saveRDS(bagged_decision_tree_hash, "03_Modeling/hash_incendios/bagged_decision_tree_hash.rds")
+# 
 
 # BOOST TREE
 
@@ -176,73 +175,73 @@ saveRDS(boost_tree_model_hash, "03_Modeling/hash_incendios/boost_tree_model_hash
 
 
 
-svm_poly_model <- svm_poly(cost = tune(),
-                           degree = tune(),
-                           scale_factor = tune(),
-                           margin = tune())  %>%
-  set_engine("kernlab") %>%
-  set_mode("regression")
-
-
-
-
-svm_poly_grid <- grid_regular(parameters(svm_poly_model))
-
-
-svm_poly_hash <- tune_grid(
-  svm_poly_model,
-  hash_rec,
-  grid = svm_poly_grid,
-  control = model_control,
-  metrics = model_metrics,
-  resamples = k_folds_data
-)
-
-autoplot(svm_poly_hash)
-
-svm_poly_hash %>% show_best("rsq")
-
-saveRDS(svm_poly_hash, "03_Modeling/hash_incendios/svm_poly_hash.rds")
-
-
-
-
-
-
-
-# SVM RBF MODEL
-
-
-
-svm_rbf_model <- svm_rbf( cost = tune(),
-                          rbf_sigma = tune(),
-                          margin = tune())  %>%
-  set_engine("kernlab") %>%
-  set_mode("regression")
-
-
-
-
-svm_rbf_grid <- grid_regular(parameters(svm_rbf_model))
-
-
-
-
-svm_rbf_hash <- tune_grid(
-  svm_rbf_model,
-  hash_rec,
-  grid = svm_rbf_grid,
-  control = model_control,
-  metrics = model_metrics,
-  resamples = k_folds_data
-)
-
-autoplot(svm_rbf_hash)
-
-svm_rbf_hash %>% show_best("rsq")
-
-
-saveRDS(svm_rbf_hash, "03_Modeling/hash_incendios/svm_rbf_hash.rds")
+# svm_poly_model <- svm_poly(cost = tune(),
+#                            degree = tune(),
+#                            scale_factor = tune(),
+#                            margin = tune())  %>%
+#   set_engine("kernlab") %>%
+#   set_mode("regression")
+# 
+# 
+# 
+# 
+# svm_poly_grid <- grid_regular(parameters(svm_poly_model))
+# 
+# 
+# svm_poly_hash <- tune_grid(
+#   svm_poly_model,
+#   hash_rec,
+#   grid = svm_poly_grid,
+#   control = model_control,
+#   metrics = model_metrics,
+#   resamples = k_folds_data
+# )
+# 
+# autoplot(svm_poly_hash)
+# 
+# svm_poly_hash %>% show_best("rsq")
+# 
+# saveRDS(svm_poly_hash, "03_Modeling/hash_incendios/svm_poly_hash.rds")
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# # SVM RBF MODEL
+# 
+# 
+# 
+# svm_rbf_model <- svm_rbf( cost = tune(),
+#                           rbf_sigma = tune(),
+#                           margin = tune())  %>%
+#   set_engine("kernlab") %>%
+#   set_mode("regression")
+# 
+# 
+# 
+# 
+# svm_rbf_grid <- grid_regular(parameters(svm_rbf_model))
+# 
+# 
+# 
+# 
+# svm_rbf_hash <- tune_grid(
+#   svm_rbf_model,
+#   hash_rec,
+#   grid = svm_rbf_grid,
+#   control = model_control,
+#   metrics = model_metrics,
+#   resamples = k_folds_data
+# )
+# 
+# autoplot(svm_rbf_hash)
+# 
+# svm_rbf_hash %>% show_best("rsq")
+# 
+# 
+# saveRDS(svm_rbf_hash, "03_Modeling/hash_incendios/svm_rbf_hash.rds")
 
 
 # KNN 
