@@ -870,6 +870,7 @@ rpart.plot::rpart.plot(fit,type = 0,
 rf_testing_pred %>%
   yardstick::recall(truth = inten, predict)
 
+#------------------------------------------------------------------------
 
 library("DALEX")
 exp_rf <- DALEX::explain(fit, data = test_data)
@@ -878,7 +879,7 @@ plot(fit)
 library("shapper")
 
 muestra <-tibble("prof_km"=300,
-                 "inten"=as.factor("VII"),
+                 "inten"=as.factor("na"),
                  "mag"=10,
                  "placa_tectonica"=as.factor(0)
 )
@@ -888,29 +889,29 @@ muestra$prof_km <- log(muestra$prof_km)
 
 
 ive_rf <- shap(exp_rf, new_observation = muestra)
-ive_rf
+
 
 a <- plot(ive_rf)+
   labs(title = "Deep earthquake")
 
+a
 
 
 
 
 
 
-
-muestra <-tibble("prof_km"=1,
-                 "inten"=as.factor("VII"),
-                 "mag"=5,
-                 "placa_tectonica"=as.factor(0)
+muestra2 <-tibble("prof_km"=1,
+                 "inten"=as.factor("na"),
+                 "mag"=6.1,
+                 "placa_tectonica"=as.factor(1)
 )
 
-muestra$mag <- (muestra$mag - 2.850961)/0.9478287
-muestra$prof_km <- log(muestra$prof_km)
+muestra2$mag <- (muestra2$mag - 2.850961)/0.9478287
+muestra2$prof_km <- log(muestra2$prof_km)
 
 
-ive_rf <- shap(exp_rf, new_observation = muestra)
+ive_rf <- shap(exp_rf, new_observation = muestra2)
 ive_rf
 
 plot(ive_rf)+
