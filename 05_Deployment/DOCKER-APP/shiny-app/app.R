@@ -4,17 +4,49 @@ library(dplyr)
 library(ggplot2)
 library(shinydashboard)
 library(tidyr)
+#library(kknn)
 
-arbol <- read_rds("../shiny-server/arbol_intensidad_terremotos.rds")
+#arbol <- read_rds("05_Deployment/arbol_intensidad_terremotos.rds")
+#matriz_costes <- readRDS("05_Deployment/matriz_costes.rds")
+#terremotos_evt <- readRDS("05_Deployment/VAL_terremotos_EVT_clusters_clara.rds")
+
+bag_tree_trained <- read_rds("../shiny-server/bag_tree_trained.rds")
+boost_tree_trained <- read_rds("../shiny-server/boost_tree_model_hash_trained.rds")
+C5_rules_trained <- read_rds("../shiny-server/C5_rules_trained.rds")
+multinom_reg_trained <- read_rds("../shiny-server/multinom_reg_trained.rds")
+naive_Bayes_trained <- read_rds("../shiny-server/naive_Bayes_trained.rds")
+
+
+
+
+
+
+
 
 matriz_costes <- readRDS("../shiny-server/matriz_costes.rds")
-
-
 terremotos_evt <- readRDS("../shiny-server/VAL_terremotos_EVT_clusters_clara.rds")
 
 
 
+
 terremotos_evt$fecha <- as.Date(terremotos_evt$fecha, format="%d/%m/%Y")
+
+#----------------------------------------------------------------------------
+
+
+incendios_evt <- readRDS("../shiny-server/incendios_evt.rds")
+
+CCAA <- readRDS("../shiny-server/CCAA.rds")
+
+
+rand_forest_trained.rds <- readRDS("../shiny-server/rand_forest_trained.rds")
+bag_mars_trained.rds <- readRDS("../shiny-server/bag_mars_trained.rds")
+boost_tree_trained.rds <- readRDS("../shiny-server/boost_tree_trained.rds")
+cubist_rules_trained.rds <- readRDS("../shiny-server/cubist_rules_trained.rds")
+nearest_neighbor_trained.rds <- readRDS("../shiny-server/nearest_neighbor_trained.rds")
+
+
+
 
 
 
@@ -34,49 +66,70 @@ fitGumbel <- function(x, metodo_optimizacion=NULL){
 }
 
 
+
+
 # Define UI ----
 ui <- dashboardPage(
   
   dashboardHeader(title = "CALCULADORA"),
   
   dashboardSidebar(
-    
-    menuItem("CALCULADORA TERREMOTOS",
-             
-      tabName = "calculadora terremotos")),
+    sidebarMenu(
+      
+    menuItem("CALCULADORA TERREMOTOS",tabName = "calculadora_terremotos"),
+    menuItem("CALCULADORA INCENDIOS",tabName = "calculadora_incendios")
+    )),
   
   dashboardBody(
-    fluidRow(
-     tabBox(
-       title =  "calculadora_terremotos",
-       width = "550px", 
-       height = "5000px",
-       
-      tabPanel("Frecuencia",
-               
-                box(width = 12,selectInput(
-                  "select_cluster",
-                  label = "Seleccione cluster",
-                  choices = c(1,2,3,4)
+    tabItems(
+      
+      #Terremotos 
+      tabItem(tabName = "calculadora_terremotos",
+              fluidRow(
+                tabBox(
+                  title =  "calculadora_terremotos",
+                  width = "550px", 
+                  height = "5000px",
                   
-                )
-                ),
-               div(
-                 
-                 box(width = 50,background = "purple",
-                  box(width = 12,background = "navy",
-                   h1("Modelo GEV")),
-                   box(plotOutput("location_plot"),background = "olive"),
+                  tabPanel("Frecuencia",
+                           box(width = 12,
+                               selectInput("select_cluster",
+                                           label = "Seleccione cluster",
+                                           choices = c(1,2,3,4)
+                                           )
+                               ),
+                           div(
+                             box(width = 50,background = "purple",
+                                 box(width = 12,background = "navy",
+                                     h1("Modelo GEV")),
+                                 box(plotOutput("location_plot"),background = "olive"),
+                                 
+                                 box(plotOutput("scale_plot"),background = "olive"),
                    
-                   box(plotOutput("scale_plot"),background = "olive"),
-                   
-                   box(plotOutput("shape_plot"),background = "olive"),
-                   box(title = "Calidad del ajuste",tableOutput("summary_GEV"),background = "olive", width = 4),
-                   box(title = "Desviaciones típicas estimadas",tableOutput("summary_GEV2"),background = "olive", width = 4),
-                   box(title = "Matriz covarianzas",tableOutput("summary_GEV3"),background = "olive", width = 4),
-                   box(numericInput("return_level_GEV",value = 5,label = "Introduzca el año de cálculo"),
-                       tableOutput("calculo_return_GEV"),background = "olive"))
-                 ),
+                                 box(plotOutput("shape_plot"),
+                                     background = "olive"),
+                                 
+                                 box(title = "Calidad del ajuste",
+                                     tableOutput("summary_GEV"),
+                                     background = "olive",
+                                     width = 4),
+                                 
+                                 box(title = "Desviaciones típicas estimadas",
+                                     tableOutput("summary_GEV2"),
+                                     background = "olive",
+                                     width = 4),
+                                 
+                                 box(title = "Matriz covarianzas",
+                                     tableOutput("summary_GEV3"),
+                                     background = "olive",
+                                     width = 4),
+                                 
+                                 box(numericInput("return_level_GEV",
+                                                  value = 5,
+                                                  label = "Introduzca el año de cálculo"),
+                                     tableOutput("calculo_return_GEV"),
+                                     background = "olive"))
+                             ),
                div(
                  
                  box(width = 50,background = "purple",
@@ -87,11 +140,26 @@ ui <- dashboardPage(
                  
                  box(plotOutput("scale_plotgumbel"),background = "olive"),
                  
-                 box(title = "Calidad del ajuste",tableOutput("summary_GUMBEL"),background = "olive", width = 4),
-                 box(title = "Desviaciones típicas estimadas",tableOutput("summary_GUMBEL2"),background = "olive", width = 4),
-                 box(title = "Matriz covarianzas",tableOutput("summary_GUMBEL3"),background = "olive", width = 4),
-                 box(numericInput("return_level_GUMBEL",value = 5,label = "Introduzca el año de cálculo"),
-                     tableOutput("calculo_return_GUMBEL"),background = "olive"))
+                 box(title = "Calidad del ajuste",
+                     tableOutput("summary_GUMBEL"),
+                     background = "olive", 
+                     width = 4),
+                 
+                 box(title = "Desviaciones típicas estimadas",
+                     tableOutput("summary_GUMBEL2")
+                     ,background = "olive",
+                     width = 4),
+                 
+                 box(title = "Matriz covarianzas",
+                     tableOutput("summary_GUMBEL3"),
+                     background = "olive",
+                     width = 4),
+                 
+                 box(numericInput("return_level_GUMBEL",
+                                  value = 5,
+                                  label = "Introduzca el año de cálculo"),
+                     tableOutput("calculo_return_GUMBEL"),
+                     background = "olive"))
                  
                  )),
        
@@ -103,19 +171,22 @@ ui <- dashboardPage(
           box(valueBoxOutput("pred_inten", width = 12)),
       
           box(solidHeader = TRUE,
-              
+              selectInput("MODELO_TERREMOTOS", 
+                          choices =c("bagged","boost tree",
+                                     "C5" ,"Multinom",
+                                     "Bayes"),label = "Elija modelo" ),
            sliderInput("magnitud", 
                        label = "Magnitud",
                       min = 0, 
                       max = 10, 
                       value = 5, 
-                      step = 0.1)),
+                      step = 0.1),background = "orange"),
           
            box(sliderInput("profundidad", label = "Profundidad",
                       min = 0, 
                       max = 300, 
                       value = 10,
-                      step = 0.1)),
+                      step = 0.1),background = "orange"),
           ),
      tabPanel("Coste",
         
@@ -145,9 +216,134 @@ ui <- dashboardPage(
       )
     )
   )
+),
+
+# INCENDIOS
+
+tabItem("calculadora_incendios",
+        
+        tabBox(
+          title =  "calculadora incendios",
+          width = "550px", 
+          height = "5000px",
+          
+          tabPanel("Frecuencia",
+                   box(width = 12,
+                       selectInput("select_cluster_incendios",
+                                   label = "Seleccione cluster",
+                                   choices = c(1,2,3,4)
+                       )
+                   ),
+                   div(
+                     box(width = 50,
+                         background = "red",
+                         
+                         box(width = 12,
+                             background = "navy",
+                             h1("Modelo GEV")),
+                         box(plotOutput("location_plot_incendios"),background = "olive"),
+                         
+                         box(plotOutput("scale_plot_incendios"),background = "olive"),
+                         
+                         box(plotOutput("shape_plot_incendios"),
+                             background = "olive"),
+                         
+                         box(title = "Calidad del ajuste",
+                             tableOutput("summary_GEV_incendios"),
+                             background = "olive",
+                             width = 4),
+                         
+                         box(title = "Desviaciones típicas estimadas",
+                             tableOutput("summary_GEV2_incendios"),
+                             background = "olive",
+                             width = 4),
+                         
+                         box(title = "Matriz covarianzas",
+                             tableOutput("summary_GEV3_incendios"),
+                             background = "olive",
+                             width = 4),
+                         
+                         box(numericInput("return_level_GEV_incendios",
+                                          value = 5,
+                                          label = "Introduzca el año de cálculo"),
+                             tableOutput("calculo_return_GEV_incendios"),
+                             background = "olive"))
+                   ),
+                   div(
+                     
+                     
+                     
+                     box(width = 50,background = "red",
+                         box(width = 12,background = "navy",
+                             h1("Modelo GUMBEL")),
+                         
+                         box(plotOutput("location_plotgumbel_incendios"),background = "olive"),
+                         
+                         box(plotOutput("scale_plotgumbel_incendios"),background = "olive"),
+                         
+                         
+                         box(title = "Calidad del ajuste",
+                             tableOutput("summary_GUMBEL_incendios"),
+                             background = "olive", 
+                             width = 4),
+                         
+                         box(title = "Desviaciones típicas estimadas",
+                             tableOutput("summary_GUMBEL2_incendios"),
+                             background = "olive", 
+                             width = 4),
+                         
+                         box(title = "Matriz covarianzas",
+                             tableOutput("summary_GUMBEL3_incendios"),
+                             background = "olive", width = 4),
+                         
+                         box(numericInput("return_level_GUMBEL_incendios",
+                                          value = 5,
+                                          label = "Introduzca el año de cálculo"),
+                             tableOutput("calculo_return_GUMBEL_incendios"),
+                             background = "olive"))
+                     
+                   )),
+          
+          
+          
+          
+          tabPanel("Coste",
+                   
+                   box(valueBoxOutput("pred_coste_incendios", width = 12)),
+                   
+                   
+                   box( selectInput("ccaa_incendios",
+                                    label = "Elija la CCAA",
+                                    choices = CCAA)),
+                   box(selectInput("mes_incendios",
+                                    label = "Mes del incendio",
+                                    choices = seq(1,12,1))),
+                   box( numericInput("fallecidos_incendios",
+                                    label = "Fallecidos en el incendio",
+                                    value = 5,
+                                    max = 25)),
+                   box( numericInput("heridos_incendios",
+                                     label = "Heridos en el incendio",
+                                     value = 12,
+                                     max = 50)),
+                   box( numericInput("superficie_incendios",
+                                     label = "Superficie quemada",
+                                     value = 20,
+                                     max = 30000)),
+                   box(selectInput("modelo_elegido_incendios",
+                                   label = "Seleccione el modelo",
+                                   choices = c("Rand Forest", "Bag Mars",
+                                               "Boost tree", "Cubist Rules",
+                                               "KNN")))
+                   
+                   
+                   
+          )
+        )
+        
 )
+))
 )
-  
 
 
 
@@ -184,7 +380,7 @@ server <- function(input, output) {
       filter(cluster == input$select_cluster)%>%
       group_by(fecha)%>%
       summarise(mag = max(mag))%>%
-      select(mag)
+      dplyr::select(mag)
     
     fitGEV(x$mag, c(0.1,0.1,0.1))
   }) 
@@ -417,7 +613,7 @@ server <- function(input, output) {
       filter(cluster == input$select_cluster)%>%
       group_by(fecha)%>%
       summarise(mag = max(mag))%>%
-      select(mag)
+      dplyr::select(mag)
     
     fitGumbel(x$mag)
   })
@@ -578,35 +774,44 @@ server <- function(input, output) {
   
   
   
-  
-  
-  
-  
-  
+
   
   output$pred_inten <- renderValueBox({ 
     
-    
-    prediction <- predict(
-      arbol,
-      tibble("prof_km"=log(input$profundidad),
-             "inten"=as.factor("."),
-             "mag"=(input$magnitud - 2.850961)/0.9478287,
-             "placa_tectonica"=as.factor(0)),
-      type = "class")
+    new_data <- tibble("prof_km"=log(input$profundidad),
+                        "inten"=as.factor("."),
+                        "mag"=(input$magnitud - 2.850961)/0.9478287,
+                        "placa_tectonica"=as.factor(0))
     
     
+    modelo_seleccionado <- if(input$MODELO_TERREMOTOS == "bagged"){
+      (bag_tree_trained)
+    }else if(input$MODELO_TERREMOTOS == "boost tree"){
+      (boost_tree_trained)
+    }else if(input$MODELO_TERREMOTOS == "C5"){
+      (C5_rules_trained)
+    }else if(input$MODELO_TERREMOTOS == "Multinom"){
+      (multinom_reg_trained)
+    }else if(input$MODELO_TERREMOTOS == "Bayes"){
+      (naive_Bayes_trained)
+    }
+    
+    
+    prediction <- as_tibble(predict(
+      modelo_seleccionado,new_data,
+      type = "class"))%>%
+      gather()%>% 
+      arrange(desc(value)) %>% 
+      dplyr::slice(1) %>% 
+      dplyr::select(value)
+
     prediction_prob <- as_tibble(predict(
-      arbol,
-      tibble("prof_km"=log(input$profundidad),
-             "inten"=as.factor("."),
-             "mag"=(input$magnitud - 2.850961)/0.9478287,
-             "placa_tectonica"=as.factor(0)),
+      modelo_seleccionado,new_data,
       type = "prob"))%>%
       gather()%>% 
       arrange(desc(value)) %>% 
-      slice(1) %>% 
-      select(value)
+      dplyr::slice(1) %>% 
+      dplyr::select(value)
     
     
     valueBox(
@@ -614,10 +819,7 @@ server <- function(input, output) {
       value = paste0("Intensidad: ",as.character(prediction)),
     )
     
-  }) %>%
-    bindCache(input$profundidad,
-              input$magnitud)
-  
+  })
   
   
   output$pred_coste <- renderValueBox({
@@ -645,6 +847,480 @@ server <- function(input, output) {
   
   
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  evt_incendios <- reactive({
+    
+    x <<- incendios_evt %>%
+      filter(cluster == input$select_cluster_incendios)%>%
+      group_by(fecha)%>%
+      summarise(superficie = max(superficie))%>%
+      dplyr::select(superficie)
+    
+    fitGEV(x$superficie, c(0.1,0.1,0.1))
+  }) 
+  
+  
+  resultados_fit_incendios <- reactive({
+    
+    tibble("Parametro"= c("location", "scale", "shape"),
+           "Valores_optimos"= evt_incendios()$par)
+  })
+  
+  valor_location_incendios <- reactive({
+    as.double(resultados_fit_incendios()[1,2])
+    
+  })
+  
+  valor_scale_incendios <- reactive({
+    as.double(resultados_fit_incendios()[2,2])
+    
+  })
+  
+  valor_shape_incendios <- reactive({
+    as.double(resultados_fit_incendios()[3,2])
+    
+  })
+  
+  output$location_plot_incendios <- renderPlot({
+    
+    
+    
+    verosimilitud <- c(evt_incendios()$value)
+    
+    
+    # PLOT LOCATION -------------------------------------------------------
+    
+    # secuencia son los numeros de la variable location para calcular y graficar
+    secuencia <-seq(valor_location_incendios()-0.1,
+                    valor_location_incendios()+0.1,
+                    0.01)
+    
+    #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
+    
+    verosimilitud_funcion_media <- sapply(secuencia, function(media){
+      E <- as.double(resultados_fit_incendios()[3,2])
+      desv <- as.double(resultados_fit_incendios()[2,2])
+      
+      (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
+    })
+    
+    # agrupamos para plotear
+    df <- data.frame(secuencia, verosimilitud_funcion_media)
+    
+    ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
+      geom_line() +
+      xlim(as.double(valor_location_incendios()-0.1),
+           as.double(valor_location_incendios()+0.1)) +
+      
+      labs(title = "Relación Verosimilitud / Location",
+           x = "Location",
+           y = "Verosimilitud",
+           color = NULL) +
+      
+      geom_hline(yintercept=min(verosimilitud_funcion_media), color="red") +
+      
+      geom_point(data = df[which.min(df$verosimilitud_funcion_media), ],
+                 color="red",
+                 size=3) +
+      
+      
+      theme_minimal()
+    
+  })
+  
+  output$scale_plot_incendios <- renderPlot({
+    
+    
+    # PLOT SCALE -------------------------------------------------------
+    
+    # secuencia son los numeros de la variable SCALE para calcular y graficar
+    secuencia <-seq(valor_scale_incendios()-0.1,
+                    valor_scale_incendios()+0.1,
+                    0.01)
+    
+    #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
+    
+    verosimilitud_funcion_media <- sapply(secuencia, function(desv){
+      E <- valor_shape_incendios()
+      media <- valor_location_incendios()
+      
+      (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
+    })
+    
+    # agrupamos para plotear
+    df <- data.frame(secuencia, verosimilitud_funcion_media)
+    
+    ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
+      geom_line() +
+      xlim(as.double(valor_scale_incendios()-0.1),
+           as.double(valor_scale_incendios()+0.1)) +
+      
+      labs(title = "Relación Verosimilitud / Scale",
+           x = "Scale",
+           y = "Verosimilitud",
+           color = NULL) +
+      
+      geom_hline(yintercept=min(verosimilitud_funcion_media), color="red") +
+      
+      geom_point(data = df[which.min(df$verosimilitud_funcion_media), ],
+                 color="red",
+                 size=3) +
+      
+      theme_minimal()
+  })
+  
+  output$shape_plot_incendios <- renderPlot({
+    
+    
+    
+    
+    # secuencia son los numeros de la variable SHAPE para calcular y graficar
+    secuencia <-seq(valor_shape_incendios()-0.1,
+                    valor_shape_incendios()+0.1,
+                    0.01)
+    
+    #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
+    
+    verosimilitud_funcion_media <- sapply(secuencia, function(E){
+      media <- valor_location_incendios()
+      desv <- valor_scale_incendios()
+      
+      (-length(x)*log(desv)-(1+1/E)*sum(log(1+E*((x-media)/desv)))-sum((1+E*((x-media)/desv))^(-1/E)))*-1
+    })
+    
+    # agrupamos para plotear
+    df <- data.frame(secuencia, verosimilitud_funcion_media)
+    
+    ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
+      geom_line() +
+      xlim(as.double(valor_shape_incendios()-0.1),
+           as.double(valor_shape_incendios()+0.1)) +
+      
+      labs(title = "Relación Verosimilitud / Shape",
+           x = "Scale",
+           y = "Verosimilitud",
+           color = NULL) +
+      
+      geom_hline(yintercept=min(verosimilitud_funcion_media), color="red") +
+      
+      geom_point(data = df[which.min(df$verosimilitud_funcion_media), ],
+                 color="red",
+                 size=3) +
+      theme_minimal()
+  })
+  
+  
+  output$summary_GEV_incendios <- renderTable({
+    verosimilitud <- c( evt_incendios()$value)
+    
+    
+    tibble("Negative log likelihood"=verosimilitud,
+           
+           "AIC"= 2*3+2*verosimilitud,
+           
+           
+           "BIC"=2*verosimilitud+3*log(length(x)))
+    
+    
+  })
+  
+  output$summary_GEV2_incendios <- renderTable({
+    
+    data.frame("location"=sqrt(solve(evt_incendios()$hessian)[1,1]),
+               "scale"=sqrt(solve(evt_incendios()$hessian)[2,2]),
+               "shape"=sqrt(solve(evt_incendios()$hessian)[3,3]))
+    
+  })
+  
+  output$summary_GEV3_incendios <- renderTable({
+    
+    data.frame("location"=solve(evt_incendios()$hessian)[1,],
+               "scale"=solve(evt_incendios()$hessian)[2,],
+               "shape"=solve(evt_incendios()$hessian)[3,])
+    
+  })
+  
+  
+  
+  output$calculo_return_GEV_incendios <- renderTable({
+    
+    resultados_fit <- tibble("Parametro"= c("location", "scale", "shape"),
+                             "Valores_optimos"= evt_incendios()$par)
+    
+    
+    V <- as.matrix(tibble("location"=solve(evt_incendios()$hessian)[1,],
+                          "scale"=solve(evt_incendios()$hessian)[2,],
+                          "shape"=solve(evt_incendios()$hessian)[3,]))
+    
+    location <- as.double(resultados_fit[1,2])
+    scale <-  as.double(resultados_fit[2,2])
+    shape <-  as.double(resultados_fit[3,2])
+    
+    p <- 1/(input$return_level_GEV*365)
+    
+    
+    y_p <- -log(1-p)
+    
+    
+    Z <- location - scale/shape*(1-(-log(1-p))^(-shape))
+    
+    d_2 <- as.numeric( -shape^(-1)*(1-y_p^(-shape)))
+    
+    d_3 <- as.numeric(scale*shape^(-2)*(1-y_p^(-shape)) -scale*shape^(-1)*y_p^(-shape)*log(y_p))
+    
+    z_T_p <- c(1, d_2 , d_3)
+    
+    Var <- t(matrix(z_T_p)) %*% V %*% matrix(z_T_p)
+    
+    tibble("Limite inferior: "= Z +1.96 * as.numeric(sqrt(Var)),
+           "Media: "= Z,
+           "Limite superior: "= Z -1.96 * as.numeric(sqrt(Var)))
+    
+  })
+  
+  
+  # GUMBEL----------------------------------------------------------------------
+  
+  evt_gumbel_incendios <- reactive({
+    
+    x <<- incendios_evt %>%
+      filter(cluster == input$select_cluster_incendios)%>%
+      group_by(fecha)%>%
+      summarise(superficie = max(superficie))%>%
+      dplyr::select(superficie)
+    
+    fitGumbel(x$superficie)
+  })
+  
+  
+  output$location_plotgumbel_incendios <- renderPlot({
+    
+    resultados_fit <- tibble("Parametro"= c("location", "scale"),
+                             "Valores_optimos"= evt_gumbel_incendios()$par)
+    
+    verosimilitud <<- c( evt_gumbel_incendios()$value)
+    
+    valor_location <- as.double(resultados_fit[1,2])
+    valor_scale <-  as.double(resultados_fit[2,2])
+    
+    
+    # PLOT LOCATION -------------------------------------------------------
+    
+    # secuencia son los numeros de la variable location para calcular y graficar
+    secuencia <-seq(valor_location-0.1,
+                    valor_location+0.1,
+                    0.01)
+    
+    #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
+    
+    verosimilitud_funcion_media <- sapply(secuencia, function(media){
+      desv <- as.double(resultados_fit[2,2])
+      
+      -(-length(x)*log(desv)-sum((x-media)/desv)-sum(exp(-(x-media)/desv)))
+    })
+    
+    # agrupamos para plotear
+    df <- data.frame(secuencia, verosimilitud_funcion_media)
+    
+    ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
+      geom_line() +
+      xlim(as.double(valor_location-0.1),
+           as.double(valor_location+0.1)) +
+      
+      labs(title = "Relación Verosimilitud / Location",
+           x = "Location",
+           y = "Verosimilitud",
+           color = NULL) +
+      
+      geom_hline(yintercept=min(verosimilitud_funcion_media), color="red") +
+      
+      geom_point(data = df[which.min(df$verosimilitud_funcion_media), ],
+                 color="red",
+                 size=3) +
+      theme_minimal()
+    
+    
+  })
+  
+  output$scale_plotgumbel_incendios <- renderPlot({
+    
+    resultados_fit <- tibble("Parametro"= c("location", "scale"),
+                             "Valores_optimos"= evt_gumbel_incendios()$par)
+    
+    verosimilitud <<- c( evt_gumbel_incendios()$value)
+    
+    valor_location <- as.double(resultados_fit[1,2])
+    valor_scale <-  as.double(resultados_fit[2,2])
+    
+    # secuencia son los numeros de la variable SCALE para calcular y graficar
+    secuencia <-seq(valor_scale-0.1,
+                    valor_scale+0.1,
+                    0.01)
+    
+    #  aplicaicon de la funcion de versimilutd con las otras dos variables fijas
+    
+    verosimilitud_funcion_media <- sapply(secuencia, function(desv){
+      media <- valor_location
+      
+      -(-length(x)*log(desv)-sum((x-media)/desv)-sum(exp(-(x-media)/desv)))
+    })
+    
+    # agrupamos para plotear
+    df <- data.frame(secuencia, verosimilitud_funcion_media)
+    
+    ggplot(df,aes(secuencia, verosimilitud_funcion_media))+
+      geom_line() +
+      xlim(as.double(valor_scale-0.1),
+           as.double(valor_scale+0.1)) +
+      
+      labs(title = "Relación Verosimilitud / Scale",
+           x = "Scale",
+           y = "Verosimilitud",
+           color = NULL) +
+      
+      geom_hline(yintercept=min(verosimilitud_funcion_media), color="red") +
+      
+      geom_point(data = df[which.min(df$verosimilitud_funcion_media), ],
+                 color="red",
+                 size=3) +
+      theme_minimal()
+    
+    
+    
+  })
+  
+  
+  output$summary_GUMBEL_incendios <- renderTable({
+    
+    
+    
+    verosimilitud <- c( evt_gumbel_incendios()$value)
+    
+    
+    tibble("Negative log likelihood"=verosimilitud,
+           
+           "AIC"= 2*2+2*verosimilitud,
+           
+           
+           "BIC"=2*verosimilitud+3*log(length(x)))
+    
+    
+  })
+  
+  
+  output$summary_GUMBEL2_incendios <- renderTable({
+    
+    data.frame("location"=sqrt(solve(evt_gumbel_incendios()$hessian)[1,1]),
+               "scale"=sqrt(solve(evt_gumbel_incendios()$hessian)[2,2]))
+    
+  })
+  
+  
+  output$summary_GUMBEL3_incendios <- renderTable({
+    
+    data.frame("location"=solve(evt_gumbel_incendios()$hessian)[1,],
+               "scale"=solve(evt_gumbel_incendios()$hessian)[2,])
+    
+  })
+  
+  
+  
+  output$calculo_return_GUMBEL_incendios <- renderTable({
+    
+    resultados_fit <- tibble("Parametro"= c("location", "scale"),
+                             "Valores_optimos"= evt_gumbel_incendios()$par)
+    
+    location <- as.double(resultados_fit[1,2])
+    scale <-  as.double(resultados_fit[2,2])
+    
+    
+    p <- 1/(input$return_level_GUMBEL*365)
+    
+    
+    Z <- as.numeric(location-scale*log(-log(1-p)))
+    
+    
+    
+    tibble(media=Z)
+    
+  })
+  
+  
+  output$pred_coste_incendios <- renderValueBox({
+
+   
+    
+    modelo_incendios <- if(input$modelo_elegido_incendios == "Rand Forest"){
+      (rand_forest_trained.rds)
+    }else if(input$modelo_elegido_incendios == "Bag Mars"){
+      (bag_mars_trained.rds)
+    }else if(input$modelo_elegido_incendios == "Boost tree"){
+      (boost_tree_trained.rds)
+    }else if(input$modelo_elegido_incendios == "Cubist Rules"){
+      (cubist_rules_trained.rds)
+    }else if(input$modelo_elegido_incendios == "KNN"){
+      (nearest_neighbor_trained.rds)
+    }
+
+      newdata_incendios <- tibble("perdidas"=log(5),
+                                "CCAA_riesgo"=as.numeric(ifelse(input$ccaa_incendios == "Galicia",2,
+                                                                ifelse(input$ccaa_incendios == "Aragón",1,
+                                                                       0))),
+                                "mes_cos"=cos(as.numeric(input$mes_incendios)*pi*2/12),
+                                "mes_sin"=sin(as.numeric(input$mes_incendios)*pi*2/12),
+                                "muertos"=as.numeric(input$fallecidos_incendios),
+                                "heridos"=as.numeric(input$heridos_incendios),
+                                "superficie"=as.numeric(log(input$superficie_incendios)^0.5))
+    
+
+        prediction_incendios <- as_tibble(predict(
+      modelo_incendios,newdata_incendios),
+      type = "class")%>%
+      gather()%>% 
+      arrange(desc(value)) %>% 
+      dplyr::slice(1) %>% 
+      dplyr::select(value)
+
+      valueBox(
+      value =  paste0(round(exp(1)^(prediction_incendios),2)," €"),
+      subtitle = ""
+    )
+    
+  })
+  
+  
+  
+  
+  
+  
+  
 }
 
 
@@ -652,8 +1328,6 @@ server <- function(input, output) {
 
 # Run the app ----
 shinyApp(ui = ui, server = server)
-
-
 
 
 
