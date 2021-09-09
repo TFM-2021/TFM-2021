@@ -75,16 +75,30 @@ ui <- dashboardPage(
   
   dashboardSidebar(
     sidebarMenu(
-      
-    menuItem("CALCULADORA TERREMOTOS",tabName = "calculadora_terremotos"),
-    menuItem("CALCULADORA INCENDIOS",tabName = "calculadora_incendios")
+      menuItem("CLUSTERS",tabName = "clusters_explicacion"),
+      menuItem("CALCULADORA TERREMOTOS",tabName = "calculadora_terremotos"),
+      menuItem("CALCULADORA INCENDIOS",tabName = "calculadora_incendios")
     )),
   
   dashboardBody(
     tabItems(
       
+      
+      tabItem(tabName = "clusters_explicacion",
+              fluidRow(box(h1("¡Bienvenido a la caluladora de eventos extremos!"),
+                           h2("Clusters terremotos"),
+                           h4("Cluster 1 = Pirineos y Sistema ibérico"),
+                           h4("Cluster 2 = Sistema bético y placa tectónica euroafricana"),
+                           h4("Cluster 3 = Galicia"),
+                           h4("Cluster 4 = Islas Canarias"),
+                           h2("Clusters incendios"),
+                           h4("Cluster 1 = Asturias, Cantabria, León, País Vasco y Palencia"),
+                           h4("Cluster 2 = Mediterráneo"),
+                           h4("Cluster 3 = Andalucía, Castilla La Mancha, Extremadura y Canarias"),
+                           h4("Cluster 4 = Galicia"),
+              ))),
       #Terremotos 
-      tabItem(tabName = "calculadora_terremotos",
+      tabItem(tabName = "Elija el clúster",
               fluidRow(
                 tabBox(
                   title =  "calculadora_terremotos",
@@ -92,12 +106,12 @@ ui <- dashboardPage(
                   height = "5000px",
                   
                   tabPanel("Frecuencia",
-                           box(width = 12,
+                           box(width = 12,background = "purple",
                                selectInput("select_cluster",
                                            label = "Seleccione cluster",
                                            choices = c(1,2,3,4)
-                                           )
-                               ),
+                               )
+                           ),
                            div(
                              box(width = 50,background = "purple",
                                  box(width = 12,background = "navy",
@@ -105,7 +119,7 @@ ui <- dashboardPage(
                                  box(plotOutput("location_plot"),background = "olive"),
                                  
                                  box(plotOutput("scale_plot"),background = "olive"),
-                   
+                                 
                                  box(plotOutput("shape_plot"),
                                      background = "olive"),
                                  
@@ -129,220 +143,220 @@ ui <- dashboardPage(
                                                   label = "Introduzca el año de cálculo"),
                                      tableOutput("calculo_return_GEV"),
                                      background = "olive"))
-                             ),
-               div(
-                 
-                 box(width = 50,background = "purple",
-                 box(width = 12,background = "navy",
-                       h1("Modelo GUMBEL")),
-                 
-                 box(plotOutput("location_plotgumbel"),background = "olive"),
-                 
-                 box(plotOutput("scale_plotgumbel"),background = "olive"),
-                 
-                 box(title = "Calidad del ajuste",
-                     tableOutput("summary_GUMBEL"),
-                     background = "olive", 
-                     width = 4),
-                 
-                 box(title = "Desviaciones típicas estimadas",
-                     tableOutput("summary_GUMBEL2")
-                     ,background = "olive",
-                     width = 4),
-                 
-                 box(title = "Matriz covarianzas",
-                     tableOutput("summary_GUMBEL3"),
-                     background = "olive",
-                     width = 4),
-                 
-                 box(numericInput("return_level_GUMBEL",
-                                  value = 5,
-                                  label = "Introduzca el año de cálculo"),
-                     tableOutput("calculo_return_GUMBEL"),
-                     background = "olive"))
-                 
-                 )),
-       
-       
+                           ),
+                           div(
+                             
+                             box(width = 50,background = "purple",
+                                 box(width = 12,background = "navy",
+                                     h1("Modelo GUMBEL")),
+                                 
+                                 box(plotOutput("location_plotgumbel"),background = "olive"),
+                                 
+                                 box(plotOutput("scale_plotgumbel"),background = "olive"),
+                                 
+                                 box(title = "Calidad del ajuste",
+                                     tableOutput("summary_GUMBEL"),
+                                     background = "olive", 
+                                     width = 4),
+                                 
+                                 box(title = "Desviaciones típicas estimadas",
+                                     tableOutput("summary_GUMBEL2")
+                                     ,background = "olive",
+                                     width = 4),
+                                 
+                                 box(title = "Matriz covarianzas",
+                                     tableOutput("summary_GUMBEL3"),
+                                     background = "olive",
+                                     width = 4),
+                                 
+                                 box(numericInput("return_level_GUMBEL",
+                                                  value = 5,
+                                                  label = "Introduzca el año de cálculo"),
+                                     tableOutput("calculo_return_GUMBEL"),
+                                     background = "olive"))
+                             
+                           )),
+                  
+                  
+                  
+                  
+                  tabPanel("Intensidad",
+                           
+                           box(valueBoxOutput("pred_inten", width = 12)),
+                           
+                           box(solidHeader = TRUE,
+                               selectInput("MODELO_TERREMOTOS", 
+                                           choices =c("bagged","boost tree",
+                                                      "C5" ,"Multinom",
+                                                      "Bayes"),label = "Elija modelo" ),
+                               sliderInput("magnitud", 
+                                           label = "Magnitud",
+                                           min = 0, 
+                                           max = 10, 
+                                           value = 5, 
+                                           step = 0.1),background = "orange"),
+                           
+                           box(sliderInput("profundidad", label = "Profundidad",
+                                           min = 0, 
+                                           max = 300, 
+                                           value = 10,
+                                           step = 0.1),background = "orange"),
+                  ),
+                  tabPanel("Coste",
+                           
+                           box(valueBoxOutput("pred_coste", width = 12)),
+                           
+                           box(numericInput("m2_ladrillo",
+                                            label = "Metros cuadrados ladrillo",
+                                            value = 10000,
+                                            step = 10000)),
+                           
+                           box(numericInput("m2_hormigon",
+                                            label = "Metros cuadrados hormigón",
+                                            value = 10000,
+                                            step = 10000)),
+                           
+                           box(numericInput("m2_coste",
+                                            label = "Coste metros cuadrados",
+                                            value = 1000,
+                                            step = 10)),
+                           box( selectInput("intensidad_terremoto",
+                                            label = "Elija la intensidad",
+                                            choices = unique(matriz_costes$Terremoto)))
+                           
+                           
+                           
+                           
+                  )
+                )
+              )
+      ),
       
-       
-     tabPanel("Intensidad",
-               
-          box(valueBoxOutput("pred_inten", width = 12)),
+      # INCENDIOS
       
-          box(solidHeader = TRUE,
-              selectInput("MODELO_TERREMOTOS", 
-                          choices =c("bagged","boost tree",
-                                     "C5" ,"Multinom",
-                                     "Bayes"),label = "Elija modelo" ),
-           sliderInput("magnitud", 
-                       label = "Magnitud",
-                      min = 0, 
-                      max = 10, 
-                      value = 5, 
-                      step = 0.1),background = "orange"),
-          
-           box(sliderInput("profundidad", label = "Profundidad",
-                      min = 0, 
-                      max = 300, 
-                      value = 10,
-                      step = 0.1),background = "orange"),
-          ),
-     tabPanel("Coste",
-        
-        box(valueBoxOutput("pred_coste", width = 12)),
-        
-        box(numericInput("m2_ladrillo",
-                     label = "Metros cuadrados ladrillo",
-                     value = 10000,
-                     step = 10000)),
-        
-            box(numericInput("m2_hormigon",
-                     label = "Metros cuadrados hormigón",
-                     value = 10000,
-                     step = 10000)),
-        
-            box(numericInput("m2_coste",
-                     label = "Coste metros cuadrados",
-                     value = 1000,
-                     step = 10)),
-            box( selectInput("intensidad_terremoto",
-                    label = "Elija la intensidad",
-                    choices = unique(matriz_costes$Terremoto)))
-        
-        
-        
-        
-      )
-    )
-  )
-),
-
-# INCENDIOS
-
-tabItem("calculadora_incendios",
-        
-        tabBox(
-          title =  "calculadora incendios",
-          width = "550px", 
-          height = "5000px",
-          
-          tabPanel("Frecuencia",
-                   box(width = 12,
-                       selectInput("select_cluster_incendios",
-                                   label = "Seleccione cluster",
-                                   choices = c(1,2,3,4)
-                       )
-                   ),
-                   div(
-                     box(width = 50,
-                         background = "red",
-                         
+      tabItem("calculadora_incendios",
+              
+              tabBox(
+                title =  "Elija el clúster",
+                width = "550px", 
+                height = "5000px",
+                
+                tabPanel("Frecuencia",
                          box(width = 12,
-                             background = "navy",
-                             h1("Modelo GEV")),
-                         box(plotOutput("location_plot_incendios"),background = "olive"),
+                             selectInput("select_cluster_incendios",
+                                         label = "Seleccione cluster",
+                                         choices = c(1,2,3,4)
+                             )
+                         ),
+                         div(
+                           box(width = 50,
+                               background = "red",
+                               
+                               box(width = 12,
+                                   background = "navy",
+                                   h1("Modelo GEV")),
+                               box(plotOutput("location_plot_incendios"),background = "olive"),
+                               
+                               box(plotOutput("scale_plot_incendios"),background = "olive"),
+                               
+                               box(plotOutput("shape_plot_incendios"),
+                                   background = "olive"),
+                               
+                               box(title = "Calidad del ajuste",
+                                   tableOutput("summary_GEV_incendios"),
+                                   background = "olive",
+                                   width = 4),
+                               
+                               box(title = "Desviaciones típicas estimadas",
+                                   tableOutput("summary_GEV2_incendios"),
+                                   background = "olive",
+                                   width = 4),
+                               
+                               box(title = "Matriz covarianzas",
+                                   tableOutput("summary_GEV3_incendios"),
+                                   background = "olive",
+                                   width = 4),
+                               
+                               box(numericInput("return_level_GEV_incendios",
+                                                value = 5,
+                                                label = "Introduzca el año de cálculo"),
+                                   tableOutput("calculo_return_GEV_incendios"),
+                                   background = "olive"))
+                         ),
+                         div(
+                           
+                           
+                           
+                           box(width = 50,background = "red",
+                               box(width = 12,background = "navy",
+                                   h1("Modelo GUMBEL")),
+                               
+                               box(plotOutput("location_plotgumbel_incendios"),background = "olive"),
+                               
+                               box(plotOutput("scale_plotgumbel_incendios"),background = "olive"),
+                               
+                               
+                               box(title = "Calidad del ajuste",
+                                   tableOutput("summary_GUMBEL_incendios"),
+                                   background = "olive", 
+                                   width = 4),
+                               
+                               box(title = "Desviaciones típicas estimadas",
+                                   tableOutput("summary_GUMBEL2_incendios"),
+                                   background = "olive", 
+                                   width = 4),
+                               
+                               box(title = "Matriz covarianzas",
+                                   tableOutput("summary_GUMBEL3_incendios"),
+                                   background = "olive", width = 4),
+                               
+                               box(numericInput("return_level_GUMBEL_incendios",
+                                                value = 5,
+                                                label = "Introduzca el año de cálculo"),
+                                   tableOutput("calculo_return_GUMBEL_incendios"),
+                                   background = "olive"))
+                           
+                         )),
+                
+                
+                
+                
+                tabPanel("Coste",
                          
-                         box(plotOutput("scale_plot_incendios"),background = "olive"),
-                         
-                         box(plotOutput("shape_plot_incendios"),
-                             background = "olive"),
-                         
-                         box(title = "Calidad del ajuste",
-                             tableOutput("summary_GEV_incendios"),
-                             background = "olive",
-                             width = 4),
-                         
-                         box(title = "Desviaciones típicas estimadas",
-                             tableOutput("summary_GEV2_incendios"),
-                             background = "olive",
-                             width = 4),
-                         
-                         box(title = "Matriz covarianzas",
-                             tableOutput("summary_GEV3_incendios"),
-                             background = "olive",
-                             width = 4),
-                         
-                         box(numericInput("return_level_GEV_incendios",
-                                          value = 5,
-                                          label = "Introduzca el año de cálculo"),
-                             tableOutput("calculo_return_GEV_incendios"),
-                             background = "olive"))
-                   ),
-                   div(
-                     
-                     
-                     
-                     box(width = 50,background = "red",
-                         box(width = 12,background = "navy",
-                             h1("Modelo GUMBEL")),
-                         
-                         box(plotOutput("location_plotgumbel_incendios"),background = "olive"),
-                         
-                         box(plotOutput("scale_plotgumbel_incendios"),background = "olive"),
+                         box(valueBoxOutput("pred_coste_incendios", width = 12)),
                          
                          
-                         box(title = "Calidad del ajuste",
-                             tableOutput("summary_GUMBEL_incendios"),
-                             background = "olive", 
-                             width = 4),
+                         box( selectInput("ccaa_incendios",
+                                          label = "Elija la CCAA",
+                                          choices = CCAA)),
+                         box(selectInput("mes_incendios",
+                                         label = "Mes del incendio",
+                                         choices = seq(1,12,1))),
+                         box( numericInput("fallecidos_incendios",
+                                           label = "Fallecidos en el incendio",
+                                           value = 5,
+                                           max = 25)),
+                         box( numericInput("heridos_incendios",
+                                           label = "Heridos en el incendio",
+                                           value = 12,
+                                           max = 50)),
+                         box( numericInput("superficie_incendios",
+                                           label = "Superficie quemada",
+                                           value = 20,
+                                           max = 30000)),
+                         box(selectInput("modelo_elegido_incendios",
+                                         label = "Seleccione el modelo",
+                                         choices = c("Rand Forest", "Bag Mars",
+                                                     "Boost tree", "Cubist Rules",
+                                                     "KNN")))
                          
-                         box(title = "Desviaciones típicas estimadas",
-                             tableOutput("summary_GUMBEL2_incendios"),
-                             background = "olive", 
-                             width = 4),
                          
-                         box(title = "Matriz covarianzas",
-                             tableOutput("summary_GUMBEL3_incendios"),
-                             background = "olive", width = 4),
                          
-                         box(numericInput("return_level_GUMBEL_incendios",
-                                          value = 5,
-                                          label = "Introduzca el año de cálculo"),
-                             tableOutput("calculo_return_GUMBEL_incendios"),
-                             background = "olive"))
-                     
-                   )),
-          
-          
-          
-          
-          tabPanel("Coste",
-                   
-                   box(valueBoxOutput("pred_coste_incendios", width = 12)),
-                   
-                   
-                   box( selectInput("ccaa_incendios",
-                                    label = "Elija la CCAA",
-                                    choices = CCAA)),
-                   box(selectInput("mes_incendios",
-                                    label = "Mes del incendio",
-                                    choices = seq(1,12,1))),
-                   box( numericInput("fallecidos_incendios",
-                                    label = "Fallecidos en el incendio",
-                                    value = 5,
-                                    max = 25)),
-                   box( numericInput("heridos_incendios",
-                                     label = "Heridos en el incendio",
-                                     value = 12,
-                                     max = 50)),
-                   box( numericInput("superficie_incendios",
-                                     label = "Superficie quemada",
-                                     value = 20,
-                                     max = 30000)),
-                   box(selectInput("modelo_elegido_incendios",
-                                   label = "Seleccione el modelo",
-                                   choices = c("Rand Forest", "Bag Mars",
-                                               "Boost tree", "Cubist Rules",
-                                               "KNN")))
-                   
-                   
-                   
-          )
-        )
-        
-)
-))
+                )
+              )
+              
+      )
+    ))
 )
 
 

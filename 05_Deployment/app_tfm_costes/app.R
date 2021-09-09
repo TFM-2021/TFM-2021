@@ -82,7 +82,7 @@ ui <- dashboardPage(
   
   dashboardSidebar(
     sidebarMenu(
-      
+   menuItem("CLUSTERS",tabName = "clusters_explicacion"),
     menuItem("CALCULADORA TERREMOTOS",tabName = "calculadora_terremotos"),
     menuItem("CALCULADORA INCENDIOS",tabName = "calculadora_incendios")
     )),
@@ -90,8 +90,22 @@ ui <- dashboardPage(
   dashboardBody(
     tabItems(
       
+      
+      tabItem(tabName = "clusters_explicacion",
+              fluidRow(box(h1("¡Bienvenido a la caluladora de eventos extremos!"),
+                           h2("Clusters terremotos"),
+                           h4("Cluster 1 = Pirineos y Sistema ibérico"),
+                           h4("Cluster 2 = Sistema bético y placa tectónica euroafricana"),
+                           h4("Cluster 3 = Galicia"),
+                           h4("Cluster 4 = Islas Canarias"),
+                           h2("Clusters incendios"),
+                           h4("Cluster 1 = Asturias, Cantabria, León, País Vasco y Palencia"),
+                           h4("Cluster 2 = Mediterráneo"),
+                           h4("Cluster 3 = Andalucía, Castilla La Mancha, Extremadura y Canarias"),
+                           h4("Cluster 4 = Galicia"),
+                           ))),
       #Terremotos 
-      tabItem(tabName = "calculadora_terremotos",
+      tabItem(tabName = "Elija el clúster",
               fluidRow(
                 tabBox(
                   title =  "calculadora_terremotos",
@@ -99,7 +113,7 @@ ui <- dashboardPage(
                   height = "5000px",
                   
                   tabPanel("Frecuencia",
-                           box(width = 12,
+                           box(width = 12,background = "purple",
                                selectInput("select_cluster",
                                            label = "Seleccione cluster",
                                            choices = c(1,2,3,4)
@@ -230,7 +244,7 @@ ui <- dashboardPage(
 tabItem("calculadora_incendios",
         
         tabBox(
-          title =  "calculadora incendios",
+          title =  "Elija el clúster",
           width = "550px", 
           height = "5000px",
           
