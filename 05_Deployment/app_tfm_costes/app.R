@@ -105,10 +105,10 @@ ui <- dashboardPage(
                            h4("Cluster 4 = Galicia"),
                            ))),
       #Terremotos 
-      tabItem(tabName = "Elija el clúster",
+      tabItem(tabName = "calculadora_terremotos",
               fluidRow(
                 tabBox(
-                  title =  "calculadora_terremotos",
+                  title =  "Elija clúster",
                   width = "550px", 
                   height = "5000px",
                   

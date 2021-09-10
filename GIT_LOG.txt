@@ -1,0 +1,199 @@
+* 4f2b95a - Thu, 9 Sep 2021 13:36:18 +0200 (23 hours ago) (HEAD -> main)
+|           revision graficos word - sercala97
+* 412f04e - Thu, 9 Sep 2021 11:21:18 +0200 (25 hours ago) (rama-repositorio-entrega)
+|           explicacion de los clusters en la app - sercala97
+* 8b145ff - Thu, 9 Sep 2021 03:43:07 +0200 (33 hours ago)
+|           app probada en docker - sercala97
+* 4b5d67c - Thu, 9 Sep 2021 00:30:56 +0200 (2 days ago) (App_desarrollo)
+|           app paquetes instalados y subida - sercala97
+* 121b7ad - Wed, 8 Sep 2021 23:29:56 +0200 (2 days ago)
+|           app hecha - sercala97
+* e5fccf1 - Wed, 8 Sep 2021 20:41:52 +0200 (2 days ago)
+|           app con modelos para elegir - sercala97
+* 1358059 - Wed, 8 Sep 2021 19:39:24 +0200 (2 days ago)
+|           modelos reentrenados y guardados - sercala97
+* 3575799 - Wed, 8 Sep 2021 12:01:29 +0200 (2 days ago) (origin/main, origin/HEAD)
+|           Modelos incendios - Ignaciorze
+* d11b24b - Tue, 7 Sep 2021 18:25:51 +0200 (3 days ago) (sergio-incendios)
+|           prueba incendios sin paralallel - sercala97
+* ea0d1be - Tue, 7 Sep 2021 17:29:36 +0200 (3 days ago)
+|           merge - sercala97
+* 4f252ec - Tue, 7 Sep 2021 17:13:21 +0200 (3 days ago) (origin/Inundaciones, Inundaciones)
+|           api plumber - sercala97
+* 3708864 - Sun, 5 Sep 2021 23:04:59 +0200 (5 days ago)
+|           parte de los terremotos de la app acabados - sercala97
+*   4eafbf8 - Sun, 5 Sep 2021 21:24:40 +0200 (5 days ago)
+|\            Merge branch 'Inundaciones' of https://github.com/TFM-2021/TFM-2021 into Inundaciones - sercala97
+| * ae9dea1 - Sat, 4 Sep 2021 20:50:54 +0200 (6 days ago)
+| |           app con gumbel - sercala97
+| * bd8675f - Sat, 4 Sep 2021 12:36:40 +0200 (6 days ago)
+| |           inicio app Debian 10 - sercala97
+* | 09f461d - Sun, 5 Sep 2021 21:22:37 +0200 (5 days ago)
+| |           cambio gitignore - sercala97
+* | 9b5eac2 - Sun, 5 Sep 2021 21:17:57 +0200 (5 days ago)
+|/            conexion mysql con java y spark - sercala97
+* 2e8f401 - Sat, 4 Sep 2021 11:38:44 +0200 (6 days ago)
+|           creacion tabas app - sercala97
+* 2994a15 - Wed, 1 Sep 2021 19:26:48 +0200 (9 days ago)
+|           app con dashboard - sercala97
+* 95b63f9 - Wed, 1 Sep 2021 16:55:55 +0200 (9 days ago) (incendios)
+|           limpieza scripst merge - sercala97
+*   08c42e4 - Wed, 1 Sep 2021 16:54:27 +0200 (9 days ago)
+|\            Merge branch 'sergio-modeling' - sercala97
+* \   879c92e - Wed, 1 Sep 2021 16:53:18 +0200 (9 days ago)
+|\ \            Merge branch 'main' of https://github.com/TFM-2021/TFM-2021 - sercala97
+| * | dbc74c1 - Mon, 30 Aug 2021 21:55:04 +0200 (11 days ago)
+| | |           incendios_final_clean - Ignaciorze
+* | | 76a77d4 - Fri, 20 Aug 2021 18:25:03 +0200 (3 weeks ago)
+|\| |           Merge branch 'main' of https://github.com/TFM-2021/TFM-2021 DATA PREPARATION SERGIO - sercala97
+| * | 83f4753 - Fri, 20 Aug 2021 13:39:15 +0200 (3 weeks ago)
+| | |           data preparation incendios - Ignaciorze
+* | | fa084c4 - Fri, 20 Aug 2021 18:24:26 +0200 (3 weeks ago)
+| | |           mapa con canarias :))) - sercala97
+| | | * 9a1293e - Tue, 7 Sep 2021 16:59:12 +0200 (3 days ago) (origin/sergio-modeling, sergio-modeling)
+| | | |           Modelo EVT  y pricing - Ignaciorze
+| | | *   864bdec - Sat, 4 Sep 2021 11:23:42 +0200 (6 days ago)
+| | | |\            Merge branch 'sergio-modeling' of https://github.com/TFM-2021/TFM-2021 into sergio-modeling - Ignaciorze
+| | | |/  
+| | |/|   
+| | * | 23606bd - Wed, 1 Sep 2021 16:47:45 +0200 (9 days ago)
+| | | |           eliminacion scripts de prueba - sercala97
+| | | * b589ed8 - Sat, 4 Sep 2021 11:23:33 +0200 (6 days ago)
+| | |/            Power BI y regresion incendios - Ignaciorze
+| | * 60b65d3 - Tue, 31 Aug 2021 20:19:06 +0200 (10 days ago)
+| | |           inicio app - sercala97
+| | * cec4f52 - Tue, 31 Aug 2021 19:49:28 +0200 (10 days ago)
+| | |           04_Evaluacion_EVT_Incendios - Ignaciorze
+| | * fb9c5ea - Tue, 31 Aug 2021 19:45:01 +0200 (10 days ago)
+| | |           Cluster Incendios y EVT Incendios - Ignaciorze
+| | * dae0196 - Mon, 30 Aug 2021 18:56:17 +0200 (11 days ago)
+| | |           fin modelos terremotos - sercala97
+| | * 293ddb8 - Sun, 29 Aug 2021 23:35:19 +0200 (12 days ago)
+| | |           fin modelos terremoto coste - sercala97
+| | * 7bb8ea3 - Sun, 29 Aug 2021 00:01:11 +0200 (13 days ago)
+| | |           fin redaccion evt terremotos - sercala97
+| | * c174b1e - Thu, 26 Aug 2021 23:39:44 +0200 (2 weeks ago)
+| | |           fin modelos c1 - sercala97
+| | * fbf596a - Thu, 26 Aug 2021 22:07:33 +0200 (2 weeks ago)
+| | |           inicio modelo paquete actualizado - sercala97
+| | * c80137f - Tue, 24 Aug 2021 19:28:00 +0200 (2 weeks ago)
+| | |           graficos para eda redaccion - sercala97
+| | * ca34159 - Mon, 23 Aug 2021 23:23:12 +0200 (3 weeks ago)
+| | |           comienzo redaccion terremotos - sercala97
+| | * ad48d1f - Sun, 22 Aug 2021 20:51:39 +0200 (3 weeks ago)
+| | |           modelos intensidad con variable - sercala97
+| | * cda3ff7 - Sun, 22 Aug 2021 19:30:24 +0200 (3 weeks ago)
+| | |           modelos intensidad con terremotos de todo el mundo - sercala97
+| | * 1e51140 - Sun, 22 Aug 2021 01:11:14 +0200 (3 weeks ago)
+| | |           plantilla modelos costes - sercala97
+| | * 1712c55 - Sat, 21 Aug 2021 12:09:57 +0200 (3 weeks ago)
+| | |           cluster terremotos hehco, inicio EVT - sercala97
+| | * c62b416 - Fri, 20 Aug 2021 18:22:18 +0200 (3 weeks ago)
+| |/            actualizo mapa con canarias - sercala97
+|/|   
+* | 4b10890 - Fri, 20 Aug 2021 16:57:44 +0200 (3 weeks ago) (origin/sergio-data-preparation, sergio-data-preparation)
+| |           terremotos inicio modeling - sercala97
+* | e7acbdd - Thu, 19 Aug 2021 23:37:58 +0200 (3 weeks ago)
+| |           clean diario aemet - sercala97
+* | 644bb56 - Wed, 18 Aug 2021 12:30:37 +0200 (3 weeks ago)
+| |           Parte construct inundaciones TCA - sercala97
+* | 71ca467 - Wed, 18 Aug 2021 10:10:38 +0200 (3 weeks ago)
+| |           Imputacion intensidad - sercala97
+* | 1694229 - Mon, 16 Aug 2021 12:57:36 +0200 (4 weeks ago)
+| |           correcion indemnizaciones.csv y select inundaciones - sercala97
+* | 5c913dd - Sun, 15 Aug 2021 23:17:58 +0200 (4 weeks ago)
+| |           inicio preparation ccss - sercala97
+* | f09c7aa - Sun, 15 Aug 2021 21:52:47 +0200 (4 weeks ago)
+| |           Construct terremotos intensidad y prueba de modelo - sercala97
+* | 9d72130 - Sun, 15 Aug 2021 18:12:35 +0200 (4 weeks ago)
+| |           datos de terremotos para el modelo de pricing elegidos - sercala97
+* | 3cd714a - Sat, 14 Aug 2021 19:54:43 +0200 (4 weeks ago)
+| |           nueva carpeta con funciones y mapa de españa - sercala97
+* | 3ffa917 - Sat, 14 Aug 2021 12:48:04 +0200 (4 weeks ago)
+| |           añadido el kernel del env y nuevos datos aemet diarios - sercala97
+* | b6009ad - Fri, 13 Aug 2021 19:03:30 +0200 (4 weeks ago)
+| |           nuevos años para completar diarios de aemet extraidos - sercala97
+* |   31c6af3 - Wed, 11 Aug 2021 21:42:28 +0200 (4 weeks ago)
+|\ \            Merge branch 'sergio_branch' Merge parte sergio data understanding con la de ignacio - sercala97
+| |/  
+|/|   
+| * d66c72b - Wed, 11 Aug 2021 21:35:57 +0200 (4 weeks ago) (origin/sergio_branch, sergio_branch)
+| |           avance explore terremotos - sercala97
+| * 9e32de5 - Wed, 11 Aug 2021 21:35:05 +0200 (4 weeks ago)
+| |           avance explore terremotos - sercala97
+| * 5e166bf - Mon, 9 Aug 2021 18:40:00 +0200 (5 weeks ago)
+| |           explore aemet diarios - sercala97
+| * c881e63 - Sun, 8 Aug 2021 22:06:25 +0200 (5 weeks ago)
+| |           Describe ccss - sercala97
+| * 86eb69c - Sun, 8 Aug 2021 12:04:55 +0200 (5 weeks ago)
+| |           terremotos Describe - sercala97
+| * 8f5dfde - Sat, 7 Aug 2021 22:32:43 +0200 (5 weeks ago)
+| |           explore aemet diario - sercala97
+| * c015d35 - Sat, 7 Aug 2021 14:04:31 +0200 (5 weeks ago)
+| |           datos json diarios - sercala97
+| * 7c98278 - Sat, 7 Aug 2021 14:03:27 +0200 (5 weeks ago)
+| |           scripts aemet - sercala97
+* | d65f7f1 - Wed, 11 Aug 2021 19:49:14 +0200 (4 weeks ago)
+| |           csv comunidades y provincias para incendios. Pruebas paquete Tidygeocoder - Ignaciorze
+* | 8799221 - Tue, 10 Aug 2021 11:11:39 +0200 (4 weeks ago)
+| |           Data preparation incendios y aemet sin terminar - Ignaciorze
+* | d639877 - Sat, 7 Aug 2021 20:32:23 +0200 (5 weeks ago)
+|/            EDA incendios y aemet sin acabar - Ignaciorze
+* 81dd1d8 - Fri, 6 Aug 2021 19:46:57 +0200 (5 weeks ago)
+|           Subcarpetas - sercala97
+| * 9488a45 - Sat, 7 Aug 2021 13:55:04 +0200 (5 weeks ago) (Sergio2, Sergio)
+| |           asasfd - sercala97
+| * 81aaea1 - Sat, 7 Aug 2021 13:42:02 +0200 (5 weeks ago)
+| |           gitignore archivo pesado - sercala97
+| * 8b15046 - Sat, 7 Aug 2021 13:36:01 +0200 (5 weeks ago)
+| |           gitignore archivo pesado - sercala97
+| * 89f040e - Sat, 7 Aug 2021 13:30:16 +0200 (5 weeks ago)
+| |           gitignore archivo pesado - sercala97
+| * 4c67c19 - Sat, 7 Aug 2021 13:27:30 +0200 (5 weeks ago)
+| |           gitignore archivo pesado - sercala97
+| * 6f83ffa - Sat, 7 Aug 2021 13:22:39 +0200 (5 weeks ago)
+| |           aasd - sercala97
+| * 227deb7 - Sat, 7 Aug 2021 13:11:34 +0200 (5 weeks ago)
+| |           añador carpeta data understanding - sercala97
+| * 5461992 - Sat, 7 Aug 2021 13:00:18 +0200 (5 weeks ago)
+| |           datos diarios aemet juntos - sercala97
+| * 07c1b2f - Sat, 7 Aug 2021 12:39:01 +0200 (5 weeks ago) (origin/Sergio)
+| |           datos raw json diarios - sercala97
+| * 2bc87a7 - Sat, 7 Aug 2021 12:37:45 +0200 (5 weeks ago)
+|/            scripts para diarios de aemet - sercala97
+* 701a717 - Fri, 6 Aug 2021 19:42:41 +0200 (5 weeks ago)
+|           CRISP-DM xd - sercala97
+* 44bc4b2 - Fri, 6 Aug 2021 18:34:10 +0200 (5 weeks ago)
+|           CRISP-DM subcarpetas - sercala97
+* 2437151 - Fri, 6 Aug 2021 18:26:14 +0200 (5 weeks ago)
+|           CRISP-DM subcarpetas - sercala97
+* 54d8a4e - Thu, 5 Aug 2021 23:36:52 +0200 (5 weeks ago)
+|           CRISP-DM II - sercala97
+* 2f63871 - Thu, 5 Aug 2021 23:29:01 +0200 (5 weeks ago)
+|           CRISP-DM - sercala97
+* f4f5506 - Wed, 4 Aug 2021 21:24:53 +0200 (5 weeks ago)
+|           expedientes y indemnizaciones - Ignaciorze
+* 8dd5916 - Wed, 4 Aug 2021 19:35:50 +0200 (5 weeks ago)
+|           datos incendios - sercala97
+* 9b4f8cc - Wed, 4 Aug 2021 19:26:48 +0200 (5 weeks ago)
+|           subo mas datos :) - sercala97
+* 786b422 - Wed, 4 Aug 2021 19:24:00 +0200 (5 weeks ago)
+|           subo datos AEMET - sercala97
+* feca89d - Tue, 3 Aug 2021 23:28:24 +0200 (5 weeks ago)
+|           EDA nulos - sercala97
+* ec4c5a7 - Mon, 2 Aug 2021 22:41:55 +0200 (6 weeks ago)
+|           eda aemet - sercala97
+* 6bd0f20 - Mon, 2 Aug 2021 22:07:52 +0200 (6 weeks ago)
+|           aemet listo EDA - sercala97
+* b156db4 - Sun, 1 Aug 2021 23:34:36 +0200 (6 weeks ago)
+|           datos aemet limpios - sercala97
+* 87b92f9 - Wed, 7 Jul 2021 14:23:18 +0200 (9 weeks ago)
+|           elimino la libreria - sercala97
+* 04487bc - Wed, 23 Jun 2021 23:45:39 +0200 (3 months ago)
+|           creacion de la optimizacion de la MLE - sercala97
+* 33558ea - Wed, 23 Jun 2021 23:28:00 +0200 (3 months ago)
+|           creo gitignore - sercala97
+* 8ac9101 - Wed, 23 Jun 2021 23:25:31 +0200 (3 months ago)
+|           inicio github, codigo y desarrolo de libreria - sercala97
+* 45a90ec - Thu, 27 May 2021 17:40:25 +0200 (4 months ago)
+            Initial commit - sercala97

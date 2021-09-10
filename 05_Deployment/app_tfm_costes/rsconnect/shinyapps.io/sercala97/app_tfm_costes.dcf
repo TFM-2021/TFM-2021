@@ -5,9 +5,9 @@ account: sercala97
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4613313
-bundleId: 5013665
+bundleId: 5015645
 url: https://sercala97.shinyapps.io/app_tfm_costes/
-when: 1631139554.52395
-lastSyncTime: 1631139554.52395
+when: 1631190497.87826
+lastSyncTime: 1631190497.87826
 asMultiple: FALSE
 asStatic: FALSE
